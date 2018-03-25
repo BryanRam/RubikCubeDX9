@@ -1,0 +1,389 @@
+//-----------------------------------------------------------------------------
+// Basic Graphics Drawing Using Direct 3D
+// Draw the a filled circle using a TRIANGLEFAN primitive.
+
+#define D3D_DEBUG_INFO
+
+//-----------------------------------------------------------------------------
+// Include these files
+#include <Windows.h>	// Windows library (for window functions, menus, dialog boxes, etc)
+#include <d3dx9.h>		// Direct 3D library (for all Direct 3D funtions).
+#include "Cubie.h"
+
+//-----------------------------------------------------------------------------
+// Global variables
+
+LPDIRECT3D9             g_pD3D           = NULL; // Used to create the D3DDevice
+LPDIRECT3DDEVICE9       g_pd3dDevice     = NULL; // The rendering device
+LPDIRECT3DVERTEXBUFFER9 g_pVertexBuffer  = NULL; // Buffer to hold vertices for the rectangle
+LPDIRECT3DVERTEXBUFFER9 g_pVertexBuffer2 = NULL; // Buffer to hold vertices for the rectangle
+LPDIRECT3DVERTEXBUFFER9 g_cVertexBuffer = NULL; // Buffer to hold vertices for the rectangle
+LPDIRECT3DINDEXBUFFER9 i_buffer;
+FLOAT g_CameraZ = -405.0f;
+
+float yIndex = 0.0f;
+float xIndex = 0.0f;
+
+/*
+Define different types of bricks
+*/
+
+LEGO_BRICK brick6X16(6, 16, LEGO_HEIGHT2, Blue);
+LEGO_BRICK brick2X6Gy(2, 6, LEGO_HEIGHT, White);
+LEGO_BRICK brick2X6B(2, 6, LEGO_HEIGHT, Yellow);
+LEGO_BRICK brick4X2(4, 2, LEGO_HEIGHT, Black);
+LEGO_BRICK brick4X2B(4, 2, LEGO_HEIGHT, Orange);
+LEGO_BRICK brick2X4B(2, 4, LEGO_HEIGHT, Red);
+LEGO_BRICK brick2X8(2, 8, LEGO_HEIGHT, Orange);
+LEGO_BRICK brick2X2(2, 2, LEGO_HEIGHT, Green);
+LEGO_BRICK brick12X8(12, 8, LEGO_HEIGHT2, Yellow);
+LEGO_BRICK brick4X2R(4, 2, LEGO_HEIGHT, White);
+LEGO_BRICK brick2X6R(2, 6, LEGO_HEIGHT, Blue);
+
+
+
+// The structure of a vertex in our vertex buffer...
+#define D3DFVF_CUSTOMVERTEX (D3DFVF_XYZ | D3DFVF_DIFFUSE)
+
+
+//-----------------------------------------------------------------------------
+// Initialise Direct 3D.
+// Requires a handle to the window in which the graphics will be drawn.
+
+HRESULT SetupD3D(HWND hWnd)
+{
+    // Create the D3D object, return failure if this can't be done.
+    if (NULL == (g_pD3D = Direct3DCreate9(D3D_SDK_VERSION))) return E_FAIL;
+
+    // Set up the structure used to create the D3DDevice
+    D3DPRESENT_PARAMETERS d3dpp;
+    ZeroMemory(&d3dpp, sizeof(d3dpp));
+    d3dpp.Windowed = TRUE;
+    d3dpp.SwapEffect = D3DSWAPEFFECT_DISCARD;
+    d3dpp.BackBufferFormat = D3DFMT_UNKNOWN;
+    d3dpp.EnableAutoDepthStencil = TRUE;
+    d3dpp.AutoDepthStencilFormat = D3DFMT_D16;
+
+    // Create the D3DDevice
+    if (FAILED(g_pD3D -> CreateDevice(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, hWnd,
+                                      D3DCREATE_SOFTWARE_VERTEXPROCESSING,
+                                      &d3dpp, &g_pd3dDevice)))
+    {
+        return E_FAIL;
+    }
+
+	// Turn on the Z buffer
+	g_pd3dDevice -> SetRenderState(D3DRS_ZENABLE, TRUE);
+
+	// Turn off the lighting, as we're using our own vertex colours.
+	g_pd3dDevice -> SetRenderState(D3DRS_LIGHTING, FALSE);
+
+	g_pd3dDevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
+
+	/*Initialise brick object*/
+	/*brick6X16.initialise(g_pd3dDevice);
+	brick2X6Gy.initialise(g_pd3dDevice);
+	brick2X6B.initialise(g_pd3dDevice);*/
+	brick4X2.initialise(g_pd3dDevice);
+	/*brick4X2B.initialise(g_pd3dDevice);
+	brick2X4B.initialise(g_pd3dDevice);
+	brick2X2.initialise(g_pd3dDevice);
+	brick2X8.initialise(g_pd3dDevice);
+	brick12X8.initialise(g_pd3dDevice);
+	brick4X2R.initialise(g_pd3dDevice);
+	brick2X6R.initialise(g_pd3dDevice);*/
+
+    return S_OK;
+}
+
+//-----------------------------------------------------------------------------
+// Release (delete) all the resources used by this program.
+// Only release things if they are valid (i.e. have a valid pointer).
+// If not, the program will crash at this point.
+
+void CleanUp()
+{
+    if (g_pVertexBuffer != NULL) g_pVertexBuffer -> Release();
+	if (g_pVertexBuffer2 != NULL) g_pVertexBuffer2->Release();
+	if (g_cVertexBuffer != NULL) g_cVertexBuffer->Release();
+    if (g_pd3dDevice != NULL)	 g_pd3dDevice -> Release();
+    if (g_pD3D != NULL)			 g_pD3D -> Release();
+}
+
+//-----------------------------------------------------------------------------
+// Set up the scene geometry.
+
+HRESULT SetupGeometry()
+{
+	if (/*brick6X16.Setup() == S_OK && 
+		brick2X6Gy.Setup() == S_OK && 
+		brick2X6B.Setup() == S_OK && */
+		brick4X2.Setup() == S_OK 
+		/*brick4X2B.Setup() == S_OK && 
+		brick2X4B.Setup() == S_OK && 
+		brick2X2.Setup() == S_OK &&
+		brick2X8.Setup() == S_OK &&
+		brick12X8.Setup() == S_OK &&
+		brick2X6R.Setup() == S_OK &&
+		brick4X2R.Setup() == S_OK*/)
+	{
+			return S_OK;
+		
+	}
+	return E_FAIL;
+}
+
+
+
+//-----------------------------------------------------------------------------
+// Set up the view - the view and projection matrices.
+
+void SetupViewMatrices()
+{
+	// Set up the view matrix.
+	// This defines which way the 'camera' will look at, and which way is up.
+    D3DXVECTOR3 vCamera(0.0f, 0.0f, g_CameraZ);
+    D3DXVECTOR3 vLookat(0.0f, 0.0f, g_CameraZ + 10);
+    D3DXVECTOR3 vUpVector(0.0f, 1.0f, 0.0f);
+    D3DXMATRIX matView;
+    D3DXMatrixLookAtLH( &matView, &vCamera, &vLookat, &vUpVector);
+    g_pd3dDevice -> SetTransform(D3DTS_VIEW, &matView);
+
+	// Set up the projection matrix.
+	// This transforms 2D geometry into a 3D space.
+    D3DXMATRIX matProj;
+    D3DXMatrixPerspectiveFovLH(&matProj, D3DX_PI/4, 1.0f, 1.0f, 600.0f);
+    g_pd3dDevice -> SetTransform(D3DTS_PROJECTION, &matProj);
+}
+
+//-----------------------------------------------------------------------------
+// Render the scene.
+
+void Render()
+{
+	D3DXMATRIX matRotateY, sideMat;    // a matrix to store the rotation information
+							  // Construct various matrices to move and expand the triangle the rectangle.
+	D3DXMATRIX WorldMat, WorldMat2, TranslateMat, TranslateMat2, TranslateMat3;
+
+
+	//static float index = 0.0f; index += 0.01f;    // an ever-increasing float value
+	static float index = 0.0f;
+												 
+
+	// tell Direct3D about our matrix
+	g_pd3dDevice->SetTransform(D3DTS_WORLD, &matRotateY);
+
+
+    // Clear the backbuffer to a dark blue colour.
+    g_pd3dDevice -> Clear(0, NULL, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER, D3DCOLOR_XRGB(0, 0, 150), 1.0f, 0);
+
+    // Begin the scene...
+	if (SUCCEEDED(g_pd3dDevice->BeginScene()))
+	{
+		// Define the viewpoint.
+		SetupViewMatrices();
+
+		D3DXMatrixRotationYawPitchRoll(&matRotateY, /*index*//*0*/xIndex, yIndex/*0*//*index*/, 0/*index*/);
+		D3DXMatrixRotationYawPitchRoll(&sideMat, 0, 90, 0);
+		D3DXMatrixTranslation(&TranslateMat2, LEGO_HALF_PITCH, LEGO_PITCH, 0.0f);
+		D3DXMatrixTranslation(&TranslateMat3, 0.0f, -24.0f, 0.0f);
+		D3DXMatrixTranslation(&TranslateMat, 0.0f, 0.0f, 5.0f);
+		D3DXMatrixIdentity(&WorldMat);								// Set WorldMat to identity matrice
+		D3DXMatrixIdentity(&WorldMat2);
+
+		/*
+		//Floor Area
+		brick6X16.renderWithTranslate(matRotateY, WorldMat, TranslateMat, TranslateMat2, 0, 0, 12, 0, 0, brick2X6Gy.brick_height);
+		brick6X16.renderWithTranslate(matRotateY, WorldMat, TranslateMat, TranslateMat2, 0, 6, 12, 0, -(LEGO_PITCH), brick2X6Gy.brick_height);
+
+		//End Floor Area
+
+		
+
+
+		brick2X6Gy.renderWithTranslate(matRotateY, WorldMat2, TranslateMat, TranslateMat2, 1, 2, 11, -(LEGO_PITCH * 2), LEGO_PITCH, brick2X6Gy.brick_height);
+		brick2X6Gy.renderWithTranslate(matRotateY, WorldMat2, TranslateMat, TranslateMat2, 1, 2, 11, -(LEGO_PITCH * 6 + (LEGO_PITCH * 2)), LEGO_PITCH, brick2X6Gy.brick_height);
+		brick2X6Gy.renderWithTranslate(matRotateY, WorldMat2, TranslateMat, TranslateMat2, 1, 2, 11, -(LEGO_PITCH * 2), -(LEGO_PITCH * 4), brick2X6Gy.brick_height);
+		brick2X6Gy.renderWithTranslate(matRotateY, WorldMat2, TranslateMat, TranslateMat2, 1, 2, 11, -(LEGO_PITCH * 6 + (LEGO_PITCH * 2)), -(LEGO_PITCH * 4), brick2X6Gy.brick_height);
+
+		for (int i = 10; i >= 2; i--)
+		{
+			brick2X6B.renderWithTranslate(matRotateY, WorldMat2, TranslateMat, TranslateMat2, 1, 2, i, -(LEGO_PITCH * 2), LEGO_PITCH, brick2X6B.brick_height);
+			brick2X6B.renderWithTranslate(matRotateY, WorldMat2, TranslateMat, TranslateMat2, 1, 2, i, -(LEGO_PITCH * 6 + (LEGO_PITCH * 2)), LEGO_PITCH, brick2X6B.brick_height);
+			brick4X2B.renderWithTranslate(matRotateY, WorldMat2, TranslateMat, TranslateMat2, 1, 2, i, -(LEGO_PITCH * 14), LEGO_HALF_PITCH, brick2X6B.brick_height);
+			brick4X2B.renderWithTranslate(matRotateY, WorldMat2, TranslateMat, TranslateMat2, 1, 2, i, -(LEGO_PITCH * 14), -(LEGO_HALF_PITCH * 3), brick2X6B.brick_height);
+			brick4X2B.renderWithTranslate(matRotateY, WorldMat2, TranslateMat, TranslateMat2, 1, 2, i, -(LEGO_PITCH * 14), -(LEGO_HALF_PITCH * 7), brick2X6B.brick_height);
+
+			brick4X2B.renderWithTranslate(matRotateY, WorldMat2, TranslateMat, TranslateMat2, 1, 2, i, 0, LEGO_HALF_PITCH, brick2X6B.brick_height);
+			brick4X2B.renderWithTranslate(matRotateY, WorldMat2, TranslateMat, TranslateMat2, 1, 2, i, 0, -(LEGO_HALF_PITCH * 3), brick2X6B.brick_height);
+			brick4X2B.renderWithTranslate(matRotateY, WorldMat2, TranslateMat, TranslateMat2, 1, 2, i, 0, -(LEGO_HALF_PITCH * 7), brick2X6B.brick_height);
+		}
+		*/
+		brick4X2.renderWithTranslate(matRotateY, WorldMat2, TranslateMat, TranslateMat2, 1, 2, 11, -(LEGO_PITCH * 14), LEGO_HALF_PITCH, brick2X6B.brick_height);
+		brick4X2.renderWithTranslate(matRotateY, WorldMat2, TranslateMat, TranslateMat2, 1, 2, 11, -(LEGO_PITCH * 14), -(LEGO_HALF_PITCH * 3), brick2X6B.brick_height);
+		brick4X2.renderWithTranslate(matRotateY, WorldMat2, TranslateMat, TranslateMat2, 1, 2, 11, -(LEGO_PITCH * 14), -(LEGO_HALF_PITCH * 7), brick2X6B.brick_height);
+
+		/*
+		brick4X2.renderWithTranslate(matRotateY, WorldMat2, TranslateMat, TranslateMat2, 1, 2, 11, 0, LEGO_HALF_PITCH, brick2X6B.brick_height);
+		brick4X2.renderWithTranslate(matRotateY, WorldMat2, TranslateMat, TranslateMat2, 1, 2, 11, 0, -(LEGO_HALF_PITCH * 3), brick2X6B.brick_height);
+		brick4X2.renderWithTranslate(matRotateY, WorldMat2, TranslateMat, TranslateMat2, 1, 2, 11, 0, -(LEGO_HALF_PITCH * 7), brick2X6B.brick_height);
+
+		brick2X4B.renderWithTranslate(matRotateY, WorldMat2, TranslateMat, TranslateMat2, 2, 2, 10, -LEGO_PITCH, -(LEGO_PITCH * 4), brick2X6Gy.brick_height);
+		brick2X4B.renderWithTranslate(matRotateY, WorldMat2, TranslateMat, TranslateMat2, 10, 2, 10, -LEGO_PITCH, -(LEGO_PITCH * 4), brick2X6Gy.brick_height);
+
+		
+
+		for (int i = 9; i >= 7; i--)
+		{
+			brick2X2.renderWithTranslate(matRotateY, WorldMat2, TranslateMat, TranslateMat2, 4, 2, i, -LEGO_PITCH, -(LEGO_PITCH * 4), brick2X6Gy.brick_height);
+			brick2X2.renderWithTranslate(matRotateY, WorldMat2, TranslateMat, TranslateMat2, 10, 2, i, -LEGO_PITCH, -(LEGO_PITCH * 4), brick2X6Gy.brick_height);
+		}
+
+		brick2X8.renderWithTranslate(matRotateY, WorldMat2, TranslateMat, TranslateMat2, 4, 2, 6, -LEGO_PITCH, -(LEGO_PITCH * 4), brick2X6Gy.brick_height);
+
+		for (int i = 5; i >= 2; i--)
+		{
+			brick2X4B.renderWithTranslate(matRotateY, WorldMat2, TranslateMat, TranslateMat2, 8, 2, i, -LEGO_PITCH, -(LEGO_PITCH * 4), brick2X6Gy.brick_height);
+			brick2X4B.renderWithTranslate(matRotateY, WorldMat2, TranslateMat, TranslateMat2, 4, 2, i, -LEGO_PITCH, -(LEGO_PITCH * 4), brick2X6Gy.brick_height);
+		}
+
+		//Brown Sides
+		for (int i = 9; i >= 2; i--)
+		{
+			brick4X2B.renderWithTranslate(matRotateY, WorldMat2, TranslateMat, TranslateMat2, 2, 7, i, -LEGO_PITCH, -(LEGO_PITCH), brick2X6B.brick_height);
+			brick4X2B.renderWithTranslate(matRotateY, WorldMat2, TranslateMat, TranslateMat2, 12, 7, i, -LEGO_PITCH, -(LEGO_PITCH), brick2X6B.brick_height);
+		}
+
+		//Roof Area
+		brick12X8.renderWithTranslate(matRotateY, WorldMat2, TranslateMat, TranslateMat2, 0, 3, 5, -LEGO_PITCH, -(LEGO_PITCH), brick12X8.brick_height);
+		brick12X8.renderWithTranslate(matRotateY, WorldMat2, TranslateMat, TranslateMat2, 8, 3, 5, -LEGO_PITCH, -(LEGO_PITCH), brick12X8.brick_height);
+
+		brick4X2R.renderWithTranslate(matRotateY, WorldMat2, TranslateMat, TranslateMat2, 1, 2, 2, -(LEGO_PITCH * 14), LEGO_HALF_PITCH, brick12X8.brick_height);
+		brick4X2R.renderWithTranslate(matRotateY, WorldMat2, TranslateMat, TranslateMat2, 1, 2, 2, -(LEGO_PITCH * 14), -(LEGO_HALF_PITCH * 3), brick12X8.brick_height);
+		brick4X2R.renderWithTranslate(matRotateY, WorldMat2, TranslateMat, TranslateMat2, 1, 2, 2, -(LEGO_PITCH * 14), -(LEGO_HALF_PITCH * 7), brick12X8.brick_height);
+
+		brick4X2R.renderWithTranslate(matRotateY, WorldMat2, TranslateMat, TranslateMat2, 1, 2, 2, 0, LEGO_HALF_PITCH, brick12X8.brick_height);
+		brick4X2R.renderWithTranslate(matRotateY, WorldMat2, TranslateMat, TranslateMat2, 1, 2, 2, 0, -(LEGO_HALF_PITCH * 3), brick12X8.brick_height);
+		brick4X2R.renderWithTranslate(matRotateY, WorldMat2, TranslateMat, TranslateMat2, 1, 2, 2, 0, -(LEGO_HALF_PITCH * 7), brick12X8.brick_height);
+
+		brick2X6R.renderWithTranslate(matRotateY, WorldMat2, TranslateMat, TranslateMat2, 8, 2, 2, -LEGO_PITCH, -(LEGO_PITCH * 4), brick12X8.brick_height);
+		brick2X6R.renderWithTranslate(matRotateY, WorldMat2, TranslateMat, TranslateMat2, 2, 2, 2, -LEGO_PITCH, -(LEGO_PITCH * 4), brick12X8.brick_height);
+		brick2X6R.renderWithTranslate(matRotateY, WorldMat2, TranslateMat, TranslateMat2, 1, 2, 2, -(LEGO_PITCH * 2), LEGO_PITCH, brick12X8.brick_height);
+		brick2X6R.renderWithTranslate(matRotateY, WorldMat2, TranslateMat, TranslateMat2, 1, 2, 2, -(LEGO_PITCH * 6 + (LEGO_PITCH * 2)), LEGO_PITCH, brick12X8.brick_height);
+		*/
+
+        // End the scene.
+        g_pd3dDevice -> EndScene();
+    }
+
+    // Present the backbuffer to the display.
+    g_pd3dDevice -> Present(NULL, NULL, NULL, NULL);
+}
+
+
+
+
+//-----------------------------------------------------------------------------
+// The window's message handling function.
+
+LRESULT WINAPI MsgProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
+{
+    switch (msg)
+    {
+        case WM_DESTROY:
+		{
+            PostQuitMessage(0);
+            return 0;
+		}
+		/*
+		WASD keys to rotate the model
+		Keys R and F to zoom in and out
+		*/
+
+		case WM_CHAR:
+			switch (wParam)
+			{
+			case 'w':
+				yIndex += 0.1f;
+				return 0;
+				break;
+
+			case 's':
+				yIndex -= 0.1f;
+				return 0;
+				break;
+
+			case 'a':
+				xIndex -= 0.1f;
+				return 0;
+				break;
+
+			case 'd':
+				xIndex += 0.1f;
+				return 0;
+				break;
+
+			case 'r':
+				g_CameraZ += 10.0f;
+				return 0;
+				break;
+
+			case 'f':
+				g_CameraZ -= 10.0f;
+				return 0;
+				break;
+			}
+    }
+
+    return DefWindowProc(hWnd, msg, wParam, lParam);
+}
+
+//-----------------------------------------------------------------------------
+// WinMain() - The application's entry point.
+// This sort of procedure is mostly standard, and could be used in most
+// DirectX applications.
+
+int WINAPI WinMain(HINSTANCE hInst, HINSTANCE, LPSTR, int)
+{
+    // Register the window class
+    WNDCLASSEX wc = {sizeof(WNDCLASSEX), CS_CLASSDC, MsgProc, 0L, 0L,
+                     GetModuleHandle(NULL), NULL, NULL, NULL, NULL,
+                     "Basic D3D Example", NULL};
+    RegisterClassEx(&wc);
+
+    // Create the application's window
+    HWND hWnd = CreateWindow( "Basic D3D Example", "Rubik's Cube Assignment",
+                              WS_OVERLAPPEDWINDOW, 150, 150, 1200, 800,
+                              GetDesktopWindow(), NULL, wc.hInstance, NULL);
+
+    // Initialize Direct3D
+    if (SUCCEEDED(SetupD3D(hWnd)))
+    {
+        // Create the scene geometry
+        if (SUCCEEDED(SetupGeometry()))
+        {
+
+            // Show the window
+            ShowWindow(hWnd, SW_SHOWDEFAULT);
+            UpdateWindow(hWnd);
+
+            // Enter the message loop
+            MSG msg;
+            ZeroMemory(&msg, sizeof(msg));
+            while (msg.message != WM_QUIT)
+            {
+                if (PeekMessage(&msg, NULL, 0U, 0U, PM_REMOVE))
+                {
+                    TranslateMessage(&msg);
+                    DispatchMessage(&msg);
+                }
+                else
+                    Render();
+            }
+        }
+		CleanUp();
+    }
+
+    UnregisterClass("Basic D3D Example", wc.hInstance);
+    return 0;
+}
