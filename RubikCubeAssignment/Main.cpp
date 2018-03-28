@@ -9,6 +9,7 @@
 #include <Windows.h>	// Windows library (for window functions, menus, dialog boxes, etc)
 #include <d3dx9.h>		// Direct 3D library (for all Direct 3D funtions).
 #include "Cubie.h"
+#include "Panel.h"
 
 //-----------------------------------------------------------------------------
 // Global variables
@@ -27,23 +28,23 @@ float xIndex = 0.0f;
 /*
 Define different types of bricks
 */
-
-LEGO_BRICK brick6X16(6, 16, LEGO_HEIGHT2, Blue);
-LEGO_BRICK brick2X6Gy(2, 6, LEGO_HEIGHT, White);
-LEGO_BRICK brick2X6B(2, 6, LEGO_HEIGHT, Yellow);
-LEGO_BRICK brick4X2(4, 2, LEGO_HEIGHT, Black);
-LEGO_BRICK brick4X2B(4, 2, LEGO_HEIGHT, Orange);
-LEGO_BRICK brick2X4B(2, 4, LEGO_HEIGHT, Red);
-LEGO_BRICK brick2X8(2, 8, LEGO_HEIGHT, Orange);
-LEGO_BRICK brick2X2(2, 2, LEGO_HEIGHT, Green);
-LEGO_BRICK brick12X8(12, 8, LEGO_HEIGHT2, Yellow);
-LEGO_BRICK brick4X2R(4, 2, LEGO_HEIGHT, White);
-LEGO_BRICK brick2X6R(2, 6, LEGO_HEIGHT, Blue);
+CUBIE_PANEL panel(Red);
+//LEGO_BRICK brick6X16(6, 16, LEGO_HEIGHT2, Blue);
+//LEGO_BRICK brick2X6Gy(2, 6, LEGO_HEIGHT, White);
+//LEGO_BRICK brick2X6B(2, 6, LEGO_HEIGHT, Yellow);
+//LEGO_BRICK brick4X2(4, 2, LEGO_HEIGHT, Black);
+//LEGO_BRICK brick4X2B(4, 2, LEGO_HEIGHT, Orange);
+//LEGO_BRICK brick2X4B(2, 4, LEGO_HEIGHT, Red);
+//LEGO_BRICK brick2X8(2, 8, LEGO_HEIGHT, Orange);
+//LEGO_BRICK brick2X2(2, 2, LEGO_HEIGHT, Green);
+//LEGO_BRICK brick12X8(12, 8, LEGO_HEIGHT2, Yellow);
+//LEGO_BRICK brick4X2R(4, 2, LEGO_HEIGHT, White);
+//LEGO_BRICK brick2X6R(2, 6, LEGO_HEIGHT, Blue);
 
 
 
 // The structure of a vertex in our vertex buffer...
-#define D3DFVF_CUSTOMVERTEX (D3DFVF_XYZ | D3DFVF_DIFFUSE)
+//#define D3DFVF_CUSTOMVERTEX (D3DFVF_XYZ | D3DFVF_DIFFUSE)
 
 
 //-----------------------------------------------------------------------------
@@ -84,7 +85,8 @@ HRESULT SetupD3D(HWND hWnd)
 	/*brick6X16.initialise(g_pd3dDevice);
 	brick2X6Gy.initialise(g_pd3dDevice);
 	brick2X6B.initialise(g_pd3dDevice);*/
-	brick4X2.initialise(g_pd3dDevice);
+//	brick4X2.initialise(g_pd3dDevice);
+	panel.initialise(g_pd3dDevice);
 	/*brick4X2B.initialise(g_pd3dDevice);
 	brick2X4B.initialise(g_pd3dDevice);
 	brick2X2.initialise(g_pd3dDevice);
@@ -118,7 +120,8 @@ HRESULT SetupGeometry()
 	if (/*brick6X16.Setup() == S_OK && 
 		brick2X6Gy.Setup() == S_OK && 
 		brick2X6B.Setup() == S_OK && */
-		brick4X2.Setup() == S_OK 
+//		brick4X2.Setup() == S_OK && 
+		panel.SetupPanel() == S_OK
 		/*brick4X2B.Setup() == S_OK && 
 		brick2X4B.Setup() == S_OK && 
 		brick2X2.Setup() == S_OK &&
@@ -219,9 +222,11 @@ void Render()
 			brick4X2B.renderWithTranslate(matRotateY, WorldMat2, TranslateMat, TranslateMat2, 1, 2, i, 0, -(LEGO_HALF_PITCH * 7), brick2X6B.brick_height);
 		}
 		*/
-		brick4X2.renderWithTranslate(matRotateY, WorldMat2, TranslateMat, TranslateMat2, 1, 2, 11, -(LEGO_PITCH * 14), LEGO_HALF_PITCH, brick2X6B.brick_height);
-		brick4X2.renderWithTranslate(matRotateY, WorldMat2, TranslateMat, TranslateMat2, 1, 2, 11, -(LEGO_PITCH * 14), -(LEGO_HALF_PITCH * 3), brick2X6B.brick_height);
-		brick4X2.renderWithTranslate(matRotateY, WorldMat2, TranslateMat, TranslateMat2, 1, 2, 11, -(LEGO_PITCH * 14), -(LEGO_HALF_PITCH * 7), brick2X6B.brick_height);
+		panel.render(matRotateY, WorldMat);
+
+		//brick4X2.renderWithTranslate(matRotateY, WorldMat2, TranslateMat, TranslateMat2, 1, 2, 11, -(LEGO_PITCH * 14), LEGO_HALF_PITCH, brick2X6B.brick_height);
+		//brick4X2.renderWithTranslate(matRotateY, WorldMat2, TranslateMat, TranslateMat2, 1, 2, 11, -(LEGO_PITCH * 14), -(LEGO_HALF_PITCH * 3), brick2X6B.brick_height);
+		//brick4X2.renderWithTranslate(matRotateY, WorldMat2, TranslateMat, TranslateMat2, 1, 2, 11, -(LEGO_PITCH * 14), -(LEGO_HALF_PITCH * 7), brick2X6B.brick_height);
 
 		/*
 		brick4X2.renderWithTranslate(matRotateY, WorldMat2, TranslateMat, TranslateMat2, 1, 2, 11, 0, LEGO_HALF_PITCH, brick2X6B.brick_height);

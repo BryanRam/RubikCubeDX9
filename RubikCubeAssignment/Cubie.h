@@ -5,8 +5,6 @@
 #include <algorithm>
 #include <functional>
 
-#pragma once
-
 // A structure for our custom vertex type
 struct CUSTOMVERTEX
 {
@@ -26,6 +24,12 @@ DWORD Red = 0xff0000;
 #define D3DFVF_CUSTOMVERTEX (D3DFVF_XYZ | D3DFVF_DIFFUSE)
 #define SAFE_RELEASE(p)      {if(p) {(p)->Release(); (p)=NULL;}}
 
+#pragma once
+
+
+
+
+
 // LEGO brick properties
 const float LEGO_PITCH = 8.0f; // 8mm between studs
 const float LEGO_HALF_PITCH = 4.0f; // 8mm between studs
@@ -37,11 +41,12 @@ const float LEGO_STUD_GAP = 3.0f;
 const float LEGO_STUD_RADIUS = 2.5f;
 const float LEGO_GAP = 0.1f; // clearance gap between bricks
 
-class LEGO_BRICK
+class CUBIE
 {
 	public:
 
-		float width = 5.715f, height = 5.5f;
+		float dimension = 1.905f;
+		DWORD colour = Black;
 
 
 		LPDIRECT3DDEVICE9 render_target_;
@@ -53,16 +58,12 @@ class LEGO_BRICK
 		float stud_height, stud_radius;
 		DWORD brick_colour;
 
+		CUBIE(DWORD cube_colour) :
+			colour(cube_colour)
+		{}
 
-		LEGO_BRICK(int otherRows, int otherColumns, float height, DWORD colour) : columns(otherColumns), rows(otherRows), brick_height(height),
-			stud_height(LEGO_STUD_HEIGHT), brick_colour(colour)
+		~CUBIE()
 		{
-			studs = columns * rows;
-		}
-
-		~LEGO_BRICK()
-		{
-
 			// Destructor - release the points buffer.
 			SAFE_RELEASE(g_topVertexBuffer);
 			SAFE_RELEASE(g_baseVertexBuffer);
@@ -71,6 +72,7 @@ class LEGO_BRICK
 			SAFE_RELEASE(g_lineVertexBuffer);
 			SAFE_RELEASE(i_buffer);
 		}
+
 		LPDIRECT3DVERTEXBUFFER9 g_topVertexBuffer = NULL; // Buffer to hold vertices for the rectangle
 		LPDIRECT3DVERTEXBUFFER9 g_baseVertexBuffer = NULL; // Buffer to hold vertices for the rectangle
 		LPDIRECT3DVERTEXBUFFER9 g_cubeVertexBuffer = NULL; // Buffer to hold vertices for the rectangle
@@ -97,26 +99,7 @@ class LEGO_BRICK
 			//render_target_->SetTransform(D3DTS_WORLD, &WorldMat);
 
 			RenderCube2X4(matRotateY, WorldMat, TranslateMat, count);
-			/*
-			D3DXMatrixIdentity(&WorldMat);								// Set WorldMat to identity matrice
-			render_target_->SetTransform(D3DTS_WORLD, &WorldMat);
-
-			RenderStuds(matRotateY, WorldMat, TranslateMat2, 2);
-			RenderCube2X4(matRotateY, WorldMat, TranslateMat, 2);
-			*/
-			/*
-			D3DXMatrixMultiply(&WorldMat, &WorldMat, &TranslateMat3);
-			render_target_->SetTransform(D3DTS_WORLD, &WorldMat);
-
 			
-			D3DXMatrixIdentity(&WorldMat);								// Set WorldMat to identity matrice
-			render_target_->SetTransform(D3DTS_WORLD, &WorldMat);
-
-			RenderCube2X4(matRotateY, WorldMat, TranslateMat);
-					
-			D3DXMatrixIdentity(&WorldMat);								// Set WorldMat to identity matrice
-			render_target_->SetTransform(D3DTS_WORLD, &WorldMat);
-			*/
 		}
 
 		void renderWithTranslate(D3DXMATRIX matRotateY, D3DXMATRIX WorldMat, D3DXMATRIX TranslateMat,
