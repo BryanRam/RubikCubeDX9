@@ -46,6 +46,7 @@ class CUBIE
 	public:
 
 		float dimension = 1.905f;
+		float cubie_side = dimension/2;
 		DWORD colour = Black;
 
 
@@ -426,6 +427,100 @@ class CUBIE
 			{
 				return E_FAIL;  // if the pointer to the vertex buffer could not be established.
 			}
+
+			// create the vertices using the CUSTOMVERTEX struct
+
+			CUSTOMVERTEX vertices[] =
+			{
+				/*Back Half   Bottom view  Heights: 3.2(1.6), 9.6(4.8)
+				0	1		2	3
+				2	3		6	7
+				*/
+				{ -cubie_side, cubie_side, -cubie_side /*-12.8f*/, brick_colour /*D3DCOLOR_XRGB(0, 0, 255)*/, },    // vertex 0 
+				{ cubie_side, cubie_side, -cubie_side /*-12.8f*/, brick_colour/*D3DCOLOR_XRGB(0, 255, 0)*/, },     // vertex 1
+				{ -cubie_side, -cubie_side, -cubie_side /*-12.8f*/, brick_colour/*D3DCOLOR_XRGB(255, 0, 0)*/, },   // 2
+				{ cubie_side, -cubie_side, -cubie_side /*-12.8f*/, brick_colour/*D3DCOLOR_XRGB(0, 255, 255)*/, },  // 3
+
+																																															/*Front Half	Top view
+																																															4	5		0	1
+																																															6	7		4	5
+																																															*/
+				{ -cubie_side, cubie_side, cubie_side /*12.8f*/, brick_colour/*D3DCOLOR_XRGB(0, 0, 255)*/, },     // ...
+				{ cubie_side, cubie_side, cubie_side /*12.8f*/, brick_colour/*D3DCOLOR_XRGB(255, 0, 0)*/, },
+				{ -cubie_side, -cubie_side, cubie_side /*12.8f*/, brick_colour/*D3DCOLOR_XRGB(0, 255, 0)*/, },
+				{ cubie_side, -cubie_side, cubie_side /*12.8f*/, brick_colour/*D3DCOLOR_XRGB(0, 255, 255)*/, },
+			};
+
+
+
+
+			//VOID* pVoid;    // a void pointer
+
+			// lock v_buffer and load the vertices into it
+			//v_buffer->Lock(0, 0, (void**)&pVoid, 0);
+			memcpy(cVertices, vertices, sizeof(vertices));
+			//v_buffer->Unlock();
+
+
+
+
+			g_cubeVertexBuffer->Unlock();
+
+			// create the indices using an int array
+			short indices[] =
+			{
+				2, 3, 6,
+				6, 3, 7,
+
+				0, 2, 4,
+				4, 2, 6,
+
+				5, 1, 4,
+				4, 1, 0,
+
+				7, 3, 5,
+				5, 3, 1,
+
+				0, 1, 2,
+				2, 1, 3,
+
+				7, 5, 6,
+				6, 5, 4,
+
+				/*
+				0, 1, 2,    // side 1
+				2, 1, 3,
+
+				4, 0, 6,    // side 2
+				6, 0, 2,
+
+				7, 5, 6,    // side 3
+				6, 5, 4,
+
+				3, 1, 7,    // side 4
+				7, 1, 5,
+
+				4, 5, 0,    // side 5
+				0, 5, 1,
+
+				3, 7, 2,    // side 6
+				2, 7, 6,
+				*/
+			};
+
+
+			render_target_->CreateIndexBuffer(36 * sizeof(short),    // 3 per triangle, 12 triangles
+				0,
+				D3DFMT_INDEX16,
+				D3DPOOL_MANAGED,
+				&i_buffer,
+				NULL);
+
+
+			// lock i_buffer and load the indices into it
+			i_buffer->Lock(0, 0, (void**)&cVertices, 0);
+			memcpy(cVertices, indices, sizeof(indices));
+			i_buffer->Unlock();
 		}
 
 		HRESULT SetupCubeBase()
