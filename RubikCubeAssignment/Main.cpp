@@ -28,6 +28,7 @@ float xIndex = 0.0f;
 /*
 Define different types of bricks
 */
+CUBIE cubie(Black);
 CUBIE_PANEL panel(Red);
 //LEGO_BRICK brick6X16(6, 16, LEGO_HEIGHT2, Blue);
 //LEGO_BRICK brick2X6Gy(2, 6, LEGO_HEIGHT, White);
@@ -86,6 +87,7 @@ HRESULT SetupD3D(HWND hWnd)
 	brick2X6Gy.initialise(g_pd3dDevice);
 	brick2X6B.initialise(g_pd3dDevice);*/
 //	brick4X2.initialise(g_pd3dDevice);
+	cubie.initialise(g_pd3dDevice);
 	panel.initialise(g_pd3dDevice);
 	/*brick4X2B.initialise(g_pd3dDevice);
 	brick2X4B.initialise(g_pd3dDevice);
@@ -120,8 +122,9 @@ HRESULT SetupGeometry()
 	if (/*brick6X16.Setup() == S_OK && 
 		brick2X6Gy.Setup() == S_OK && 
 		brick2X6B.Setup() == S_OK && */
-//		brick4X2.Setup() == S_OK && 
-		panel.SetupPanel() == S_OK
+//		brick4X2.Setup() == S_OK &&
+		cubie.SetupCubie() == S_OK &&
+		panel.SetupPanel() == S_OK 
 		/*brick4X2B.Setup() == S_OK && 
 		brick2X4B.Setup() == S_OK && 
 		brick2X2.Setup() == S_OK &&
@@ -187,7 +190,7 @@ void Render()
 		SetupViewMatrices();
 
 		D3DXMatrixRotationYawPitchRoll(&matRotateY, /*index*//*0*/xIndex, yIndex/*0*//*index*/, 0/*index*/);
-		D3DXMatrixRotationYawPitchRoll(&sideMat, 0, 90, 0);
+		D3DXMatrixRotationYawPitchRoll(&sideMat, 0, D3DX_PI / 2, 0); //rotate 90 degrees
 		D3DXMatrixTranslation(&TranslateMat2, LEGO_HALF_PITCH, LEGO_PITCH, 0.0f);
 		D3DXMatrixTranslation(&TranslateMat3, 0.0f, -24.0f, 0.0f);
 		D3DXMatrixTranslation(&TranslateMat, 0.0f, 0.0f, 5.0f);
@@ -222,7 +225,8 @@ void Render()
 			brick4X2B.renderWithTranslate(matRotateY, WorldMat2, TranslateMat, TranslateMat2, 1, 2, i, 0, -(LEGO_HALF_PITCH * 7), brick2X6B.brick_height);
 		}
 		*/
-		panel.render(matRotateY, WorldMat);
+		cubie.render(matRotateY, WorldMat, TranslateMat, TranslateMat2);
+		panel.render(matRotateY, WorldMat/*, (D3DX_PI / 2)*/);
 
 		//brick4X2.renderWithTranslate(matRotateY, WorldMat2, TranslateMat, TranslateMat2, 1, 2, 11, -(LEGO_PITCH * 14), LEGO_HALF_PITCH, brick2X6B.brick_height);
 		//brick4X2.renderWithTranslate(matRotateY, WorldMat2, TranslateMat, TranslateMat2, 1, 2, 11, -(LEGO_PITCH * 14), -(LEGO_HALF_PITCH * 3), brick2X6B.brick_height);

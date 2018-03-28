@@ -95,11 +95,13 @@ class CUBIE
 			D3DXMATRIX TranslateMat3;
 			D3DXMatrixTranslation(&TranslateMat3, 0.0f, -24.0f, 0.0f);
 
-			RenderStuds(matRotateY, WorldMat, TranslateMat2, count);
+			RenderCubie(matRotateY, WorldMat, TranslateMat);
+
+			//RenderStuds(matRotateY, WorldMat, TranslateMat2, count);
 			//D3DXMatrixIdentity(&WorldMat);								// Set WorldMat to identity matrice
 			//render_target_->SetTransform(D3DTS_WORLD, &WorldMat);
 
-			RenderCube2X4(matRotateY, WorldMat, TranslateMat, count);
+			//RenderCube2X4(matRotateY, WorldMat, TranslateMat, count);
 			
 		}
 
@@ -521,6 +523,8 @@ class CUBIE
 			i_buffer->Lock(0, 0, (void**)&cVertices, 0);
 			memcpy(cVertices, indices, sizeof(indices));
 			i_buffer->Unlock();
+
+			return S_OK;
 		}
 
 		HRESULT SetupCubeBase()
@@ -907,6 +911,27 @@ class CUBIE
 			render_target_->SetStreamSource(0, g_lineVertexBuffer, 0, sizeof(CUSTOMVERTEX));
 			render_target_->DrawPrimitive(D3DPT_LINESTRIP, 0, 6);
 
+		}
+
+		void RenderCubie(D3DXMATRIX matRotateY, D3DXMATRIX WorldMat, D3DXMATRIX TranslateMat)
+		{
+			//Move forward 10 units and apply world rotation
+			D3DXMatrixTranslation(&TranslateMat, 0.0f, 0.0f, 0.8f);
+			//D3DXMatrixMultiply(&WorldMat, &WorldMat, &matRotateY2);
+			D3DXMatrixMultiply(&WorldMat, &WorldMat, &TranslateMat);
+			D3DXMatrixMultiply(&WorldMat, &WorldMat, &matRotateY);
+			render_target_->SetTransform(D3DTS_WORLD, &WorldMat);
+
+			// Reset the world to its original 'shape'.
+			D3DXMatrixIdentity(&WorldMat);
+
+			// select the vertex and index buffers to use
+			render_target_->SetStreamSource(0, g_cubeVertexBuffer, 0, sizeof(CUSTOMVERTEX));
+			render_target_->SetIndices(i_buffer);
+
+			// draw the cube
+			render_target_->DrawIndexedPrimitive(D3DPT_TRIANGLELIST, 0, 0, 8, 0, 12);
+			//render_target_->DrawIndexedPrimitive(D3DPT_LINESTRIP, 0, 0, 8, 0, 12);
 		}
 
 		void RenderCube(D3DXMATRIX matRotateY, D3DXMATRIX WorldMat, D3DXMATRIX TranslateMat)

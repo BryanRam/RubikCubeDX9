@@ -49,12 +49,16 @@ class CUBIE_PANEL
 		LPDIRECT3DDEVICE9 render_target_;
 		//float length = 1.833; //1.833 cm = 0.722 in
 		float dimension = 1.405; //1.905 cm = 0.75 in
+		float panel_height = dimension / 5;
 		DWORD panel_colour;
 		float hCubeHeight = 0.4025f, hCubeWidth = 0.7025f;
 		float vCubeHeight = 0.7025f, vCubeWidth = 0.5025f;
+		D3DXMATRIX rotMat;
 
 		CUBIE_PANEL(DWORD pcolour) : panel_colour(pcolour) 
-		{}
+		{
+			D3DXMatrixRotationYawPitchRoll(&rotMat, 0, 0, 0); //rotate 90 degrees
+		}
 
 		~CUBIE_PANEL()
 		{
@@ -84,18 +88,18 @@ class CUBIE_PANEL
 			return S_OK;
 		}
 
-		void render(D3DXMATRIX matRotateY, D3DXMATRIX WorldMat)
+		void render(D3DXMATRIX matRotateY, D3DXMATRIX WorldMat, float val = 0.0f)
 		{	
-			renderVCube(matRotateY, WorldMat);
-			renderHCube(matRotateY, WorldMat);
-			renderREdge(matRotateY, WorldMat, 1, 1);
-			renderREdge(matRotateY, WorldMat, -1, 1);
-			renderREdge(matRotateY, WorldMat, 1, -1);
-			renderREdge(matRotateY, WorldMat, -1, -1);
+			renderVCube(matRotateY, WorldMat, val);
+			renderHCube(matRotateY, WorldMat, val);
+			renderREdge(matRotateY, WorldMat, 1, 1, val);
+			renderREdge(matRotateY, WorldMat, -1, 1, val);
+			renderREdge(matRotateY, WorldMat, 1, -1, val);
+			renderREdge(matRotateY, WorldMat, -1, -1, val);
 
 		}
 
-		void renderVCube(D3DXMATRIX matRotateY, D3DXMATRIX WorldMat)
+		void renderVCube(D3DXMATRIX matRotateY, D3DXMATRIX WorldMat, float val = 0.0f )
 		{
 			D3DXMATRIX TranslateMat3;
 			D3DXMatrixTranslation(&TranslateMat3, 0.0f, -24.0f, 0.0f);
@@ -109,6 +113,10 @@ class CUBIE_PANEL
 			render_target_->SetTransform(D3DTS_WORLD, &WorldMat);
 
 			D3DXMatrixIdentity(&WorldMat);*/
+			D3DXMATRIX rotateMatX;
+			D3DXMatrixRotationYawPitchRoll(&rotateMatX, 0, val, 0); //rotate 90 degrees
+
+			D3DXMatrixMultiply(&WorldMat, &WorldMat, &rotateMatX);
 			D3DXMatrixMultiply(&WorldMat, &WorldMat, &matRotateY);
 			render_target_->SetTransform(D3DTS_WORLD, &WorldMat);
 
@@ -127,8 +135,12 @@ class CUBIE_PANEL
 			render_target_->DrawPrimitive(D3DPT_LINESTRIP, 0, 6);*/
 		}
 
-		void renderHCube(D3DXMATRIX matRotateY, D3DXMATRIX WorldMat)
+		void renderHCube(D3DXMATRIX matRotateY, D3DXMATRIX WorldMat, float val = 0.0f)
 		{
+			D3DXMATRIX rotateMatX;
+			D3DXMatrixRotationYawPitchRoll(&rotateMatX, 0, val, 0); //rotate 90 degrees
+
+			D3DXMatrixMultiply(&WorldMat, &WorldMat, &rotateMatX);
 			
 			D3DXMatrixMultiply(&WorldMat, &WorldMat, &matRotateY);
 			render_target_->SetTransform(D3DTS_WORLD, &WorldMat);
@@ -145,14 +157,17 @@ class CUBIE_PANEL
 			render_target_->SetTransform(D3DTS_WORLD, &WorldMat);
 		}
 
-		void renderREdge(D3DXMATRIX matRotateY, D3DXMATRIX WorldMat, int posx = 1, int posy=1)
+		void renderREdge(D3DXMATRIX matRotateY, D3DXMATRIX WorldMat, int posx = 1, int posy=1, float val = 0.0f)
 		{
 			int j = 0;
 			
+			D3DXMATRIX rotateMatX;
+			D3DXMatrixRotationYawPitchRoll(&rotateMatX, 0, val, 0); //rotate 90 degrees
+			D3DXMatrixMultiply(&WorldMat, &WorldMat, &rotateMatX);
+
 			D3DXMATRIX TranslateMat3;
 			D3DXMatrixTranslation(&TranslateMat3, (vCubeWidth-0.048f)*posx, (vCubeHeight-0.25f)*posy, 0.0f);
-			D3DXMATRIX rotateMat;
-			D3DXMatrixRotationYawPitchRoll(&rotateMat, 0, 70.0f, 0);
+			
 			
 				D3DXMatrixMultiply(&WorldMat, &WorldMat, &TranslateMat3);
 
@@ -232,10 +247,10 @@ class CUBIE_PANEL
 				0	1		2	3
 				2	3		6	7
 				*/
-				{ -vCubeWidth, vCubeHeight, -1.6f, panel_colour, },    // vertex 0 
-				{ vCubeWidth, vCubeHeight, -1.6f, panel_colour, },     // vertex 1
-				{ -vCubeWidth, -vCubeHeight, -1.6f, panel_colour, },   // 2
-				{ vCubeWidth, -vCubeHeight, -1.6f, panel_colour, },  // 3
+				{ -vCubeWidth, vCubeHeight, -panel_height, panel_colour, },    // vertex 0 
+				{ vCubeWidth, vCubeHeight, -panel_height, panel_colour, },     // vertex 1
+				{ -vCubeWidth, -vCubeHeight, -panel_height, panel_colour, },   // 2
+				{ vCubeWidth, -vCubeHeight, -panel_height, panel_colour, },  // 3
 
 				/*Front Half	Top view
 				 4	5		0	1
@@ -254,10 +269,10 @@ class CUBIE_PANEL
 				 7	3			6	2
 				*/
 
-				{ -vCubeWidth, vCubeHeight, 1.6f, panel_colour, },     // 4
-				{ vCubeWidth, vCubeHeight, 1.6f, panel_colour, }, //5
-				{ -vCubeWidth, -vCubeHeight, 1.6f, panel_colour, }, //6
-				{ vCubeWidth, -vCubeHeight, 1.6f, panel_colour, }, //7
+				{ -vCubeWidth, vCubeHeight, panel_height, panel_colour, },     // 4
+				{ vCubeWidth, vCubeHeight, panel_height, panel_colour, }, //5
+				{ -vCubeWidth, -vCubeHeight, panel_height, panel_colour, }, //6
+				{ vCubeWidth, -vCubeHeight, panel_height, panel_colour, }, //7
 			};
 
 
@@ -335,10 +350,10 @@ class CUBIE_PANEL
 				0	1		2	3
 				2	3		6	7
 				*/
-				{ -hCubeWidth, hCubeHeight, -1.6f, panel_colour, },    // vertex 0 
-				{ hCubeWidth, hCubeHeight, -1.6f, panel_colour, },     // vertex 1
-				{ -hCubeWidth, -hCubeHeight, -1.6f, panel_colour, },   // 2
-				{ hCubeWidth, -hCubeHeight, -1.6f, panel_colour, },  // 3
+				{ -hCubeWidth, hCubeHeight, -panel_height, panel_colour, },    // vertex 0 
+				{ hCubeWidth, hCubeHeight, -panel_height, panel_colour, },     // vertex 1
+				{ -hCubeWidth, -hCubeHeight, -panel_height, panel_colour, },   // 2
+				{ hCubeWidth, -hCubeHeight, -panel_height, panel_colour, },  // 3
 
 				/*Front Half	Top view
 				4	5		0	1
@@ -357,10 +372,10 @@ class CUBIE_PANEL
 				7	3			6	2
 				*/
 
-				{ -hCubeWidth, hCubeHeight, 1.6f, panel_colour, },     // 4
-				{ hCubeWidth, hCubeHeight, 1.6f, panel_colour, }, //5
-				{ -hCubeWidth, -hCubeHeight, 1.6f, panel_colour, }, //6
-				{ hCubeWidth, -hCubeHeight, 1.6f, panel_colour, }, //7
+				{ -hCubeWidth, hCubeHeight, panel_height, panel_colour, },     // 4
+				{ hCubeWidth, hCubeHeight, panel_height, panel_colour, }, //5
+				{ -hCubeWidth, -hCubeHeight, panel_height, panel_colour, }, //6
+				{ hCubeWidth, -hCubeHeight, panel_height, panel_colour, }, //7
 			};
 
 
@@ -468,7 +483,7 @@ class CUBIE_PANEL
 
 			topVertices[0].x = 0;
 			topVertices[0].y = 0;
-			topVertices[0].z = 0;
+			topVertices[0].z = -panel_height;
 			topVertices[0].colour = panel_colour;
 
 			// Now get Direct3D to create the vertex buffer.
@@ -495,7 +510,7 @@ class CUBIE_PANEL
 
 				topVertices[i].x = x;
 				topVertices[i].y = y;
-				topVertices[i].z = -1.6f;
+				topVertices[i].z = -panel_height;
 				topVertices[i].colour = panel_colour;
 
 				topLineVertices[i - 1].x = x;
@@ -539,7 +554,7 @@ class CUBIE_PANEL
 				//{ 
 				baseVertices[i].x = topVertices[j].x;
 				baseVertices[i].y = topVertices[j].y;
-				baseVertices[i].z = height;
+				baseVertices[i].z = panel_height;
 				baseVertices[i].colour = panel_colour;
 
 
@@ -559,7 +574,7 @@ class CUBIE_PANEL
 
 				baseVertices[i + 3].x = topVertices[j + 1].x;
 				baseVertices[i + 3].y = topVertices[j + 1].y;
-				baseVertices[i + 3].z = height;
+				baseVertices[i + 3].z = panel_height;
 				baseVertices[i + 3].colour = panel_colour;
 
 				baseVertices[i + 4].x = topVertices[j + 1].x;
@@ -569,7 +584,7 @@ class CUBIE_PANEL
 
 				baseVertices[i + 5].x = topVertices[j].x;
 				baseVertices[i + 5].y = topVertices[j].y;
-				baseVertices[i + 5].z = height;
+				baseVertices[i + 5].z = panel_height;
 				baseVertices[i + 5].colour = panel_colour;
 
 
@@ -580,6 +595,8 @@ class CUBIE_PANEL
 
 
 			g_baseVertexBuffer->Unlock();
+
+			return S_OK;
 		}
 		
 
