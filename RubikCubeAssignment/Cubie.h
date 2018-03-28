@@ -45,7 +45,7 @@ class CUBIE
 {
 	public:
 
-		float dimension = 1.905f;
+		float dimension = 1.705f;
 		float cubie_side = dimension/2;
 		DWORD colour = Black;
 
