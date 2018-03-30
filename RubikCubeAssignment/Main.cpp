@@ -25,6 +25,9 @@ FLOAT g_CameraZ = -405.0f;
 float yIndex = 0.0f;
 float xIndex = 0.0f;
 
+float xIndexHRow1 = 0.0f;
+float yIndexVRow1 = 0.0f;
+
 /*
 Define different types of bricks
 */
@@ -167,7 +170,7 @@ void SetupViewMatrices()
 
 void Render()
 {
-	D3DXMATRIX matRotateY, sideMat;    // a matrix to store the rotation information
+	D3DXMATRIX matRotateY, sideMat, matRotateH;    // a matrix to store the rotation information
 							  // Construct various matrices to move and expand the triangle the rectangle.
 	D3DXMATRIX WorldMat, WorldMat2, TranslateMat, TranslateMat2, TranslateMat3;
 
@@ -190,6 +193,7 @@ void Render()
 		SetupViewMatrices();
 
 		D3DXMatrixRotationYawPitchRoll(&matRotateY, /*index*//*0*/xIndex, yIndex/*0*//*index*/, 0/*index*/);
+		D3DXMatrixRotationYawPitchRoll(&matRotateH, xIndexHRow1, 0.0f/*index*/, 0/*index*/);
 		D3DXMatrixRotationYawPitchRoll(&sideMat, 0, D3DX_PI / 2, 0); //rotate 90 degrees
 		D3DXMatrixTranslation(&TranslateMat2, LEGO_HALF_PITCH, LEGO_PITCH, 0.0f);
 		D3DXMatrixTranslation(&TranslateMat3, 0.0f, -24.0f, 0.0f);
@@ -225,8 +229,8 @@ void Render()
 			brick4X2B.renderWithTranslate(matRotateY, WorldMat2, TranslateMat, TranslateMat2, 1, 2, i, 0, -(LEGO_HALF_PITCH * 7), brick2X6B.brick_height);
 		}
 		*/
-		for (int i=0; i<9; i++)
-		cubie.render(matRotateY, WorldMat, TranslateMat, TranslateMat2, i);
+		for (int i=0; i<18; i++)
+		cubie.render(matRotateY, matRotateH, WorldMat, TranslateMat, TranslateMat2, i);
 		panel.render(matRotateY, WorldMat/*, (D3DX_PI / 2)*/);
 
 		//brick4X2.renderWithTranslate(matRotateY, WorldMat2, TranslateMat, TranslateMat2, 1, 2, 11, -(LEGO_PITCH * 14), LEGO_HALF_PITCH, brick2X6B.brick_height);
@@ -340,6 +344,16 @@ LRESULT WINAPI MsgProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 
 			case 'f':
 				g_CameraZ -= 10.0f;
+				return 0;
+				break;
+			
+			case 't':
+				xIndexHRow1 -= 0.1f;
+				return 0;
+				break;
+
+			case 'y':
+				xIndexHRow1 += 0.1f;
 				return 0;
 				break;
 			}
