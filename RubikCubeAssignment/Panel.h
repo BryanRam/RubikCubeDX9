@@ -30,6 +30,7 @@
 
 
 int circleSides = 24;
+float cubie_dimension = 1.705f;
 
 
 //// LEGO brick properties
@@ -49,7 +50,7 @@ class CUBIE_PANEL
 		LPDIRECT3DDEVICE9 render_target_;
 		//float length = 1.833; //1.833 cm = 0.722 in
 		float dimension = 1.405; //1.905 cm = 0.75 in
-		float panel_height = dimension / 5;
+		float panel_height = dimension / 5; //0.281 * 2 = 0.562
 		DWORD panel_colour;
 		float hCubeHeight = 0.4025f, hCubeWidth = 0.7025f;
 		float vCubeHeight = 0.7025f, vCubeWidth = 0.5025f;
@@ -102,7 +103,7 @@ class CUBIE_PANEL
 		void renderVCube(D3DXMATRIX matRotateY, D3DXMATRIX WorldMat, float val = 0.0f )
 		{
 			D3DXMATRIX TranslateMat3;
-			D3DXMatrixTranslation(&TranslateMat3, 0.0f, -24.0f, 0.0f);
+			D3DXMatrixTranslation(&TranslateMat3, /*-(cubie_dimension/2.5)*/ 0.0f, 0.0f,  /*0.65f*/0.0f);
 
 			
 			
@@ -114,9 +115,12 @@ class CUBIE_PANEL
 
 			D3DXMatrixIdentity(&WorldMat);*/
 			D3DXMATRIX rotateMatX;
-			D3DXMatrixRotationYawPitchRoll(&rotateMatX, 0, val, 0); //rotate 90 degrees
+			D3DXMatrixRotationYawPitchRoll(&rotateMatX, val, 0, 0); //rotate 90 degrees
 
+			D3DXMatrixMultiply(&WorldMat, &WorldMat, &TranslateMat3);
 			D3DXMatrixMultiply(&WorldMat, &WorldMat, &rotateMatX);
+			D3DXMatrixTranslation(&TranslateMat3, /*-(cubie_dimension/1.3)*/0.0f, 0.0f, 0.0f);
+			D3DXMatrixMultiply(&WorldMat, &WorldMat, &TranslateMat3);
 			D3DXMatrixMultiply(&WorldMat, &WorldMat, &matRotateY);
 			render_target_->SetTransform(D3DTS_WORLD, &WorldMat);
 

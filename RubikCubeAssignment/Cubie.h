@@ -95,7 +95,7 @@ class CUBIE
 			D3DXMATRIX TranslateMat3;
 			D3DXMatrixTranslation(&TranslateMat3, 0.0f, -24.0f, 0.0f);
 
-			RenderCubie(matRotateY, WorldMat, TranslateMat);
+			RenderCubie(matRotateY, WorldMat, TranslateMat, count);
 
 			//RenderStuds(matRotateY, WorldMat, TranslateMat2, count);
 			//D3DXMatrixIdentity(&WorldMat);								// Set WorldMat to identity matrice
@@ -913,10 +913,20 @@ class CUBIE
 
 		}
 
-		void RenderCubie(D3DXMATRIX matRotateY, D3DXMATRIX WorldMat, D3DXMATRIX TranslateMat)
+		void RenderCubie(D3DXMATRIX matRotateY, D3DXMATRIX WorldMat, D3DXMATRIX TranslateMat, int count = 1)
 		{
-			//Move forward 10 units and apply world rotation
-			D3DXMatrixTranslation(&TranslateMat, 0.0f, 0.0f, 0.8f);
+			int j = count / 3;
+			int i = count % 3;
+			if (count > 2)
+			{
+				//Move forward 10 units and apply world rotation
+				D3DXMatrixTranslation(&TranslateMat, dimension * (i), -(dimension * (j)), 0.65f);
+			}
+			else
+			{
+				//Move forward 10 units and apply world rotation
+				D3DXMatrixTranslation(&TranslateMat, dimension * (i), 0.0f, 0.65f);
+			}
 			//D3DXMatrixMultiply(&WorldMat, &WorldMat, &matRotateY2);
 			D3DXMatrixMultiply(&WorldMat, &WorldMat, &TranslateMat);
 			D3DXMatrixMultiply(&WorldMat, &WorldMat, &matRotateY);

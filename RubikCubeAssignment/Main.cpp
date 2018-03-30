@@ -225,7 +225,8 @@ void Render()
 			brick4X2B.renderWithTranslate(matRotateY, WorldMat2, TranslateMat, TranslateMat2, 1, 2, i, 0, -(LEGO_HALF_PITCH * 7), brick2X6B.brick_height);
 		}
 		*/
-		cubie.render(matRotateY, WorldMat, TranslateMat, TranslateMat2);
+		for (int i=0; i<9; i++)
+		cubie.render(matRotateY, WorldMat, TranslateMat, TranslateMat2, i);
 		panel.render(matRotateY, WorldMat/*, (D3DX_PI / 2)*/);
 
 		//brick4X2.renderWithTranslate(matRotateY, WorldMat2, TranslateMat, TranslateMat2, 1, 2, 11, -(LEGO_PITCH * 14), LEGO_HALF_PITCH, brick2X6B.brick_height);
