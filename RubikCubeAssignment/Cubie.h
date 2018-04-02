@@ -5,6 +5,7 @@
 #include <algorithm>
 #include <functional>
 
+
 // A structure for our custom vertex type
 struct CUSTOMVERTEX
 {
@@ -26,7 +27,12 @@ DWORD Red = 0xff0000;
 
 #pragma once
 
+std::vector<float> transXCoordsToCenter(14, 0.0f);
 
+std::vector<float> transXCoordsFromCenter;
+
+std::vector<float> transYCoordsToCenter;
+std::vector<float> transYCoordsFromCenter;
 
 
 
@@ -40,6 +46,7 @@ const float LEGO_STUD_WIDTH = 8.0f; // width a single stud occupies
 const float LEGO_STUD_GAP = 3.0f;
 const float LEGO_STUD_RADIUS = 2.5f;
 const float LEGO_GAP = 0.1f; // clearance gap between bricks
+
 
 class CUBIE
 {
@@ -58,6 +65,29 @@ class CUBIE
 		float brick_height, brick_length, brick_width;
 		float stud_height, stud_radius;
 		DWORD brick_colour;
+		std::vector<float> transXCoordsToCenter;
+		float toArr[9] = { dimension, 0.0f, -(dimension), 
+						    dimension, 0.0f, -(dimension), 
+						  dimension, 0.0f, -dimension
+						};
+		float toArr2[9] = { dimension, dimension, dimension,
+						 	 0.0f, 0.0f, 0.0f,
+						 -(dimension), -(dimension), -(dimension)
+						 };
+
+		float fromArr[9] = {-(dimension), 0, dimension,
+							-(dimension), 0.0f, dimension, 
+							-(dimension), 0.0f, dimension
+							};
+
+		float fromArr2[9] = {-(dimension), -(dimension), -(dimension),
+							0.0f, 0.0f, 0.0f,
+							dimension, dimension, dimension
+							};
+
+		//transXCoordsToCenter.insert(transXCoordsToCenter.begin(), {1, -(dimension)+1, -(dimension*2)+1, 0,0,0,0,0,0, 1, 0, -1, 1, 0, -1});
+
+		
 
 		CUBIE(DWORD cube_colour) :
 			colour(cube_colour)
@@ -90,12 +120,12 @@ class CUBIE
 		}
 
 		void render(D3DXMATRIX matRotateY, D3DXMATRIX matRotateH, D3DXMATRIX WorldMat, D3DXMATRIX TranslateMat,
-			D3DXMATRIX TranslateMat2, int count = 1)
+			D3DXMATRIX TranslateMat2, int zVal, int count = 1)
 		{	
 			D3DXMATRIX TranslateMat3;
 			D3DXMatrixTranslation(&TranslateMat3, 0.0f, -24.0f, 0.0f);
 
-			RenderCubie(matRotateY, matRotateH, WorldMat, TranslateMat, count);
+			RenderCubie(matRotateY, matRotateH, WorldMat, TranslateMat, zVal, count);
 
 			//RenderStuds(matRotateY, WorldMat, TranslateMat2, count);
 			//D3DXMatrixIdentity(&WorldMat);								// Set WorldMat to identity matrice
@@ -913,13 +943,67 @@ class CUBIE
 
 		}
 
-		void RenderCubie(D3DXMATRIX matRotateY, D3DXMATRIX matRotateH, D3DXMATRIX WorldMat, D3DXMATRIX TranslateMat, int count = 1)
+		void RenderCubie(D3DXMATRIX matRotateY, D3DXMATRIX matRotateH, D3DXMATRIX WorldMat, D3DXMATRIX TranslateMat, int zVal, int count = 1)
 		{
-			int j = count / 3;
-			int i = count % 3;
 			int k = count / 9;
-			int l = (count % 9) % 3;
-			if (count > 2 && count < 9)
+			int j;
+
+			int i = count % 3;
+			
+			int l = count % 9;
+			
+
+			D3DXMATRIX tMat, tMat2;
+			D3DXMATRIX TransformMatrix;
+
+			float RotateAngle = 0.0f;
+
+			D3DXQUATERNION Rotation, ScalingRotation;
+			D3DXQuaternionRotationMatrix(&Rotation, &matRotateH);
+			D3DXQuaternionRotationYawPitchRoll(&Rotation, 0.0f, 0.0f, RotateAngle);
+			D3DXQuaternionRotationYawPitchRoll(&ScalingRotation, 0.0f, 0.0f, 0.0f);
+
+			D3DXVECTOR3 ScalingCentre(0.0f, 0.0f, 0.0f);
+			D3DXVECTOR3 RotationCentre(1.0f, 0.0f, 0.65f * dimension);
+			D3DXVECTOR3 Translate(0.0f, 0.0f, 0.0f);
+			D3DXVECTOR3 Scaling(1.0f, 1.0f, 1.0f);
+
+			D3DXMatrixTransformation(&TransformMatrix, &ScalingCentre, &ScalingRotation, &Scaling, &RotationCentre, &Rotation, &Translate);
+			
+
+			D3DXMatrixTranslation(&tMat, toArr[count], 0.0f, toArr2[count]);
+			//Move forward 10 units and apply world rotation
+			D3DXMatrixTranslation(&TranslateMat, dimension * (i), -(dimension * (k)), 0.65f + (dimension * zVal));
+			D3DXMatrixMultiply(&WorldMat, &WorldMat, &TranslateMat);
+			//render_target_->SetTransform(D3DTS_WORLD, &WorldMat);
+			//D3DXMatrixIdentity(&WorldMat);
+
+			//D3DXMatrixMultiply(&WorldMat, &WorldMat, &tMat);
+			if (count < 9)
+			{
+				D3DXMatrixMultiply(&matRotateH, &matRotateH, &tMat);
+				D3DXMatrixMultiply(&WorldMat, &WorldMat, &matRotateH);
+				render_target_->SetTransform(D3DTS_WORLD, &WorldMat);
+				D3DXMatrixIdentity(&WorldMat);
+				
+				
+				D3DXMatrixTranslation(&tMat2, fromArr[count], 0.0f, fromArr2[count]);
+				D3DXMatrixMultiply(&WorldMat, &WorldMat, &tMat2);
+				D3DXMatrixMultiply(&matRotateH, &matRotateH, &tMat2);
+				
+				D3DXMatrixMultiply(&WorldMat, &WorldMat, &matRotateH);
+
+				//D3DXMatrixMultiply(&WorldMat, &WorldMat, &TransformMatrix);
+			}
+
+			//D3DXMatrixTranslation(&tMat2, fromArr[count], 0.0f, fromArr2[count]);
+
+			D3DXMatrixMultiply(&WorldMat, &WorldMat, &matRotateY);
+			render_target_->SetTransform(D3DTS_WORLD, &WorldMat);
+			D3DXMatrixIdentity(&WorldMat);
+
+			/*
+			if (count >= 3 && count <= 8)
 			{
 				//Move forward 10 units and apply world rotation
 				D3DXMatrixTranslation(&TranslateMat, dimension * (i), -(dimension * (j)), 0.65f);
@@ -932,26 +1016,48 @@ class CUBIE
 				D3DXMatrixIdentity(&WorldMat);
 			}
 
-			else if (count > 8 && count < 18)
+			else if (count >= 9 && count < 18)
 			{
-				//Move forward 10 units and apply world rotation
-				D3DXMatrixTranslation(&TranslateMat, dimension * (l), 0.0f, 0.65f+(dimension * (j/2)));
+				
+					D3DXMatrixTranslation(&tMat, toArr[count], 0.0f, toArr2[count]);
+					//Move forward 10 units and apply world rotation
+					D3DXMatrixTranslation(&TranslateMat, dimension * (l), 0.0f, 0.65f + (dimension * (j / 2)));
 
-				D3DXMatrixMultiply(&WorldMat, &WorldMat, &TranslateMat);
-				D3DXMatrixMultiply(&WorldMat, &WorldMat, &matRotateH);
-				D3DXMatrixMultiply(&WorldMat, &WorldMat, &matRotateY);
-				render_target_->SetTransform(D3DTS_WORLD, &WorldMat);
+					D3DXMatrixMultiply(&WorldMat, &WorldMat, &TranslateMat);
+					//render_target_->SetTransform(D3DTS_WORLD, &WorldMat);
+					//D3DXMatrixIdentity(&WorldMat);
 
-				// Reset the world to its original 'shape'.
-				D3DXMatrixIdentity(&WorldMat);
+					//D3DXMatrixMultiply(&WorldMat, &WorldMat, &tMat);
+					D3DXMatrixMultiply(&WorldMat, &WorldMat, &matRotateH);
+
+					D3DXMatrixTranslation(&tMat2, fromArr[count], 0.0f, fromArr2[count]);
+					//D3DXMatrixMultiply(&WorldMat, &WorldMat, &tMat2);
+					//render_target_->SetTransform(D3DTS_WORLD, &WorldMat);
+					//D3DXMatrixIdentity(&WorldMat);
+
+					D3DXMatrixMultiply(&WorldMat, &WorldMat, &matRotateY);
+					render_target_->SetTransform(D3DTS_WORLD, &WorldMat);
+
+					// Reset the world to its original 'shape'.
+					D3DXMatrixIdentity(&WorldMat);
+				//}
 			}
-
+			
 			else
 			{
+				D3DXMatrixTranslation(&tMat, toArr[count], 0.0f, toArr2[count]);
 				//Move forward 10 units and apply world rotation
 				D3DXMatrixTranslation(&TranslateMat, dimension * (i), 0.0f, 0.65f);
 				D3DXMatrixMultiply(&WorldMat, &WorldMat, &TranslateMat);
+				//render_target_->SetTransform(D3DTS_WORLD, &WorldMat);
+				//D3DXMatrixIdentity(&WorldMat);
+
+				//D3DXMatrixMultiply(&WorldMat, &WorldMat, &tMat);
 				D3DXMatrixMultiply(&WorldMat, &WorldMat, &matRotateH);
+				
+
+				D3DXMatrixTranslation(&tMat2, fromArr[count], 0.0f, fromArr2[count]);
+				//D3DXMatrixMultiply(&WorldMat, &WorldMat, &tMat2);
 				//render_target_->SetTransform(D3DTS_WORLD, &WorldMat);
 				//D3DXMatrixIdentity(&WorldMat);
 
@@ -959,6 +1065,7 @@ class CUBIE
 				render_target_->SetTransform(D3DTS_WORLD, &WorldMat);
 				D3DXMatrixIdentity(&WorldMat);
 			}
+			*/
 			/*
 			//D3DXMatrixMultiply(&WorldMat, &WorldMat, &matRotateY2);
 			D3DXMatrixMultiply(&WorldMat, &WorldMat, &TranslateMat);
