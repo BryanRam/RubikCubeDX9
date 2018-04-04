@@ -170,7 +170,7 @@ void SetupViewMatrices()
 
 void Render()
 {
-	D3DXMATRIX matRotateY, sideMat, matRotateH;    // a matrix to store the rotation information
+	D3DXMATRIX matRotateY, sideMat, matRotateH, matRotateV;    // a matrix to store the rotation information
 							  // Construct various matrices to move and expand the triangle the rectangle.
 	D3DXMATRIX WorldMat, WorldMat2, TranslateMat, TranslateMat2, TranslateMat3;
 
@@ -193,7 +193,8 @@ void Render()
 		SetupViewMatrices();
 
 		D3DXMatrixRotationYawPitchRoll(&matRotateY, /*index*//*0*/xIndex, yIndex/*0*//*index*/, 0/*index*/);
-		D3DXMatrixRotationYawPitchRoll(&matRotateH, xIndexHRow1, 0.0f/*index*/, 0/*index*/);
+		D3DXMatrixRotationYawPitchRoll(&matRotateH, xIndexHRow1, 0/*index*/, 0/*index*/);
+		D3DXMatrixRotationYawPitchRoll(&matRotateV, 0.0f, yIndexVRow1, 0/*index*/);
 		D3DXMatrixRotationYawPitchRoll(&sideMat, 0, D3DX_PI / 2, 0); //rotate 90 degrees
 		D3DXMatrixTranslation(&TranslateMat2, LEGO_HALF_PITCH, LEGO_PITCH, 0.0f);
 		D3DXMatrixTranslation(&TranslateMat3, 0.0f, -24.0f, 0.0f);
@@ -201,34 +202,7 @@ void Render()
 		D3DXMatrixIdentity(&WorldMat);								// Set WorldMat to identity matrice
 		D3DXMatrixIdentity(&WorldMat2);
 
-		/*
-		//Floor Area
-		brick6X16.renderWithTranslate(matRotateY, WorldMat, TranslateMat, TranslateMat2, 0, 0, 12, 0, 0, brick2X6Gy.brick_height);
-		brick6X16.renderWithTranslate(matRotateY, WorldMat, TranslateMat, TranslateMat2, 0, 6, 12, 0, -(LEGO_PITCH), brick2X6Gy.brick_height);
-
-		//End Floor Area
-
 		
-
-
-		brick2X6Gy.renderWithTranslate(matRotateY, WorldMat2, TranslateMat, TranslateMat2, 1, 2, 11, -(LEGO_PITCH * 2), LEGO_PITCH, brick2X6Gy.brick_height);
-		brick2X6Gy.renderWithTranslate(matRotateY, WorldMat2, TranslateMat, TranslateMat2, 1, 2, 11, -(LEGO_PITCH * 6 + (LEGO_PITCH * 2)), LEGO_PITCH, brick2X6Gy.brick_height);
-		brick2X6Gy.renderWithTranslate(matRotateY, WorldMat2, TranslateMat, TranslateMat2, 1, 2, 11, -(LEGO_PITCH * 2), -(LEGO_PITCH * 4), brick2X6Gy.brick_height);
-		brick2X6Gy.renderWithTranslate(matRotateY, WorldMat2, TranslateMat, TranslateMat2, 1, 2, 11, -(LEGO_PITCH * 6 + (LEGO_PITCH * 2)), -(LEGO_PITCH * 4), brick2X6Gy.brick_height);
-
-		for (int i = 10; i >= 2; i--)
-		{
-			brick2X6B.renderWithTranslate(matRotateY, WorldMat2, TranslateMat, TranslateMat2, 1, 2, i, -(LEGO_PITCH * 2), LEGO_PITCH, brick2X6B.brick_height);
-			brick2X6B.renderWithTranslate(matRotateY, WorldMat2, TranslateMat, TranslateMat2, 1, 2, i, -(LEGO_PITCH * 6 + (LEGO_PITCH * 2)), LEGO_PITCH, brick2X6B.brick_height);
-			brick4X2B.renderWithTranslate(matRotateY, WorldMat2, TranslateMat, TranslateMat2, 1, 2, i, -(LEGO_PITCH * 14), LEGO_HALF_PITCH, brick2X6B.brick_height);
-			brick4X2B.renderWithTranslate(matRotateY, WorldMat2, TranslateMat, TranslateMat2, 1, 2, i, -(LEGO_PITCH * 14), -(LEGO_HALF_PITCH * 3), brick2X6B.brick_height);
-			brick4X2B.renderWithTranslate(matRotateY, WorldMat2, TranslateMat, TranslateMat2, 1, 2, i, -(LEGO_PITCH * 14), -(LEGO_HALF_PITCH * 7), brick2X6B.brick_height);
-
-			brick4X2B.renderWithTranslate(matRotateY, WorldMat2, TranslateMat, TranslateMat2, 1, 2, i, 0, LEGO_HALF_PITCH, brick2X6B.brick_height);
-			brick4X2B.renderWithTranslate(matRotateY, WorldMat2, TranslateMat, TranslateMat2, 1, 2, i, 0, -(LEGO_HALF_PITCH * 3), brick2X6B.brick_height);
-			brick4X2B.renderWithTranslate(matRotateY, WorldMat2, TranslateMat, TranslateMat2, 1, 2, i, 0, -(LEGO_HALF_PITCH * 7), brick2X6B.brick_height);
-		}
-		*/
 		int zVal = 0;
 		for (int i = 0; i < 27; i++)
 		{
@@ -238,63 +212,12 @@ void Render()
 				++zVal;
 			if (zVal > 2)
 				zVal = 0;
-			cubie.render(matRotateY, matRotateH, WorldMat, TranslateMat, TranslateMat2, zVal, i);
+			cubie.render(matRotateY, matRotateH, matRotateV, WorldMat, TranslateMat, TranslateMat2, zVal, i);
 		}
 		
 		panel.render(matRotateY, WorldMat/*, (D3DX_PI / 2)*/);
 
-		//brick4X2.renderWithTranslate(matRotateY, WorldMat2, TranslateMat, TranslateMat2, 1, 2, 11, -(LEGO_PITCH * 14), LEGO_HALF_PITCH, brick2X6B.brick_height);
-		//brick4X2.renderWithTranslate(matRotateY, WorldMat2, TranslateMat, TranslateMat2, 1, 2, 11, -(LEGO_PITCH * 14), -(LEGO_HALF_PITCH * 3), brick2X6B.brick_height);
-		//brick4X2.renderWithTranslate(matRotateY, WorldMat2, TranslateMat, TranslateMat2, 1, 2, 11, -(LEGO_PITCH * 14), -(LEGO_HALF_PITCH * 7), brick2X6B.brick_height);
-
-		/*
-		brick4X2.renderWithTranslate(matRotateY, WorldMat2, TranslateMat, TranslateMat2, 1, 2, 11, 0, LEGO_HALF_PITCH, brick2X6B.brick_height);
-		brick4X2.renderWithTranslate(matRotateY, WorldMat2, TranslateMat, TranslateMat2, 1, 2, 11, 0, -(LEGO_HALF_PITCH * 3), brick2X6B.brick_height);
-		brick4X2.renderWithTranslate(matRotateY, WorldMat2, TranslateMat, TranslateMat2, 1, 2, 11, 0, -(LEGO_HALF_PITCH * 7), brick2X6B.brick_height);
-
-		brick2X4B.renderWithTranslate(matRotateY, WorldMat2, TranslateMat, TranslateMat2, 2, 2, 10, -LEGO_PITCH, -(LEGO_PITCH * 4), brick2X6Gy.brick_height);
-		brick2X4B.renderWithTranslate(matRotateY, WorldMat2, TranslateMat, TranslateMat2, 10, 2, 10, -LEGO_PITCH, -(LEGO_PITCH * 4), brick2X6Gy.brick_height);
-
 		
-
-		for (int i = 9; i >= 7; i--)
-		{
-			brick2X2.renderWithTranslate(matRotateY, WorldMat2, TranslateMat, TranslateMat2, 4, 2, i, -LEGO_PITCH, -(LEGO_PITCH * 4), brick2X6Gy.brick_height);
-			brick2X2.renderWithTranslate(matRotateY, WorldMat2, TranslateMat, TranslateMat2, 10, 2, i, -LEGO_PITCH, -(LEGO_PITCH * 4), brick2X6Gy.brick_height);
-		}
-
-		brick2X8.renderWithTranslate(matRotateY, WorldMat2, TranslateMat, TranslateMat2, 4, 2, 6, -LEGO_PITCH, -(LEGO_PITCH * 4), brick2X6Gy.brick_height);
-
-		for (int i = 5; i >= 2; i--)
-		{
-			brick2X4B.renderWithTranslate(matRotateY, WorldMat2, TranslateMat, TranslateMat2, 8, 2, i, -LEGO_PITCH, -(LEGO_PITCH * 4), brick2X6Gy.brick_height);
-			brick2X4B.renderWithTranslate(matRotateY, WorldMat2, TranslateMat, TranslateMat2, 4, 2, i, -LEGO_PITCH, -(LEGO_PITCH * 4), brick2X6Gy.brick_height);
-		}
-
-		//Brown Sides
-		for (int i = 9; i >= 2; i--)
-		{
-			brick4X2B.renderWithTranslate(matRotateY, WorldMat2, TranslateMat, TranslateMat2, 2, 7, i, -LEGO_PITCH, -(LEGO_PITCH), brick2X6B.brick_height);
-			brick4X2B.renderWithTranslate(matRotateY, WorldMat2, TranslateMat, TranslateMat2, 12, 7, i, -LEGO_PITCH, -(LEGO_PITCH), brick2X6B.brick_height);
-		}
-
-		//Roof Area
-		brick12X8.renderWithTranslate(matRotateY, WorldMat2, TranslateMat, TranslateMat2, 0, 3, 5, -LEGO_PITCH, -(LEGO_PITCH), brick12X8.brick_height);
-		brick12X8.renderWithTranslate(matRotateY, WorldMat2, TranslateMat, TranslateMat2, 8, 3, 5, -LEGO_PITCH, -(LEGO_PITCH), brick12X8.brick_height);
-
-		brick4X2R.renderWithTranslate(matRotateY, WorldMat2, TranslateMat, TranslateMat2, 1, 2, 2, -(LEGO_PITCH * 14), LEGO_HALF_PITCH, brick12X8.brick_height);
-		brick4X2R.renderWithTranslate(matRotateY, WorldMat2, TranslateMat, TranslateMat2, 1, 2, 2, -(LEGO_PITCH * 14), -(LEGO_HALF_PITCH * 3), brick12X8.brick_height);
-		brick4X2R.renderWithTranslate(matRotateY, WorldMat2, TranslateMat, TranslateMat2, 1, 2, 2, -(LEGO_PITCH * 14), -(LEGO_HALF_PITCH * 7), brick12X8.brick_height);
-
-		brick4X2R.renderWithTranslate(matRotateY, WorldMat2, TranslateMat, TranslateMat2, 1, 2, 2, 0, LEGO_HALF_PITCH, brick12X8.brick_height);
-		brick4X2R.renderWithTranslate(matRotateY, WorldMat2, TranslateMat, TranslateMat2, 1, 2, 2, 0, -(LEGO_HALF_PITCH * 3), brick12X8.brick_height);
-		brick4X2R.renderWithTranslate(matRotateY, WorldMat2, TranslateMat, TranslateMat2, 1, 2, 2, 0, -(LEGO_HALF_PITCH * 7), brick12X8.brick_height);
-
-		brick2X6R.renderWithTranslate(matRotateY, WorldMat2, TranslateMat, TranslateMat2, 8, 2, 2, -LEGO_PITCH, -(LEGO_PITCH * 4), brick12X8.brick_height);
-		brick2X6R.renderWithTranslate(matRotateY, WorldMat2, TranslateMat, TranslateMat2, 2, 2, 2, -LEGO_PITCH, -(LEGO_PITCH * 4), brick12X8.brick_height);
-		brick2X6R.renderWithTranslate(matRotateY, WorldMat2, TranslateMat, TranslateMat2, 1, 2, 2, -(LEGO_PITCH * 2), LEGO_PITCH, brick12X8.brick_height);
-		brick2X6R.renderWithTranslate(matRotateY, WorldMat2, TranslateMat, TranslateMat2, 1, 2, 2, -(LEGO_PITCH * 6 + (LEGO_PITCH * 2)), LEGO_PITCH, brick12X8.brick_height);
-		*/
 
         // End the scene.
         g_pd3dDevice -> EndScene();
@@ -364,6 +287,16 @@ LRESULT WINAPI MsgProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 
 			case 'y':
 				xIndexHRow1 += 0.1f;
+				return 0;
+				break;
+
+			case 'g':
+				yIndexVRow1 -= 0.1f;
+				return 0;
+				break;
+
+			case 'h':
+				yIndexVRow1 += 0.1f;
 				return 0;
 				break;
 			}
