@@ -20,10 +20,12 @@ LPDIRECT3DVERTEXBUFFER9 g_pVertexBuffer  = NULL; // Buffer to hold vertices for 
 LPDIRECT3DVERTEXBUFFER9 g_pVertexBuffer2 = NULL; // Buffer to hold vertices for the rectangle
 LPDIRECT3DVERTEXBUFFER9 g_cVertexBuffer = NULL; // Buffer to hold vertices for the rectangle
 LPDIRECT3DINDEXBUFFER9 i_buffer;
-FLOAT g_CameraZ = -405.0f;
+FLOAT g_CameraZ = -25.0f;
 
 float yIndex = 0.0f;
 float xIndex = 0.0f;
+float yIndex2 = 0.0f;
+float xIndex2 = 0.0f;
 
 float xIndexHRow1 = 0.0f;
 float yIndexVRow1 = 0.0f;
@@ -122,19 +124,10 @@ void CleanUp()
 
 HRESULT SetupGeometry()
 {
-	if (/*brick6X16.Setup() == S_OK && 
-		brick2X6Gy.Setup() == S_OK && 
-		brick2X6B.Setup() == S_OK && */
-//		brick4X2.Setup() == S_OK &&
+	if (
 		cubie.SetupCubie() == S_OK &&
 		panel.SetupPanel() == S_OK 
-		/*brick4X2B.Setup() == S_OK && 
-		brick2X4B.Setup() == S_OK && 
-		brick2X2.Setup() == S_OK &&
-		brick2X8.Setup() == S_OK &&
-		brick12X8.Setup() == S_OK &&
-		brick2X6R.Setup() == S_OK &&
-		brick4X2R.Setup() == S_OK*/)
+		)
 	{
 			return S_OK;
 		
@@ -154,9 +147,24 @@ void SetupViewMatrices()
     D3DXVECTOR3 vCamera(0.0f, 0.0f, g_CameraZ);
     D3DXVECTOR3 vLookat(0.0f, 0.0f, g_CameraZ + 10);
     D3DXVECTOR3 vUpVector(0.0f, 1.0f, 0.0f);
-    D3DXMATRIX matView;
+    D3DXMATRIX matView, matRotate, toCenter, fromCenter;
+	
+	//D3DXMatrixInverse(&matView, NULL, &matView);
+	D3DXMatrixRotationYawPitchRoll(&matRotate, xIndex2, yIndex2, 0);
+	D3DXMatrixTranslation(&toCenter, cubie.dimension, -(cubie.dimension), 0.65f + (cubie.dimension));
+	D3DXMatrixTranslation(&fromCenter, -cubie.dimension, (cubie.dimension), -(0.65f + (cubie.dimension)));
+
+	//D3DXMatrixIdentity(&matView);
+	//D3DXMatrixMultiply(&matView, &matView, &toCenter);
+	//D3DXMatrixIdentity(&matView);
+	//D3DXMatrixMultiply(&matView, &matView, &fromCenter);
+	D3DXMatrixMultiply(&matView, &toCenter, &matRotate);
+
     D3DXMatrixLookAtLH( &matView, &vCamera, &vLookat, &vUpVector);
     g_pd3dDevice -> SetTransform(D3DTS_VIEW, &matView);
+
+	//http://www.chadvernon.com/blog/resources/directx9/moving-around-a-3d-world/
+	//http://astronomy.swin.edu.au/~pbourke/geometry/rotate/
 
 	// Set up the projection matrix.
 	// This transforms 2D geometry into a 3D space.
@@ -193,7 +201,7 @@ void Render()
 		SetupViewMatrices();
 
 		D3DXMatrixRotationYawPitchRoll(&matRotateY, /*index*//*0*/xIndex, yIndex/*0*//*index*/, 0/*index*/);
-		D3DXMatrixRotationYawPitchRoll(&matRotateH, xIndexHRow1, 0/*index*/, 0/*index*/);
+		D3DXMatrixRotationYawPitchRoll(&matRotateH, xIndexHRow1, 0, 0);
 		D3DXMatrixRotationYawPitchRoll(&matRotateV, 0.0f, yIndexVRow1, 0/*index*/);
 		D3DXMatrixRotationYawPitchRoll(&sideMat, 0, D3DX_PI / 2, 0); //rotate 90 degrees
 		D3DXMatrixTranslation(&TranslateMat2, LEGO_HALF_PITCH, LEGO_PITCH, 0.0f);
@@ -204,7 +212,7 @@ void Render()
 
 		
 		int zVal = 0;
-		for (int i = 0; i < 27; i++)
+		for (int i = 0; i < 9; i++)
 		{
 			if (i < 3)
 				zVal = 0;
