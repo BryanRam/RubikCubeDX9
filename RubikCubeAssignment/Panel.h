@@ -89,21 +89,21 @@ class CUBIE_PANEL
 			return S_OK;
 		}
 
-		void render(D3DXMATRIX matRotateY, D3DXMATRIX WorldMat, float hOffset, float val = 0.0f)
+		void render(D3DXMATRIX matRotateY, D3DXMATRIX WorldMat, float hOffset, float vOffset, float val = 0.0f)
 		{	
-			renderVCube(matRotateY, WorldMat, hOffset, val);
-			renderHCube(matRotateY, WorldMat, hOffset, val);
-			renderREdge(matRotateY, WorldMat, hOffset, 1, 1, val);
-			renderREdge(matRotateY, WorldMat, hOffset, -1, 1, val);
-			renderREdge(matRotateY, WorldMat, hOffset, 1, -1, val);
-			renderREdge(matRotateY, WorldMat, hOffset, -1, -1, val);
+			renderVCube(matRotateY, WorldMat, hOffset, vOffset, val);
+			renderHCube(matRotateY, WorldMat, hOffset, vOffset, val);
+			renderREdge(matRotateY, WorldMat, hOffset, vOffset, 1, 1, val);
+			renderREdge(matRotateY, WorldMat, hOffset, vOffset,-1, 1, val);
+			renderREdge(matRotateY, WorldMat, hOffset, vOffset, 1, -1, val);
+			renderREdge(matRotateY, WorldMat, hOffset, vOffset, -1, -1, val);
 
 		}
 
-		void renderVCube(D3DXMATRIX matRotateY, D3DXMATRIX WorldMat, float hOffset, float val = 0.0f )
+		void renderVCube(D3DXMATRIX matRotateY, D3DXMATRIX WorldMat, float hOffset, float vOffset, float val = 0.0f )
 		{
 			D3DXMATRIX TranslateMat3;
-			D3DXMatrixTranslation(&TranslateMat3, hOffset, 0.0f,  /*0.65f*/0.0f);
+			D3DXMatrixTranslation(&TranslateMat3, hOffset, vOffset,  /*0.65f*/0.0f);
 
 			
 			
@@ -132,27 +132,27 @@ class CUBIE_PANEL
 			// draw the cube
 			render_target_->DrawIndexedPrimitive(D3DPT_TRIANGLELIST, 0, 0, 8, 0, 12);
 
-			D3DXMatrixIdentity(&WorldMat);								// Set WorldMat to identity matrice
-			render_target_->SetTransform(D3DTS_WORLD, &WorldMat);
+			//D3DXMatrixIdentity(&WorldMat);								// Set WorldMat to identity matrice
+			//render_target_->SetTransform(D3DTS_WORLD, &WorldMat);
 
 			/*render_target_->SetStreamSource(0, g_lineVertexBuffer, 0, sizeof(CUSTOMVERTEX));
 			render_target_->DrawPrimitive(D3DPT_LINESTRIP, 0, 6);*/
 		}
 
-		void renderHCube(D3DXMATRIX matRotateY, D3DXMATRIX WorldMat, float hOffset, float val = 0.0f)
+		void renderHCube(D3DXMATRIX matRotateY, D3DXMATRIX WorldMat, float hOffset, float vOffset, float val = 0.0f)
 		{
 			D3DXMATRIX rotateMatX;
 			D3DXMatrixRotationYawPitchRoll(&rotateMatX, 0, val, 0); //rotate 90 degrees
 
 			D3DXMATRIX TranslateMat3;
-			D3DXMatrixTranslation(&TranslateMat3, hOffset, 0.0f,  /*0.65f*/0.0f);
+			D3DXMatrixTranslation(&TranslateMat3, hOffset, vOffset,  /*0.65f*/0.0f);
 
 			D3DXMatrixMultiply(&WorldMat, &WorldMat, &TranslateMat3);
 
 			D3DXMatrixMultiply(&WorldMat, &WorldMat, &rotateMatX);
 			
 			D3DXMatrixMultiply(&WorldMat, &WorldMat, &matRotateY);
-			render_target_->SetTransform(D3DTS_WORLD, &WorldMat);
+			//render_target_->SetTransform(D3DTS_WORLD, &WorldMat);
 
 			// select the vertex and index buffers to use
 			render_target_->SetStreamSource(0, g_panelVertexBuffer2, 0, sizeof(CUSTOMVERTEX));
@@ -162,11 +162,11 @@ class CUBIE_PANEL
 			// draw the cube
 			render_target_->DrawIndexedPrimitive(D3DPT_TRIANGLELIST, 0, 0, 8, 0, 12);
 
-			D3DXMatrixIdentity(&WorldMat);								// Set WorldMat to identity matrice
+			//D3DXMatrixIdentity(&WorldMat);								// Set WorldMat to identity matrice
 			render_target_->SetTransform(D3DTS_WORLD, &WorldMat);
 		}
 
-		void renderREdge(D3DXMATRIX matRotateY, D3DXMATRIX WorldMat, float hOffset, int posx = 1, int posy=1, float val = 0.0f)
+		void renderREdge(D3DXMATRIX matRotateY, D3DXMATRIX WorldMat, float hOffset, float vOffset, int posx = 1, int posy=1, float val = 0.0f)
 		{
 			int j = 0;
 			
@@ -174,7 +174,7 @@ class CUBIE_PANEL
 			D3DXMatrixRotationYawPitchRoll(&rotateMatX, 0, val, 0); //rotate 90 degrees
 
 			D3DXMATRIX TranslateMat3;
-			D3DXMatrixTranslation(&TranslateMat3, hOffset, 0.0f,  /*0.65f*/0.0f);
+			D3DXMatrixTranslation(&TranslateMat3, hOffset, vOffset,  /*0.65f*/0.0f);
 
 			D3DXMatrixMultiply(&WorldMat, &WorldMat, &TranslateMat3);
 
@@ -186,7 +186,7 @@ class CUBIE_PANEL
 			
 				D3DXMatrixMultiply(&WorldMat, &WorldMat, &TranslateMat4);
 
-				render_target_->SetTransform(D3DTS_WORLD, &WorldMat);
+				//render_target_->SetTransform(D3DTS_WORLD, &WorldMat);
 				
 				//D3DXMatrixTranslation(&TranslateMat2, LEGO_HALF_PITCH, LEGO_PITCH, 0.0f);
 
@@ -204,7 +204,7 @@ class CUBIE_PANEL
 
 																					  //render_target_->DrawPrimitive(D3DPT_LINESTRIP, ); //outline for the bricks
 
-				D3DXMatrixIdentity(&WorldMat);								// Set WorldMat to identity matrice
+				//D3DXMatrixIdentity(&WorldMat);								// Set WorldMat to identity matrice
 				render_target_->SetTransform(D3DTS_WORLD, &WorldMat);
 			
 		}

@@ -36,17 +36,12 @@ std::vector<float> transYCoordsToCenter;
 std::vector<float> transYCoordsFromCenter;
 
 
+//-----------------------------------------------------------------------------
+// Global variables
+const int Textures = 7;
+LPDIRECT3DTEXTURE9		g_pTextures[Textures];   // Array of pointers for the textures.
 
-// LEGO brick properties
-const float LEGO_PITCH = 8.0f; // 8mm between studs
-const float LEGO_HALF_PITCH = 4.0f; // 8mm between studs
-const float LEGO_HEIGHT2 = 3.2f; 
-const float LEGO_HEIGHT = 9.6f; // height of a classic brick
-const float LEGO_STUD_HEIGHT = 1.7f; // height of a classic brick
-const float LEGO_STUD_WIDTH = 8.0f; // width a single stud occupies
-const float LEGO_STUD_GAP = 3.0f;
-const float LEGO_STUD_RADIUS = 2.5f;
-const float LEGO_GAP = 0.1f; // clearance gap between bricks
+
 
 
 class CUBIE
@@ -56,7 +51,7 @@ class CUBIE
 		float dimension = 1.705f;
 		float cubie_side = dimension/2;
 		DWORD colour = Black;
-		CUBIE_PANEL * panel = new CUBIE_PANEL(Red);
+		CUBIE_PANEL * panelRed = new CUBIE_PANEL(Red);
 
 
 		LPDIRECT3DDEVICE9 render_target_;
@@ -88,7 +83,7 @@ class CUBIE
 							};
 
 		//float toArrV[9] = {};
-		int mul = 1;
+		float mul = 0.0f;
 		float toArrV2[9] = {(dimension * mul), 
 			0, 0,
 							 0.0f,
@@ -96,11 +91,11 @@ class CUBIE
 							 -(dimension * mul),
 			0, 0 };
 
-		float fromArrV2[9] = { -(dimension * mul),
+		float fromArrV2[9] = { -(dimension * mul/2),
 			0,  0,
 							  0.0f,
 			0, 0,
-							  (dimension * mul),
+							  (dimension * mul/2),
 			0, 0 };
 
 		//transXCoordsToCenter.insert(transXCoordsToCenter.begin(), {1, -(dimension)+1, -(dimension*2)+1, 0,0,0,0,0,0, 1, 0, -1, 1, 0, -1});
@@ -113,6 +108,11 @@ class CUBIE
 
 		~CUBIE()
 		{
+			// Delete the textures.
+			for (int i(0); i < Textures; ++i)
+			{
+				if (g_pTextures[i] != NULL) g_pTextures[i]->Release();
+			}
 			// Destructor - release the points buffer.
 			SAFE_RELEASE(g_topVertexBuffer);
 			SAFE_RELEASE(g_baseVertexBuffer);
@@ -133,8 +133,22 @@ class CUBIE
 		{
 			// Store the render target for later use...
 			render_target_ = device;
-			panel->initialise(device);
+			panelRed->initialise(device);
 			return S_OK;
+		}
+
+		//-----------------------------------------------------------------------------
+		// Load and initialise the textures.
+
+		void LoadTextures()
+		{
+			D3DXCreateTextureFromFile(render_target_, "BrickTexture.png", &g_pTextures[0]);
+			D3DXCreateTextureFromFile(render_target_, "CloudTexture.png", &g_pTextures[1]);
+			D3DXCreateTextureFromFile(render_target_, "DXTexture.png", &g_pTextures[2]);
+			D3DXCreateTextureFromFile(render_target_, "TimesSquareTexture.png", &g_pTextures[3]);
+			D3DXCreateTextureFromFile(render_target_, "Pattern1Texture.png", &g_pTextures[4]);
+			D3DXCreateTextureFromFile(render_target_, "TilesTexture.png", &g_pTextures[5]);
+			D3DXCreateTextureFromFile(render_target_, "CircleTexture.png", &g_pTextures[6]);
 		}
 
 		void render(D3DXMATRIX matRotateY, D3DXMATRIX matRotateH, D3DXMATRIX matRotateV, D3DXMATRIX WorldMat, D3DXMATRIX TranslateMat,
@@ -143,7 +157,7 @@ class CUBIE
 			D3DXMATRIX TranslateMat3;
 			D3DXMatrixTranslation(&TranslateMat3, 0.0f, -24.0f, 0.0f);
 
-			RenderCubie(matRotateY, matRotateH, matRotateV, WorldMat, TranslateMat, panel, zVal, count);
+			RenderCubie(matRotateY, matRotateH, matRotateV, WorldMat, TranslateMat, panelRed, zVal, count);
 
 			//RenderStuds(matRotateY, WorldMat, TranslateMat2, count);
 			//D3DXMatrixIdentity(&WorldMat);								// Set WorldMat to identity matrice
@@ -268,7 +282,7 @@ class CUBIE
 			memcpy(cVertices, indices, sizeof(indices));
 			i_buffer->Unlock();
 
-			panel->Setup();
+			panelRed->Setup();
 
 			return S_OK;
 		}
@@ -279,7 +293,7 @@ class CUBIE
 	private:
 		
 		
-		void RenderCubie(D3DXMATRIX matRotateY, D3DXMATRIX matRotateH,D3DXMATRIX matRotateV, D3DXMATRIX WorldMat, D3DXMATRIX TranslateMat, CUBIE_PANEL* panel, int zVal, int count = 1)
+		void RenderCubie(D3DXMATRIX matRotateY, D3DXMATRIX matRotateH,D3DXMATRIX matRotateV, D3DXMATRIX WorldMat, D3DXMATRIX TranslateMat, CUBIE_PANEL* panelRed, int zVal, int count = 1)
 		{
 			int k = count / 9;
 			int j;
@@ -314,10 +328,10 @@ class CUBIE
 			D3DXMatrixTranslation(&tMat4, 0.0f, 0.0f, 0.65f + fromArrV2[count]);
 			//Move forward 10 units and apply world rotation
 			D3DXMatrixTranslation(&TranslateMat, dimension * (i), -(dimension * (k)), 0.65f + (dimension * zVal));
-			D3DXMatrixTranslation(&emptyMat, dimension * (i), -(dimension * (k)), 0.65f - (dimension * zVal));
+			D3DXMatrixTranslation(&emptyMat, 0.0f, 0.0f, -0.65f);
 			D3DXMatrixMultiply(&WorldMat, &WorldMat, &TranslateMatEx);
 			D3DXMatrixMultiply(&WorldMat2, &WorldMat2, &TranslateMat);
-			D3DXMatrixMultiply(&WorldMat3, &WorldMat3, &TranslateMat);
+			//D3DXMatrixMultiply(&WorldMat3, &WorldMat3, &WorldMat2);
 			
 			//render_target_->SetTransform(D3DTS_WORLD, &WorldMat);
 			//D3DXMatrixIdentity(&WorldMat);
@@ -327,23 +341,28 @@ class CUBIE
 
 			if (count < 9)
 			{
-				//if (count % 3 == 0)
-				//{
-				//	D3DXMatrixMultiply(&WorldMat3, &WorldMat3, &tMat3);
-				//	D3DXMatrixIdentity(&WorldMat3);
-				//	
-				//	//D3DXMatrixMultiply(&WorldMat3, &WorldMat3, &tMat4);
-				//	D3DXMatrixMultiply(&WorldMat3, &WorldMat3, &matRotateV);
-				//	D3DXMatrixMultiply(&WorldMat3, &WorldMat3, &emptyMat);
-				//	D3DXMatrixMultiply(&WorldMat, &WorldMat, &WorldMat3);
-				//}
-				
-				
+						
 				D3DXMatrixMultiply(&WorldMat2, &WorldMat2, &tMat);
 				D3DXMatrixIdentity(&WorldMat2);
 				D3DXMatrixTranslation(&tMat2, fromArr[count], 0.0f, fromArr2[count]);
 				D3DXMatrixMultiply(&WorldMat2, &WorldMat2, &tMat2);
 				D3DXMatrixMultiply(&WorldMat2, &WorldMat2, &matRotateH);
+				
+
+				if (count % 3 == 0)
+				{
+					D3DXMatrixMultiply(&WorldMat3, &WorldMat3, &WorldMat2);
+					D3DXMatrixMultiply(&WorldMat3, &WorldMat3, &tMat3);
+					D3DXMatrixIdentity(&WorldMat3);
+
+					D3DXMatrixMultiply(&WorldMat3, &WorldMat3, &tMat4);
+					D3DXMatrixMultiply(&WorldMat3, &WorldMat3, &matRotateV);
+					//D3DXMatrixIdentity(&WorldMat3);
+					//D3DXMatrixMultiply(&WorldMat2, &WorldMat2, &WorldMat3);
+					D3DXMatrixMultiply(&WorldMat3, &WorldMat3, &emptyMat);
+					D3DXMatrixMultiply(&WorldMat2, &WorldMat2, &WorldMat3);
+				}
+
 				D3DXMatrixMultiply(&WorldMat2, &WorldMat2, &WorldMat);
 				
 				
@@ -372,125 +391,28 @@ class CUBIE
 			render_target_->SetStreamSource(0, g_cubeVertexBuffer, 0, sizeof(CUSTOMVERTEX));
 			render_target_->SetIndices(i_buffer);
 
+			//// Render each face in turn, but select a different texture for each one.
+			//for (int i = 0; i < 6; i++)
+			//{
+			//	// Select the texture.
+			//	render_target_->SetTexture(0, g_pTextures[i]);
+
+			//	// Render the contents of the vertex buffer.
+			//	render_target_->DrawIndexedPrimitive(D3DPT_TRIANGLELIST, 0, 0, 4, i * 6, 2);
+			//}
+
 			// draw the cube
 			render_target_->DrawIndexedPrimitive(D3DPT_TRIANGLELIST, 0, 0, 8, 0, 12);
+			
 			if(i == 0)
-			panel->render(matRotateY, WorldMat2, i * (dimension - (panel->hCubeWidth)));
+			panelRed->render(matRotateH, WorldMat2, i, -(dimension * (k)));
 			else
-				panel->render(matRotateY, WorldMat2, i * (dimension-(panel->hCubeWidth)));
+				panelRed->render(matRotateH, WorldMat2, i * ((panelRed->hCubeWidth*2) + (dimension- panelRed->hCubeWidth * 2)), -(dimension * (k)));
+			
 			//render_target_->DrawIndexedPrimitive(D3DPT_LINESTRIP, 0, 0, 8, 0, 12);
 		}
 
 		
 
-		void RenderStudsWithTranslate(D3DXMATRIX matRotateY, D3DXMATRIX WorldMat, D3DXMATRIX TranslateMat2, D3DXMATRIX TranslateMat3)
-		{
-			int j = 0;
-			float pos[] = { LEGO_PITCH, 0.0f, -LEGO_PITCH, (-LEGO_PITCH * 2) };
-			float col = LEGO_HALF_PITCH * (rows - 1);
-			float row = LEGO_HALF_PITCH;
-
-			D3DXMATRIX TranslateMat4;
-			D3DXMatrixTranslation(&TranslateMat4, 0.0f, 0.0f, LEGO_STUD_HEIGHT);
-
-			D3DXMATRIX rotateMat;
-			D3DXMatrixRotationYawPitchRoll(&rotateMat, 0, 70.0f, 0);
-			for (int i = 1; i <= studs; i++)
-			{
-				D3DXMatrixMultiply(&WorldMat, &WorldMat, &TranslateMat3);
-
-				render_target_->SetTransform(D3DTS_WORLD, &WorldMat);
-				if (i == 1)
-				{
-					D3DXMatrixTranslation(&TranslateMat2, row, col, 0.0f);
-				}
-				else if (i % columns == 0)
-				{
-					D3DXMatrixTranslation(&TranslateMat2, row, col, 0.0f);
-					++j;
-					col -= LEGO_PITCH;
-					row = LEGO_HALF_PITCH + LEGO_PITCH;
-				}
-				else if (i % columns != 0)
-				{
-					D3DXMatrixTranslation(&TranslateMat2, row, col, 0.0f);
-				}
-
-				row -= LEGO_PITCH;
-				//D3DXMatrixTranslation(&TranslateMat2, LEGO_HALF_PITCH, LEGO_PITCH, 0.0f);
-
-				D3DXMatrixMultiply(&WorldMat, &WorldMat, &TranslateMat2);
-				D3DXMatrixMultiply(&WorldMat, &WorldMat, &rotateMat);
-				D3DXMatrixMultiply(&WorldMat, &WorldMat, &matRotateY);
-				render_target_->SetTransform(D3DTS_WORLD, &WorldMat);
-
-				render_target_->SetStreamSource(0, g_baseVertexBuffer, 0, sizeof(CUSTOMVERTEX));
-				render_target_->SetFVF(D3DFVF_CUSTOMVERTEX);
-				render_target_->DrawPrimitive(D3DPT_TRIANGLELIST, 0, (Sides * 2)); // using a D3DPT_TRIANGLELIST primitive
-
-
-				render_target_->SetStreamSource(0, g_topVertexBuffer, 0, sizeof(CUSTOMVERTEX));
-				render_target_->SetFVF(D3DFVF_CUSTOMVERTEX);
-				render_target_->DrawPrimitive(D3DPT_TRIANGLEFAN, 0, (Sides * 2) + 3); // using a D3DPT_TRIANGLEFAN primitive
-				render_target_->SetStreamSource(0, g_studLineVertexBuffer, 0, sizeof(CUSTOMVERTEX));
-				render_target_->DrawPrimitive(D3DPT_LINESTRIP, 0, Sides );
-
-				/*D3DXMatrixMultiply(&WorldMat, &WorldMat, &TranslateMat4);
-				D3DXMatrixMultiply(&WorldMat, &WorldMat, &rotateMat);
-				D3DXMatrixMultiply(&WorldMat, &WorldMat, &matRotateY);
-				render_target_->DrawPrimitive(D3DPT_LINESTRIP, 0, Sides);*/
-
-				D3DXMatrixIdentity(&WorldMat);								// Set WorldMat to identity matrice
-				render_target_->SetTransform(D3DTS_WORLD, &WorldMat);
-
-				
-			}
-		}
-
-		void RenderCubeWithTranslate(D3DXMATRIX matRotateY, D3DXMATRIX WorldMat, D3DXMATRIX TranslateMat, 
-			D3DXMATRIX TranslateMat3)
-		{
-			// Construct various matrices to move and expand the triangle the rectangle.
-			D3DXMATRIX matRotateY2;
-
-			D3DXMatrixRotationYawPitchRoll(&matRotateY2, 0, 90, 0/*index*/);
-
-			//D3DXMATRIX TranslateMat3;
-			
-			//D3DXMatrixTranslation(&TranslateMat3, x * count, y * count, z * count);
-			/*
-			if (z > 0)
-				D3DXMatrixTranslation(&TranslateMat3, 0.0f, 0.0f, z * (count - 1));
-			else if (y > 0)
-				D3DXMatrixTranslation(&TranslateMat3, 0.0f, y * (count - 1), 0.0f);
-			else if (x > 0)
-				D3DXMatrixTranslation(&TranslateMat3, x * (count - 1), 0.0f, 0.0f);
-			*/
-			D3DXMatrixMultiply(&WorldMat, &WorldMat, &TranslateMat3);
-			render_target_->SetTransform(D3DTS_WORLD, &WorldMat);
-
-			D3DXMATRIX rotateMat;
-			D3DXMatrixRotationYawPitchRoll(&rotateMat, 0, 70.0f, 0);
-
-			//Move forward 10 units and apply world rotation
-			D3DXMatrixTranslation(&TranslateMat, -LEGO_HALF_PITCH * (columns - 2), 0.0f, /*brick_height-1*/ LEGO_STUD_HEIGHT);
-			//D3DXMatrixMultiply(&WorldMat, &WorldMat, &matRotateY2);
-			D3DXMatrixMultiply(&WorldMat, &WorldMat, &TranslateMat);
-			D3DXMatrixMultiply(&WorldMat, &WorldMat, &rotateMat);
-			D3DXMatrixMultiply(&WorldMat, &WorldMat, &matRotateY);
-			render_target_->SetTransform(D3DTS_WORLD, &WorldMat);
-
-			// Reset the world to its original 'shape'.
-			D3DXMatrixIdentity(&WorldMat);
-
-			// select the vertex and index buffers to use
-			render_target_->SetStreamSource(0, g_cubeVertexBuffer, 0, sizeof(CUSTOMVERTEX));
-			render_target_->SetIndices(i_buffer);
-
-			// draw the cube
-			render_target_->DrawIndexedPrimitive(D3DPT_TRIANGLELIST, 0, 0, 8, 0, 12);
-
-			render_target_->SetStreamSource(0, g_lineVertexBuffer, 0, sizeof(CUSTOMVERTEX));
-			render_target_->DrawPrimitive(D3DPT_LINESTRIP, 0, 13);
-		}
+		
 };

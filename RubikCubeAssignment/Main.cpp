@@ -8,6 +8,7 @@
 // Include these files
 #include <Windows.h>	// Windows library (for window functions, menus, dialog boxes, etc)
 #include <d3dx9.h>		// Direct 3D library (for all Direct 3D funtions).
+#include <math.h>
 #include "Cubie.h"
 #include "Panel.h"
 
@@ -46,7 +47,9 @@ CUBIE_PANEL panel(Red);
 //LEGO_BRICK brick12X8(12, 8, LEGO_HEIGHT2, Yellow);
 //LEGO_BRICK brick4X2R(4, 2, LEGO_HEIGHT, White);
 //LEGO_BRICK brick2X6R(2, 6, LEGO_HEIGHT, Blue);
-
+static float g_RotationAngle = 0.0f;
+static int count = 1;
+bool isRotating = false;
 
 
 // The structure of a vertex in our vertex buffer...
@@ -213,7 +216,7 @@ void Render()
 
 
     // Clear the backbuffer to a dark blue colour.
-    g_pd3dDevice -> Clear(0, NULL, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER, D3DCOLOR_XRGB(0, 0, 150), 1.0f, 0);
+    g_pd3dDevice -> Clear(0, NULL, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER, D3DCOLOR_XRGB(150, 150, 150), 1.0f, 0);
 
     // Begin the scene...
 	if (SUCCEEDED(g_pd3dDevice->BeginScene()))
@@ -221,11 +224,13 @@ void Render()
 		// Define the viewpoint.
 		SetupViewMatrices();
 
+		xIndexHRow1 = g_RotationAngle;
+
 		D3DXMatrixRotationYawPitchRoll(&matRotateY, /*index*//*0*/xIndex, yIndex/*0*//*index*/, 0/*index*/);
 		D3DXMatrixRotationYawPitchRoll(&matRotateH, xIndexHRow1, 0, 0);
 		D3DXMatrixRotationYawPitchRoll(&matRotateV, 0.0f, yIndexVRow1, 0/*index*/);
 		D3DXMatrixRotationYawPitchRoll(&sideMat, 0, D3DX_PI / 2, 0); //rotate 90 degrees
-		D3DXMatrixTranslation(&TranslateMat2, LEGO_HALF_PITCH, LEGO_PITCH, 0.0f);
+//		D3DXMatrixTranslation(&TranslateMat2, LEGO_HALF_PITCH, LEGO_PITCH, 0.0f);
 		D3DXMatrixTranslation(&TranslateMat3, 0.0f, -24.0f, 0.0f);
 		D3DXMatrixTranslation(&TranslateMat, 0.0f, 0.0f, 5.0f);
 		D3DXMatrixIdentity(&WorldMat);								// Set WorldMat to identity matrice
@@ -250,6 +255,20 @@ void Render()
 
         // End the scene.
         g_pd3dDevice -> EndScene();
+
+		if (isRotating)
+		{
+			if (g_RotationAngle >= (D3DX_PI/2 * count))
+			{
+				isRotating = !isRotating;
+				g_RotationAngle = D3DX_PI / 2 * count;
+				++count;
+			}
+			else
+			{
+				g_RotationAngle += 0.01f;
+			}
+		}
     }
 
     // Present the backbuffer to the display.
@@ -326,6 +345,10 @@ LRESULT WINAPI MsgProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 
 			case 'h':
 				yIndexVRow1 += 0.1f;
+				return 0;
+				break;
+			case 'o':
+				isRotating = !isRotating;
 				return 0;
 				break;
 			}
