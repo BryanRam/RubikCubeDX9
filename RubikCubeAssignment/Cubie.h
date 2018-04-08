@@ -50,6 +50,12 @@ struct CUSTOMVERTEX2
 	float u, v;				// Texture co-ordinates.
 };
 
+struct transCoords
+{
+	float toX, toY, toZ;
+	float fromX, fromY, fromZ;
+};
+
 
 class CUBIE
 {
@@ -90,7 +96,7 @@ class CUBIE
 							};
 
 		//float toArrV[9] = {};
-		float mul = 0.0f;
+		float mul = 1.0f;
 		float toArrV2[9] = {(dimension * mul), 
 			0, 0,
 							 0.0f,
@@ -105,6 +111,35 @@ class CUBIE
 							  (dimension * mul/2),
 			0, 0 };
 
+		transCoords vCoords[27] = { {0, -dimension, dimension, 0, dimension, -dimension},
+								   {0},
+								   {0},
+								   {0, -dimension, 0, 0, dimension, 0},
+								   { 0 },
+								   { 0 },
+								   {0, -dimension, 0, -dimension, dimension, dimension },
+								   { 0 },
+								   { 0 },
+								   {0, 0, dimension, 0, 0, -dimension},
+								   { 0 },
+								   { 0 },
+								   { 0 },
+								   { 0 },
+								   { 0 },
+								   {0, 0, -dimension, 0, 0, dimension},
+								   { 0 },
+								   { 0 },
+								   {0, dimension, dimension, 0, -dimension, -dimension},
+								   { 0 },
+								   { 0 },
+								   {0, dimension, 0, 0, -dimension, 0 },
+								   { 0 },
+								   { 0 },
+								   {0, dimension, -dimension, 0, -dimension, dimension},
+								   { 0 },
+								   { 0 },
+
+		                          };
 		//transXCoordsToCenter.insert(transXCoordsToCenter.begin(), {1, -(dimension)+1, -(dimension*2)+1, 0,0,0,0,0,0, 1, 0, -1, 1, 0, -1});
 
 		 
@@ -697,8 +732,9 @@ class CUBIE
 
 			D3DXMatrixTranslation(&TranslateMatEx, dimension, 0.0f, 0.65f + dimension);
 
-			D3DXMatrixTranslation(&tMat3, 0.0f, 0.0f, 0.65f + toArrV2[count]);
-			D3DXMatrixTranslation(&tMat4, 0.0f, 0.0f, 0.65f + fromArrV2[count]);
+			//D3DXMatrixTranslation(&tMat3, 0.0f, 0.0f, 0.65f + toArrV2[count]);
+			D3DXMatrixTranslation(&tMat3, vCoords[count].toX, vCoords[count].toY, 0.65 + vCoords[count].toZ);
+			D3DXMatrixTranslation(&tMat4, vCoords[count].fromX, vCoords[count].fromY, 0.65f + vCoords[count].fromZ);
 			//Move forward 10 units and apply world rotation
 			D3DXMatrixTranslation(&TranslateMat, dimension * (i), -(dimension * (k)), 0.65f + (dimension * zVal));
 			D3DXMatrixTranslation(&emptyMat, 0.0f, 0.0f, -0.65f);
@@ -742,28 +778,42 @@ class CUBIE
 
 				D3DXMatrixMultiply(&WorldMat2, &WorldMat2, &matRotateH);
 
+				//if (count == 0)
+				//{
+				//	D3DXMatrixMultiply(&WorldMat3, &WorldMat3, &WorldMat2);
+				//	D3DXMatrixMultiply(&WorldMat3, &WorldMat3, &tMat3);
+				//	D3DXMatrixIdentity(&WorldMat3);
 
-				if (count % 3 == 0)
-				{
-					D3DXMatrixMultiply(&WorldMat3, &WorldMat3, &WorldMat2);
-					D3DXMatrixMultiply(&WorldMat3, &WorldMat3, &tMat3);
-					D3DXMatrixIdentity(&WorldMat3);
+				//	D3DXMatrixMultiply(&WorldMat3, &WorldMat3, &tMat4);
+				//	D3DXMatrixMultiply(&WorldMat3, &WorldMat3, &matRotateV);
+				//	//D3DXMatrixIdentity(&WorldMat3);
+				//	//D3DXMatrixMultiply(&WorldMat2, &WorldMat2, &WorldMat3);
+				//	D3DXMatrixMultiply(&WorldMat3, &WorldMat3, &emptyMat);
+				//	D3DXMatrixMultiply(&WorldMat2, &WorldMat2, &WorldMat3);
+				//}
 
-					D3DXMatrixMultiply(&WorldMat3, &WorldMat3, &tMat4);
-					D3DXMatrixMultiply(&WorldMat3, &WorldMat3, &matRotateV);
-					//D3DXMatrixIdentity(&WorldMat3);
-					//D3DXMatrixMultiply(&WorldMat2, &WorldMat2, &WorldMat3);
-					D3DXMatrixMultiply(&WorldMat3, &WorldMat3, &emptyMat);
-					D3DXMatrixMultiply(&WorldMat2, &WorldMat2, &WorldMat3);
-				}
+				//else if ((count+1) % 3 == 0)
+				//{
+				//	D3DXMatrixMultiply(&WorldMat3, &WorldMat3, &WorldMat2);
+				//	D3DXMatrixMultiply(&WorldMat3, &WorldMat3, &tMat3);
+				//	D3DXMatrixIdentity(&WorldMat3);
+
+				//	D3DXMatrixMultiply(&WorldMat3, &WorldMat3, &tMat4);
+				//	D3DXMatrixMultiply(&WorldMat3, &WorldMat3, &matRotateV);
+				//	//D3DXMatrixIdentity(&WorldMat3);
+				//	//D3DXMatrixMultiply(&WorldMat2, &WorldMat2, &WorldMat3);
+				//	D3DXMatrixMultiply(&WorldMat3, &WorldMat3, &emptyMat);
+				//	D3DXMatrixMultiply(&WorldMat2, &WorldMat2, &WorldMat3);
+				//}
 
 				D3DXMatrixMultiply(&WorldMat2, &WorldMat2, &WorldMat);
 
 
 			}
+			
 
 			///*Middle hRotation
-			if((count < 18) && (count > 8))
+			else if((count < 18) && (count > 8))
 			{
 			D3DXMatrixTranslation(&tMat, toArr[count - 9], -(dimension), toArr2[count - 9]);
 			D3DXMatrixMultiply(&WorldMat2, &WorldMat2, &tMat);
@@ -773,10 +823,19 @@ class CUBIE
 			D3DXMatrixTranslation(&tMat2, fromArr[count - 9], -(dimension), fromArr2[count - 9]);
 			D3DXMatrixMultiply(&WorldMat2, &WorldMat2, &tMat2);
 			
-			D3DXMatrixMultiply(&WorldMat2, &WorldMat2, &matRotateH);
+			//D3DXMatrixMultiply(&WorldMat2, &WorldMat2, &matRotateH);
 			D3DXMatrixMultiply(&WorldMat2, &WorldMat2, &WorldMat);
 			//*/
 		    }
+
+			D3DXMatrixMultiply(&WorldMat3, &WorldMat3, &WorldMat2);
+			D3DXMatrixMultiply(&WorldMat3, &WorldMat3, &tMat3);
+			D3DXMatrixIdentity(&WorldMat3);
+
+			D3DXMatrixMultiply(&WorldMat3, &WorldMat3, &tMat4);
+			D3DXMatrixMultiply(&WorldMat3, &WorldMat3, &matRotateV);
+
+			D3DXMatrixMultiply(&WorldMat2, &WorldMat2, &WorldMat);
 
 			//D3DXMatrixTranslation(&tMat2, fromArr[count], 0.0f, fromArr2[count]);
 			

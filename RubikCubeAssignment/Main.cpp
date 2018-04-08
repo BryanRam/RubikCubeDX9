@@ -86,7 +86,7 @@ HRESULT SetupD3D(HWND hWnd)
 	g_pd3dDevice -> SetRenderState(D3DRS_ZENABLE, TRUE);
 
 	// Turn off the lighting, as we're using our own vertex colours.
-	g_pd3dDevice -> SetRenderState(D3DRS_LIGHTING, FALSE);
+	//g_pd3dDevice -> SetRenderState(D3DRS_LIGHTING, FALSE);
 
 	g_pd3dDevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
 
@@ -257,7 +257,7 @@ void Render()
 
 
     // Clear the backbuffer to a dark blue colour.
-    g_pd3dDevice -> Clear(0, NULL, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER, D3DCOLOR_XRGB(150, 150, 150), 1.0f, 0);
+    g_pd3dDevice -> Clear(0, NULL, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER, D3DCOLOR_XRGB(0, 0, 0), 1.0f, 0);
 
     // Begin the scene...
 	if (SUCCEEDED(g_pd3dDevice->BeginScene()))
@@ -427,6 +427,9 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE, LPSTR, int)
             // Show the window
             ShowWindow(hWnd, SW_SHOWDEFAULT);
             UpdateWindow(hWnd);
+			
+			//Set up the light
+			SetupLightsAndMaterials();
 
             // Enter the message loop
             MSG msg;
