@@ -127,6 +127,15 @@
     <ClInclude Include="Cubie.h" />
     <ClInclude Include="Panel.h" />
   </ItemGroup>
+  <ItemGroup>
+    <Image Include="BrickTexture.png" />
+    <Image Include="CircleTexture.png" />
+    <Image Include="CloudTexture.png" />
+    <Image Include="DXTexture.png" />
+    <Image Include="Pattern1Texture.png" />
+    <Image Include="TilesTexture.png" />
+    <Image Include="TimesSquareTexture.png" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

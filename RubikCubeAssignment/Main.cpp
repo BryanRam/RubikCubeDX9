@@ -128,7 +128,7 @@ void CleanUp()
 HRESULT SetupGeometry()
 {
 	if (
-		cubie.SetupCubie() == S_OK /*&&
+		cubie.SetupCubie2() == S_OK /*&&
 //		panel.SetupPanel() == S_OK */
 		)
 	{
@@ -195,6 +195,47 @@ void SetupViewMatrices()
     D3DXMATRIX matProj;
     D3DXMatrixPerspectiveFovLH(&matProj, D3DX_PI/4, 1.0f, 1.0f, 600.0f);
     g_pd3dDevice -> SetTransform(D3DTS_PROJECTION, &matProj);
+}
+
+
+//-----------------------------------------------------------------------------
+// Define the light for the scene.
+
+void SetupLightsAndMaterials()
+{
+	// Define a material.
+	// Reflects only diffuse colour.
+	D3DMATERIAL9 Mtl;
+	ZeroMemory(&Mtl, sizeof(D3DMATERIAL9));
+	Mtl.Diffuse.r = 1.0f;
+	Mtl.Diffuse.g = 1.0f;
+	Mtl.Diffuse.b = 1.0f;
+	Mtl.Diffuse.a = 1.0f;
+	g_pd3dDevice->SetMaterial(&Mtl);
+
+	// Define a light.
+	// Possesses only a diffuse colour.
+	D3DLIGHT9 Light1;
+	ZeroMemory(&Light1, sizeof(D3DLIGHT9));
+	Light1.Type = D3DLIGHT_POINT;
+
+	Light1.Diffuse.r = 1.2f;
+	Light1.Diffuse.g = 1.2f;
+	Light1.Diffuse.b = 1.2f;
+
+	Light1.Position.x = 0.0f;
+	Light1.Position.y = 50.0f;
+	Light1.Position.z = -50.0f;
+
+	Light1.Attenuation0 = 1.0f;
+	Light1.Attenuation1 = 0.0f;
+	Light1.Attenuation2 = 0.0f;
+
+	Light1.Range = 200.0f;
+
+	// Select and enable the light.
+	g_pd3dDevice->SetLight(0, &Light1);
+	g_pd3dDevice->LightEnable(0, TRUE);
 }
 
 //-----------------------------------------------------------------------------
@@ -266,7 +307,7 @@ void Render()
 			}
 			else
 			{
-				g_RotationAngle += 0.01f;
+				g_RotationAngle += 0.035f;
 			}
 		}
     }
@@ -381,6 +422,7 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE, LPSTR, int)
         // Create the scene geometry
         if (SUCCEEDED(SetupGeometry()))
         {
+			cubie.LoadTextures();
 
             // Show the window
             ShowWindow(hWnd, SW_SHOWDEFAULT);

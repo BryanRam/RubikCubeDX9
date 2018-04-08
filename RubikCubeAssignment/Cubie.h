@@ -23,7 +23,7 @@
 //DWORD Red = 0xff0000;
 
 // The structure of a vertex in our vertex buffer...
-#define D3DFVF_CUSTOMVERTEX (D3DFVF_XYZ | D3DFVF_DIFFUSE)
+#define D3DFVF_CUSTOMVERTEX2 (D3DFVF_XYZ | D3DFVF_NORMAL | D3DFVF_TEX1)
 #define SAFE_RELEASE(p)      {if(p) {(p)->Release(); (p)=NULL;}}
 
 #pragma once
@@ -41,7 +41,14 @@ std::vector<float> transYCoordsFromCenter;
 const int Textures = 7;
 LPDIRECT3DTEXTURE9		g_pTextures[Textures];   // Array of pointers for the textures.
 
-
+// A structure for our custom vertex type
+struct CUSTOMVERTEX2
+{
+	D3DXVECTOR3 position;	// Position
+	D3DXVECTOR3 normal;		// Vertex normal
+	DWORD colour;
+	float u, v;				// Texture co-ordinates.
+};
 
 
 class CUBIE
@@ -167,6 +174,372 @@ class CUBIE
 			
 		}
 
+		HRESULT SetupCubie2()
+		{
+			// Calculate the number of vertices required, and the size of the buffer to hold them.
+			int Vertices = 2 * 3 * 6;	// Six vertices for each side, six sides.
+			int BufferSize = Vertices * sizeof(CUSTOMVERTEX2);
+
+			// Create the vertex buffer.
+			if (FAILED(render_target_->CreateVertexBuffer(BufferSize, 0, D3DFVF_CUSTOMVERTEX, D3DPOOL_DEFAULT, &g_cubeVertexBuffer, NULL)))
+			{
+				return E_FAIL; // if the vertex buffer could not be created.
+			}
+
+			// Fill the buffer with appropriate vertices to describe the cube...
+
+			// Create a pointer to the first vertex in the buffer.
+			CUSTOMVERTEX2 *pVertices;
+			if (FAILED(g_cubeVertexBuffer->Lock(0, 0, (void**)&pVertices, 0)))
+			{
+				return E_FAIL;  // if the pointer to the vertex buffer could not be established.
+			}
+
+			// Fill the vertex buffers with data...
+
+			DWORD FaceColour = 0x00ff00000;
+
+
+
+			// Side 1 - Front face
+			pVertices[0].position.x = -cubie_side;	// Vertex co-ordinate.
+			pVertices[0].position.y = -cubie_side;
+			pVertices[0].position.z = -cubie_side;
+			pVertices[0].normal.x = 0;		// Vertex normal.
+			pVertices[0].normal.y = 0;
+			pVertices[0].normal.z = -1;
+			pVertices[0].u = 0;
+			pVertices[0].v = 0;
+
+			pVertices[1].position.x = -cubie_side;
+			pVertices[1].position.y = cubie_side;
+			pVertices[1].position.z = -cubie_side;
+			pVertices[1].normal.x = 0;
+			pVertices[1].normal.y = 0;
+			pVertices[1].normal.z = -1;
+			pVertices[1].u = 0;
+			pVertices[1].v = 1;
+
+			pVertices[2].position.x = cubie_side;
+			pVertices[2].position.y = cubie_side;
+			pVertices[2].position.z = -cubie_side;
+			pVertices[2].normal.x = 0;
+			pVertices[2].normal.y = 0;
+			pVertices[2].normal.z = -1;
+			pVertices[2].u = 1;
+			pVertices[2].v = 1;
+
+			pVertices[3].position.x = cubie_side;
+			pVertices[3].position.y = -cubie_side;
+			pVertices[3].position.z = -cubie_side;
+			pVertices[3].normal.x = 0;
+			pVertices[3].normal.y = 0;
+			pVertices[3].normal.z = -1;
+			pVertices[3].u = 1;
+			pVertices[3].v = 0;
+
+			pVertices[4].position.x = -cubie_side;
+			pVertices[4].position.y = -cubie_side;
+			pVertices[4].position.z = -cubie_side;
+			pVertices[4].normal.x = 0;
+			pVertices[4].normal.y = 0;
+			pVertices[4].normal.z = -1;
+			pVertices[4].u = 0;
+			pVertices[4].v = 0;
+
+			pVertices[5].position.x = cubie_side;
+			pVertices[5].position.y = cubie_side;
+			pVertices[5].position.z = -cubie_side;
+			pVertices[5].normal.x = 0;
+			pVertices[5].normal.y = 0;
+			pVertices[5].normal.z = -1;
+			pVertices[5].u = 1;
+			pVertices[5].v = 1;
+
+			// Side 2 - Right face
+			pVertices[6].position.x = cubie_side;
+			pVertices[6].position.y = -cubie_side;
+			pVertices[6].position.z = -cubie_side;
+			pVertices[6].normal.x = 1;
+			pVertices[6].normal.y = 0;
+			pVertices[6].normal.z = 0;
+			pVertices[6].u = 0;
+			pVertices[6].v = 0;
+
+			pVertices[7].position.x = cubie_side;
+			pVertices[7].position.y = cubie_side;
+			pVertices[7].position.z = -cubie_side;
+			pVertices[7].normal.x = 1;
+			pVertices[7].normal.y = 0;
+			pVertices[7].normal.z = 0;
+			pVertices[7].u = 0;
+			pVertices[7].v = 1;
+
+			pVertices[8].position.x = cubie_side;
+			pVertices[8].position.y = cubie_side;
+			pVertices[8].position.z = cubie_side;
+			pVertices[8].normal.x = 1;
+			pVertices[8].normal.y = 0;
+			pVertices[8].normal.z = 0;
+			pVertices[8].u = 1;
+			pVertices[8].v = 1;
+
+			pVertices[9].position.x = cubie_side;
+			pVertices[9].position.y = -cubie_side;
+			pVertices[9].position.z = cubie_side;
+			pVertices[9].normal.x = 1;
+			pVertices[9].normal.y = 0;
+			pVertices[9].normal.z = 0;
+			pVertices[9].u = 1;
+			pVertices[9].v = 0;
+
+			pVertices[10].position.x = cubie_side;
+			pVertices[10].position.y = -cubie_side;
+			pVertices[10].position.z = -cubie_side;
+			pVertices[10].normal.x = 1;
+			pVertices[10].normal.y = 0;
+			pVertices[10].normal.z = 0;
+			pVertices[10].u = 0;
+			pVertices[10].v = 0;
+
+			pVertices[11].position.x = cubie_side;
+			pVertices[11].position.y = cubie_side;
+			pVertices[11].position.z = cubie_side;
+			pVertices[11].normal.x = 1;
+			pVertices[11].normal.y = 0;
+			pVertices[11].normal.z = 0;
+			pVertices[11].u = 1;
+			pVertices[11].v = 1;
+
+			// Side 3 - Rear face
+			pVertices[12].position.x = cubie_side;
+			pVertices[12].position.y = -cubie_side;
+			pVertices[12].position.z = cubie_side;
+			pVertices[12].normal.x = 0;
+			pVertices[12].normal.y = 0;
+			pVertices[12].normal.z = 1;
+			pVertices[12].u = 0;
+			pVertices[12].v = 0;
+
+			pVertices[13].position.x = cubie_side;
+			pVertices[13].position.y = cubie_side;
+			pVertices[13].position.z = cubie_side;
+			pVertices[13].normal.x = 0;
+			pVertices[13].normal.y = 0;
+			pVertices[13].normal.z = 1;
+			pVertices[13].u = 0;
+			pVertices[13].v = 1;
+
+			pVertices[14].position.x = -cubie_side;
+			pVertices[14].position.y = cubie_side;
+			pVertices[14].position.z = cubie_side;
+			pVertices[14].normal.x = 0;
+			pVertices[14].normal.y = 0;
+			pVertices[14].normal.z = 1;
+			pVertices[14].u = 1;
+			pVertices[14].v = 1;
+
+			pVertices[15].position.x = -cubie_side;
+			pVertices[15].position.y = -cubie_side;
+			pVertices[15].position.z = cubie_side;
+			pVertices[15].normal.x = 0;
+			pVertices[15].normal.y = 0;
+			pVertices[15].normal.z = 1;
+			pVertices[15].u = 1;
+			pVertices[15].v = 0;
+
+			pVertices[16].position.x = cubie_side;
+			pVertices[16].position.y = -cubie_side;
+			pVertices[16].position.z = cubie_side;
+			pVertices[16].normal.x = 0;
+			pVertices[16].normal.y = 0;
+			pVertices[16].normal.z = 1;
+			pVertices[16].u = 0;
+			pVertices[16].v = 0;
+
+			pVertices[17].position.x = -cubie_side;
+			pVertices[17].position.y = cubie_side;
+			pVertices[17].position.z = cubie_side;
+			pVertices[17].normal.x = 0;
+			pVertices[17].normal.y = 0;
+			pVertices[17].normal.z = 1;
+			pVertices[17].u = 1;
+			pVertices[17].v = 1;
+
+			// Side 4 - Left face
+			pVertices[18].position.x = -cubie_side;
+			pVertices[18].position.y = -cubie_side;
+			pVertices[18].position.z = cubie_side;
+			pVertices[18].normal.x = -1;
+			pVertices[18].normal.y = 0;
+			pVertices[18].normal.z = 0;
+			pVertices[18].u = 0;
+			pVertices[18].v = 0;
+
+			pVertices[19].position.x = -cubie_side;
+			pVertices[19].position.y = cubie_side;
+			pVertices[19].position.z = cubie_side;
+			pVertices[19].normal.x = -1;
+			pVertices[19].normal.y = 0;
+			pVertices[19].normal.z = 0;
+			pVertices[19].u = 0;
+			pVertices[19].v = 1;
+
+			pVertices[20].position.x = -cubie_side;
+			pVertices[20].position.y = cubie_side;
+			pVertices[20].position.z = -cubie_side;
+			pVertices[20].normal.x = -1;
+			pVertices[20].normal.y = 0;
+			pVertices[20].normal.z = 0;
+			pVertices[20].u = 1;
+			pVertices[20].v = 1;
+
+			pVertices[21].position.x = -cubie_side;
+			pVertices[21].position.y = -cubie_side;
+			pVertices[21].position.z = -cubie_side;
+			pVertices[21].normal.x = -1;
+			pVertices[21].normal.y = 0;
+			pVertices[21].normal.z = 0;
+			pVertices[21].u = 1;
+			pVertices[21].v = 0;
+
+			pVertices[22].position.x = -cubie_side;
+			pVertices[22].position.y = -cubie_side;
+			pVertices[22].position.z = cubie_side;
+			pVertices[22].normal.x = -1;
+			pVertices[22].normal.y = 0;
+			pVertices[22].normal.z = 0;
+			pVertices[22].u = 0;
+			pVertices[22].v = 0;
+
+			pVertices[23].position.x = -cubie_side;
+			pVertices[23].position.y = cubie_side;
+			pVertices[23].position.z = -cubie_side;
+			pVertices[23].normal.x = -1;
+			pVertices[23].normal.y = 0;
+			pVertices[23].normal.z = 0;
+			pVertices[23].u = 1;
+			pVertices[23].v = 1;
+
+			// Side 5 - Top face
+
+			pVertices[24].position.x = -cubie_side;
+			pVertices[24].position.y = cubie_side;
+			pVertices[24].position.z = -cubie_side;
+			pVertices[24].normal.x = 0;
+			pVertices[24].normal.y = 1;
+			pVertices[24].normal.z = 0;
+			pVertices[24].u = 0;
+			pVertices[24].v = 0;
+
+			pVertices[25].position.x = -cubie_side;
+			pVertices[25].position.y = cubie_side;
+			pVertices[25].position.z = cubie_side;
+			pVertices[25].normal.x = 0;
+			pVertices[25].normal.y = 1;
+			pVertices[25].normal.z = 0;
+			pVertices[25].u = 0;
+			pVertices[25].v = 1;
+
+			pVertices[26].position.x = cubie_side;
+			pVertices[26].position.y = cubie_side;
+			pVertices[26].position.z = -cubie_side;
+			pVertices[26].normal.x = 0;
+			pVertices[26].normal.y = 1;
+			pVertices[26].normal.z = 0;
+			pVertices[26].u = 1;
+			pVertices[26].v = 0;
+
+			pVertices[27].position.x = cubie_side;
+			pVertices[27].position.y = cubie_side;
+			pVertices[27].position.z = -cubie_side;
+			pVertices[27].normal.x = 0;
+			pVertices[27].normal.y = 1;
+			pVertices[27].normal.z = 0;
+			pVertices[27].u = 1;
+			pVertices[27].v = 0;
+
+			pVertices[28].position.x = -cubie_side;
+			pVertices[28].position.y = cubie_side;
+			pVertices[28].position.z = cubie_side;
+			pVertices[28].normal.x = 0;
+			pVertices[28].normal.y = 1;
+			pVertices[28].normal.z = 0;
+			pVertices[28].u = 0;
+			pVertices[28].v = 1;
+
+			pVertices[29].position.x = cubie_side;
+			pVertices[29].position.y = cubie_side;
+			pVertices[29].position.z = cubie_side;
+			pVertices[29].normal.x = 0;
+			pVertices[29].normal.y = 1;
+			pVertices[29].normal.z = 0;
+			pVertices[29].u = 1;
+			pVertices[29].v = 1;
+
+			// Side 6 - Bottom face
+
+			pVertices[30].position.x = -cubie_side;
+			pVertices[30].position.y = -cubie_side;
+			pVertices[30].position.z = -cubie_side;
+			pVertices[30].normal.x = 0;
+			pVertices[30].normal.y = -1;
+			pVertices[30].normal.z = 0;
+			pVertices[30].u = 0;
+			pVertices[30].v = 0;
+
+			pVertices[31].position.x = cubie_side;
+			pVertices[31].position.y = -cubie_side;
+			pVertices[31].position.z = -cubie_side;
+			pVertices[31].normal.x = 0;
+			pVertices[31].normal.y = -1;
+			pVertices[31].normal.z = 0;
+			pVertices[31].u = 1;
+			pVertices[31].v = 0;
+
+			pVertices[32].position.x = -cubie_side;
+			pVertices[32].position.y = -cubie_side;
+			pVertices[32].position.z = cubie_side;
+			pVertices[32].normal.x = 0;
+			pVertices[32].normal.y = -1;
+			pVertices[32].normal.z = 0;
+			pVertices[32].u = 0;
+			pVertices[32].v = 1;
+
+			pVertices[33].position.x = cubie_side;
+			pVertices[33].position.y = -cubie_side;
+			pVertices[33].position.z = -cubie_side;
+			pVertices[33].normal.x = 0;
+			pVertices[33].normal.y = -1;
+			pVertices[33].normal.z = 0;
+			pVertices[33].u = 1;
+			pVertices[33].v = 0;
+
+			pVertices[34].position.x = cubie_side;
+			pVertices[34].position.y = -cubie_side;
+			pVertices[34].position.z = cubie_side;
+			pVertices[34].normal.x = 0;
+			pVertices[34].normal.y = -1;
+			pVertices[34].normal.z = 0;
+			pVertices[34].u = 1;
+			pVertices[34].v = 1;
+
+			pVertices[35].position.x = -cubie_side;
+			pVertices[35].position.y = -cubie_side;
+			pVertices[35].position.z = cubie_side;
+			pVertices[35].normal.x = 0;
+			pVertices[35].normal.y = -1;
+			pVertices[35].normal.z = 0;
+			pVertices[35].u = 0;
+			pVertices[35].v = 1;
+
+			// Unlock the vertex buffer...
+			g_cubeVertexBuffer->Unlock();
+
+			panelRed->Setup();
+
+			return S_OK;
+		}
 				
 		HRESULT SetupCubie()
 		{
@@ -425,27 +798,33 @@ class CUBIE
 			*/
 
 			// select the vertex and index buffers to use
-			render_target_->SetStreamSource(0, g_cubeVertexBuffer, 0, sizeof(CUSTOMVERTEX));
-			render_target_->SetIndices(i_buffer);
+			render_target_->SetTexture(0, g_pTextures[0]);
+			render_target_->SetTextureStageState(0, D3DTSS_COLORARG1, D3DTA_DIFFUSE);
+			render_target_->SetTextureStageState(0, D3DTSS_COLORARG2, D3DTA_TEXTURE);
+			render_target_->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_MODULATE);
+			render_target_->SetStreamSource(0, g_cubeVertexBuffer, 0, sizeof(CUSTOMVERTEX2));
+			render_target_->SetFVF(D3DFVF_CUSTOMVERTEX2);
+			//render_target_->SetIndices(i_buffer);
 
-			//// Render each face in turn, but select a different texture for each one.
-			//for (int i = 0; i < 6; i++)
-			//{
-			//	// Select the texture.
-			//	render_target_->SetTexture(0, g_pTextures[i]);
+			// Render each face in turn, but select a different texture for each one.
+			for (int i = 0; i < 6; i++)
+			{
+				// Select the texture.
+				render_target_->SetTexture(0, g_pTextures[i]);
 
-			//	// Render the contents of the vertex buffer.
-			//	render_target_->DrawIndexedPrimitive(D3DPT_TRIANGLELIST, 0, 0, 4, i * 6, 2);
-			//}
+				//g_pd3dDevice->DrawPrimitive(D3DPT_TRIANGLELIST, i * 6, 2);
+				// Render the contents of the vertex buffer.
+				render_target_->DrawPrimitive(D3DPT_TRIANGLELIST, i * 6, 2);
+			}
 
 			// draw the cube
-			render_target_->DrawIndexedPrimitive(D3DPT_TRIANGLELIST, 0, 0, 8, 0, 12);
-			
+			//render_target_->DrawIndexedPrimitive(D3DPT_TRIANGLELIST, 0, 0, 8, 0, 12);
+			/*
 			if(i == 0)
 			panelRed->render(matRotateH, WorldMat2, i, -(dimension * (k)));
 			else
 				panelRed->render(matRotateH, WorldMat2, i * ((panelRed->hCubeWidth*2) + (dimension- panelRed->hCubeWidth * 2)), -(dimension * (k)));
-			
+			*/
 			//render_target_->DrawIndexedPrimitive(D3DPT_LINESTRIP, 0, 0, 8, 0, 12);
 		}
 

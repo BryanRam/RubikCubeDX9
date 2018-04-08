@@ -27,4 +27,27 @@
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
+  <ItemGroup>
+    <Image Include="BrickTexture.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="CircleTexture.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="CloudTexture.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="DXTexture.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Pattern1Texture.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="TilesTexture.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="TimesSquareTexture.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+  </ItemGroup>
 </Project>
