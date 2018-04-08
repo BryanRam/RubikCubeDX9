@@ -48,8 +48,14 @@ CUBIE_PANEL panel(Red);
 //LEGO_BRICK brick4X2R(4, 2, LEGO_HEIGHT, White);
 //LEGO_BRICK brick2X6R(2, 6, LEGO_HEIGHT, Blue);
 static float g_RotationAngle = 0.0f;
+static float g_RotationAngleH2 = 0.0f;
+static float g_RotationAngleH3 = 0.0f;
 static int count = 1;
+static int countH2 = 1;
+static int countH3 = 1;
 bool isRotating = false;
+bool isRotatingH2 = false;
+bool isRotatingH3 = false;
 
 
 // The structure of a vertex in our vertex buffer...
@@ -243,7 +249,7 @@ void SetupLightsAndMaterials()
 
 void Render()
 {
-	D3DXMATRIX matRotateY, sideMat, matRotateH, matRotateV;    // a matrix to store the rotation information
+	D3DXMATRIX matRotateY, sideMat, matRotateH, matRotateV, matRotateH2, matRotateH3;    // a matrix to store the rotation information
 							  // Construct various matrices to move and expand the triangle the rectangle.
 	D3DXMATRIX WorldMat, WorldMat2, TranslateMat, TranslateMat2, TranslateMat3;
 
@@ -269,6 +275,8 @@ void Render()
 
 		D3DXMatrixRotationYawPitchRoll(&matRotateY, /*index*//*0*/xIndex, yIndex/*0*//*index*/, 0/*index*/);
 		D3DXMatrixRotationYawPitchRoll(&matRotateH, xIndexHRow1, 0, 0);
+		D3DXMatrixRotationYawPitchRoll(&matRotateH2, g_RotationAngleH2, 0, 0);
+		D3DXMatrixRotationYawPitchRoll(&matRotateH3, g_RotationAngleH3, 0, 0);
 		D3DXMatrixRotationYawPitchRoll(&matRotateV, 0.0f, yIndexVRow1, 0/*index*/);
 		D3DXMatrixRotationYawPitchRoll(&sideMat, 0, D3DX_PI / 2, 0); //rotate 90 degrees
 //		D3DXMatrixTranslation(&TranslateMat2, LEGO_HALF_PITCH, LEGO_PITCH, 0.0f);
@@ -287,7 +295,11 @@ void Render()
 				++zVal;
 			if (zVal > 2)
 				zVal = 0;
-			cubie.render(matRotateY, matRotateH, matRotateV, WorldMat, TranslateMat, TranslateMat2, panel, zVal, i);
+			cubie.render(matRotateY, 
+				matRotateH, matRotateH2, matRotateH3, 
+				matRotateV, 
+				WorldMat, TranslateMat, TranslateMat2, 
+				panel, zVal, i);
 		}
 		
 		//panel.render(matRotateY, WorldMat/*, (D3DX_PI / 2)*/);
@@ -308,6 +320,34 @@ void Render()
 			else
 			{
 				g_RotationAngle += 0.035f;
+			}
+		}
+
+		if (isRotatingH2)
+		{
+			if (g_RotationAngleH2 >= (D3DX_PI / 2 * countH2))
+			{
+				isRotatingH2 = !isRotatingH2;
+				g_RotationAngleH2 = D3DX_PI / 2 * countH2;
+				++countH2;
+			}
+			else
+			{
+				g_RotationAngleH2 += 0.035f;
+			}
+		}
+
+		if (isRotatingH3)
+		{
+			if (g_RotationAngleH3 >= (D3DX_PI / 2 * countH3))
+			{
+				isRotatingH3 = !isRotatingH3;
+				g_RotationAngleH3 = D3DX_PI / 2 * countH3;
+				++countH3;
+			}
+			else
+			{
+				g_RotationAngleH3 += 0.035f;
 			}
 		}
     }
@@ -390,6 +430,14 @@ LRESULT WINAPI MsgProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 				break;
 			case 'o':
 				isRotating = !isRotating;
+				return 0;
+				break;
+			case 'l':
+				isRotatingH2 = !isRotatingH2;
+				return 0;
+				break;
+			case '.':
+				isRotatingH3 = !isRotatingH3;
 				return 0;
 				break;
 			}
