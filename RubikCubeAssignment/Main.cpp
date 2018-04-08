@@ -125,8 +125,8 @@ void CleanUp()
 HRESULT SetupGeometry()
 {
 	if (
-		cubie.SetupCubie() == S_OK &&
-		panel.SetupPanel() == S_OK 
+		cubie.SetupCubie() == S_OK /*&&
+//		panel.SetupPanel() == S_OK */
 		)
 	{
 			return S_OK;
@@ -147,18 +147,39 @@ void SetupViewMatrices()
     D3DXVECTOR3 vCamera(0.0f, 0.0f, g_CameraZ);
     D3DXVECTOR3 vLookat(0.0f, 0.0f, g_CameraZ + 10);
     D3DXVECTOR3 vUpVector(0.0f, 1.0f, 0.0f);
-    D3DXMATRIX matView, matRotate, toCenter, fromCenter;
+    D3DXMATRIX matView, matRotate, toCenter, fromCenter, 
+				yawMatrix, pitchMatrix, rollMatrix;
+	D3DXVECTOR3 rightVector;
+
+	// Setup matrices to rotate around axes
+	D3DXMatrixRotationAxis(&yawMatrix, &vUpVector, xIndex2);
+	D3DXMatrixRotationAxis(&pitchMatrix, &rightVector, yIndex2);
+	D3DXMatrixRotationAxis(&rollMatrix, &vLookat, 0.0f);
+
+	//move lookat vector
+	D3DXVec3TransformCoord(&vLookat, &vLookat, &pitchMatrix);
+	D3DXVec3TransformCoord(&vLookat, &vLookat, &yawMatrix);
+	
+	D3DXVec3Normalize(&vLookat, &vLookat);
+
+	//use lookat vector to define right vector
+	D3DXVec3Cross(&rightVector, &vUpVector, &vLookat);
+	D3DXVec3Normalize(&rightVector, &rightVector);
+
+	D3DXVec3Cross(&vUpVector, &vLookat, &rightVector);
 	
 	//D3DXMatrixInverse(&matView, NULL, &matView);
 	D3DXMatrixRotationYawPitchRoll(&matRotate, xIndex2, yIndex2, 0);
-	D3DXMatrixTranslation(&toCenter, cubie.dimension, -(cubie.dimension), 0.65f + (cubie.dimension));
-	D3DXMatrixTranslation(&fromCenter, -cubie.dimension, (cubie.dimension), -(0.65f + (cubie.dimension)));
+	//D3DXVec3TransformCoord(&vLookat, &vLookat, &matRotate);
+	//D3DXVec3Normalize(&vLookat, &vLookat);
+	//D3DXMatrixTranslation(&toCenter, cubie.dimension, -(cubie.dimension), 0.65f + (cubie.dimension));
+	//D3DXMatrixTranslation(&fromCenter, -cubie.dimension, (cubie.dimension), -(0.65f + (cubie.dimension)));
 
-	//D3DXMatrixIdentity(&matView);
+	D3DXMatrixIdentity(&matView);
 	//D3DXMatrixMultiply(&matView, &matView, &toCenter);
 	//D3DXMatrixIdentity(&matView);
 	//D3DXMatrixMultiply(&matView, &matView, &fromCenter);
-	D3DXMatrixMultiply(&matView, &toCenter, &matRotate);
+	//D3DXMatrixMultiply(&matView, &toCenter, &matRotate);
 
     D3DXMatrixLookAtLH( &matView, &vCamera, &vLookat, &vUpVector);
     g_pd3dDevice -> SetTransform(D3DTS_VIEW, &matView);
@@ -212,7 +233,7 @@ void Render()
 
 		
 		int zVal = 0;
-		for (int i = 0; i < 9; i++)
+		for (int i = 0; i < 27; i++)
 		{
 			if (i < 3)
 				zVal = 0;
@@ -220,10 +241,10 @@ void Render()
 				++zVal;
 			if (zVal > 2)
 				zVal = 0;
-			cubie.render(matRotateY, matRotateH, matRotateV, WorldMat, TranslateMat, TranslateMat2, zVal, i);
+			cubie.render(matRotateY, matRotateH, matRotateV, WorldMat, TranslateMat, TranslateMat2, panel, zVal, i);
 		}
 		
-		panel.render(matRotateY, WorldMat/*, (D3DX_PI / 2)*/);
+		//panel.render(matRotateY, WorldMat/*, (D3DX_PI / 2)*/);
 
 		
 

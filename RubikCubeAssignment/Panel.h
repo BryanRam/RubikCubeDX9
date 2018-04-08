@@ -6,20 +6,20 @@
 #include <functional>
 
 
-//// A structure for our custom vertex type
-//struct CUSTOMVERTEX
-//{
-//	float x, y, z;      // X, Y, Z position of the vertex.
-//	DWORD colour;       // The vertex color
-//};
-//
-//DWORD Black = 0x00000000;
-//DWORD Blue = 0x000000ff;
-//DWORD White = 0x00ffffff;
-//DWORD Yellow = 0x00ffff00;
-//DWORD Green = 0x008000;
-//DWORD Orange = 0x00ffa500;
-//DWORD Red = 0xff0000;
+// A structure for our custom vertex type
+struct CUSTOMVERTEX
+{
+	float x, y, z;      // X, Y, Z position of the vertex.
+	DWORD colour;       // The vertex color
+};
+
+DWORD Black = 0x00000000;
+DWORD Blue = 0x000000ff;
+DWORD White = 0x00ffffff;
+DWORD Yellow = 0x00ffff00;
+DWORD Green = 0x008000;
+DWORD Orange = 0x00ffa500;
+DWORD Red = 0xff0000;
 
 // The structure of a vertex in our vertex buffer...
 #define D3DFVF_CUSTOMVERTEX (D3DFVF_XYZ | D3DFVF_DIFFUSE)
@@ -89,21 +89,21 @@ class CUBIE_PANEL
 			return S_OK;
 		}
 
-		void render(D3DXMATRIX matRotateY, D3DXMATRIX WorldMat, float val = 0.0f)
+		void render(D3DXMATRIX matRotateY, D3DXMATRIX WorldMat, float hOffset, float val = 0.0f)
 		{	
-			renderVCube(matRotateY, WorldMat, val);
-			renderHCube(matRotateY, WorldMat, val);
-			renderREdge(matRotateY, WorldMat, 1, 1, val);
-			renderREdge(matRotateY, WorldMat, -1, 1, val);
-			renderREdge(matRotateY, WorldMat, 1, -1, val);
-			renderREdge(matRotateY, WorldMat, -1, -1, val);
+			renderVCube(matRotateY, WorldMat, hOffset, val);
+			renderHCube(matRotateY, WorldMat, hOffset, val);
+			renderREdge(matRotateY, WorldMat, hOffset, 1, 1, val);
+			renderREdge(matRotateY, WorldMat, hOffset, -1, 1, val);
+			renderREdge(matRotateY, WorldMat, hOffset, 1, -1, val);
+			renderREdge(matRotateY, WorldMat, hOffset, -1, -1, val);
 
 		}
 
-		void renderVCube(D3DXMATRIX matRotateY, D3DXMATRIX WorldMat, float val = 0.0f )
+		void renderVCube(D3DXMATRIX matRotateY, D3DXMATRIX WorldMat, float hOffset, float val = 0.0f )
 		{
 			D3DXMATRIX TranslateMat3;
-			D3DXMatrixTranslation(&TranslateMat3, /*-(cubie_dimension/2.5)*/ 0.0f, 0.0f,  /*0.65f*/0.0f);
+			D3DXMatrixTranslation(&TranslateMat3, hOffset, 0.0f,  /*0.65f*/0.0f);
 
 			
 			
@@ -139,10 +139,15 @@ class CUBIE_PANEL
 			render_target_->DrawPrimitive(D3DPT_LINESTRIP, 0, 6);*/
 		}
 
-		void renderHCube(D3DXMATRIX matRotateY, D3DXMATRIX WorldMat, float val = 0.0f)
+		void renderHCube(D3DXMATRIX matRotateY, D3DXMATRIX WorldMat, float hOffset, float val = 0.0f)
 		{
 			D3DXMATRIX rotateMatX;
 			D3DXMatrixRotationYawPitchRoll(&rotateMatX, 0, val, 0); //rotate 90 degrees
+
+			D3DXMATRIX TranslateMat3;
+			D3DXMatrixTranslation(&TranslateMat3, hOffset, 0.0f,  /*0.65f*/0.0f);
+
+			D3DXMatrixMultiply(&WorldMat, &WorldMat, &TranslateMat3);
 
 			D3DXMatrixMultiply(&WorldMat, &WorldMat, &rotateMatX);
 			
@@ -161,19 +166,25 @@ class CUBIE_PANEL
 			render_target_->SetTransform(D3DTS_WORLD, &WorldMat);
 		}
 
-		void renderREdge(D3DXMATRIX matRotateY, D3DXMATRIX WorldMat, int posx = 1, int posy=1, float val = 0.0f)
+		void renderREdge(D3DXMATRIX matRotateY, D3DXMATRIX WorldMat, float hOffset, int posx = 1, int posy=1, float val = 0.0f)
 		{
 			int j = 0;
 			
 			D3DXMATRIX rotateMatX;
 			D3DXMatrixRotationYawPitchRoll(&rotateMatX, 0, val, 0); //rotate 90 degrees
-			D3DXMatrixMultiply(&WorldMat, &WorldMat, &rotateMatX);
 
 			D3DXMATRIX TranslateMat3;
-			D3DXMatrixTranslation(&TranslateMat3, (vCubeWidth-0.048f)*posx, (vCubeHeight-0.25f)*posy, 0.0f);
+			D3DXMatrixTranslation(&TranslateMat3, hOffset, 0.0f,  /*0.65f*/0.0f);
+
+			D3DXMatrixMultiply(&WorldMat, &WorldMat, &TranslateMat3);
+
+			D3DXMatrixMultiply(&WorldMat, &WorldMat, &rotateMatX);
+
+			D3DXMATRIX TranslateMat4;
+			D3DXMatrixTranslation(&TranslateMat4, (vCubeWidth-0.048f)*posx, (vCubeHeight-0.25f)*posy, 0.0f);
 			
 			
-				D3DXMatrixMultiply(&WorldMat, &WorldMat, &TranslateMat3);
+				D3DXMatrixMultiply(&WorldMat, &WorldMat, &TranslateMat4);
 
 				render_target_->SetTransform(D3DTS_WORLD, &WorldMat);
 				

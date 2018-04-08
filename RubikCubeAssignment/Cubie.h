@@ -4,22 +4,23 @@
 #include <vector>
 #include <algorithm>
 #include <functional>
+#include "Panel.h"
 
 
 // A structure for our custom vertex type
-struct CUSTOMVERTEX
-{
-	float x, y, z;      // X, Y, Z position of the vertex.
-	DWORD colour;       // The vertex color
-};
-
-DWORD Black = 0x00000000;
-DWORD Blue = 0x000000ff;
-DWORD White = 0x00ffffff;
-DWORD Yellow = 0x00ffff00;
-DWORD Green = 0x008000;
-DWORD Orange = 0x00ffa500;
-DWORD Red = 0xff0000;
+//struct CUSTOMVERTEX
+//{
+//	float x, y, z;      // X, Y, Z position of the vertex.
+//	DWORD colour;       // The vertex color
+//};
+//
+//DWORD Black = 0x00000000;
+//DWORD Blue = 0x000000ff;
+//DWORD White = 0x00ffffff;
+//DWORD Yellow = 0x00ffff00;
+//DWORD Green = 0x008000;
+//DWORD Orange = 0x00ffa500;
+//DWORD Red = 0xff0000;
 
 // The structure of a vertex in our vertex buffer...
 #define D3DFVF_CUSTOMVERTEX (D3DFVF_XYZ | D3DFVF_DIFFUSE)
@@ -55,6 +56,7 @@ class CUBIE
 		float dimension = 1.705f;
 		float cubie_side = dimension/2;
 		DWORD colour = Black;
+		CUBIE_PANEL * panel = new CUBIE_PANEL(Red);
 
 
 		LPDIRECT3DDEVICE9 render_target_;
@@ -131,17 +133,17 @@ class CUBIE
 		{
 			// Store the render target for later use...
 			render_target_ = device;
-
+			panel->initialise(device);
 			return S_OK;
 		}
 
 		void render(D3DXMATRIX matRotateY, D3DXMATRIX matRotateH, D3DXMATRIX matRotateV, D3DXMATRIX WorldMat, D3DXMATRIX TranslateMat,
-			D3DXMATRIX TranslateMat2, int zVal, int count = 1)
+			D3DXMATRIX TranslateMat2, CUBIE_PANEL panels, int zVal, int count = 1)
 		{	
 			D3DXMATRIX TranslateMat3;
 			D3DXMatrixTranslation(&TranslateMat3, 0.0f, -24.0f, 0.0f);
 
-			RenderCubie(matRotateY, matRotateH, matRotateV, WorldMat, TranslateMat, zVal, count);
+			RenderCubie(matRotateY, matRotateH, matRotateV, WorldMat, TranslateMat, panel, zVal, count);
 
 			//RenderStuds(matRotateY, WorldMat, TranslateMat2, count);
 			//D3DXMatrixIdentity(&WorldMat);								// Set WorldMat to identity matrice
@@ -266,6 +268,8 @@ class CUBIE
 			memcpy(cVertices, indices, sizeof(indices));
 			i_buffer->Unlock();
 
+			panel->Setup();
+
 			return S_OK;
 		}
 
@@ -275,7 +279,7 @@ class CUBIE
 	private:
 		
 		
-		void RenderCubie(D3DXMATRIX matRotateY, D3DXMATRIX matRotateH,D3DXMATRIX matRotateV, D3DXMATRIX WorldMat, D3DXMATRIX TranslateMat, int zVal, int count = 1)
+		void RenderCubie(D3DXMATRIX matRotateY, D3DXMATRIX matRotateH,D3DXMATRIX matRotateV, D3DXMATRIX WorldMat, D3DXMATRIX TranslateMat, CUBIE_PANEL* panel, int zVal, int count = 1)
 		{
 			int k = count / 9;
 			int j;
@@ -323,16 +327,16 @@ class CUBIE
 
 			if (count < 9)
 			{
-				if (count % 3 == 0)
-				{
-					D3DXMatrixMultiply(&WorldMat3, &WorldMat3, &tMat3);
-					D3DXMatrixIdentity(&WorldMat3);
-					
-					//D3DXMatrixMultiply(&WorldMat3, &WorldMat3, &tMat4);
-					D3DXMatrixMultiply(&WorldMat3, &WorldMat3, &matRotateV);
-					D3DXMatrixMultiply(&WorldMat3, &WorldMat3, &emptyMat);
-					D3DXMatrixMultiply(&WorldMat, &WorldMat, &WorldMat3);
-				}
+				//if (count % 3 == 0)
+				//{
+				//	D3DXMatrixMultiply(&WorldMat3, &WorldMat3, &tMat3);
+				//	D3DXMatrixIdentity(&WorldMat3);
+				//	
+				//	//D3DXMatrixMultiply(&WorldMat3, &WorldMat3, &tMat4);
+				//	D3DXMatrixMultiply(&WorldMat3, &WorldMat3, &matRotateV);
+				//	D3DXMatrixMultiply(&WorldMat3, &WorldMat3, &emptyMat);
+				//	D3DXMatrixMultiply(&WorldMat, &WorldMat, &WorldMat3);
+				//}
 				
 				
 				D3DXMatrixMultiply(&WorldMat2, &WorldMat2, &tMat);
@@ -370,6 +374,10 @@ class CUBIE
 
 			// draw the cube
 			render_target_->DrawIndexedPrimitive(D3DPT_TRIANGLELIST, 0, 0, 8, 0, 12);
+			if(i == 0)
+			panel->render(matRotateY, WorldMat2, i * (dimension - (panel->hCubeWidth)));
+			else
+				panel->render(matRotateY, WorldMat2, i * (dimension-(panel->hCubeWidth)));
 			//render_target_->DrawIndexedPrimitive(D3DPT_LINESTRIP, 0, 0, 8, 0, 12);
 		}
 
