@@ -49,5 +49,29 @@
     <Image Include="TimesSquareTexture.png">
       <Filter>Resource Files</Filter>
     </Image>
+    <Image Include="Rubik’s_blue.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Rubik’s_green.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Rubik’s_orange.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Rubik’s_red.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Rubik’s_white.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Rubik’s_yellow.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Rubik_green2.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Green_def.png">
+      <Filter>Resource Files</Filter>
+    </Image>
   </ItemGroup>
 </Project>

@@ -94,7 +94,7 @@ HRESULT SetupD3D(HWND hWnd)
 	// Turn off the lighting, as we're using our own vertex colours.
 	//g_pd3dDevice -> SetRenderState(D3DRS_LIGHTING, FALSE);
 
-	g_pd3dDevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
+	g_pd3dDevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_CCW);
 
 	/*Initialise brick object*/
 	/*brick6X16.initialise(g_pd3dDevice);
@@ -263,7 +263,7 @@ void Render()
 
 
     // Clear the backbuffer to a dark blue colour.
-    g_pd3dDevice -> Clear(0, NULL, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER, D3DCOLOR_XRGB(0, 0, 0), 1.0f, 0);
+    g_pd3dDevice -> Clear(0, NULL, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER, D3DCOLOR_XRGB(150, 150, 150), 1.0f, 0);
 
     // Begin the scene...
 	if (SUCCEEDED(g_pd3dDevice->BeginScene()))

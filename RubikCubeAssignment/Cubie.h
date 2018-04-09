@@ -22,6 +22,16 @@
 //DWORD Orange = 0x00ffa500;
 //DWORD Red = 0xff0000;
 
+// A structure for our custom vertex type
+struct CUSTOMVERTEX2
+{
+	D3DXVECTOR3 position;	// Position
+	D3DXVECTOR3 normal;		// Vertex normal
+	DWORD colour;
+	float u, v;				// Texture co-ordinates.
+};
+
+
 // The structure of a vertex in our vertex buffer...
 #define D3DFVF_CUSTOMVERTEX2 (D3DFVF_XYZ | D3DFVF_NORMAL | D3DFVF_TEX1)
 #define SAFE_RELEASE(p)      {if(p) {(p)->Release(); (p)=NULL;}}
@@ -41,14 +51,7 @@ std::vector<float> transYCoordsFromCenter;
 const int Textures = 7;
 LPDIRECT3DTEXTURE9		g_pTextures[Textures];   // Array of pointers for the textures.
 
-// A structure for our custom vertex type
-struct CUSTOMVERTEX2
-{
-	D3DXVECTOR3 position;	// Position
-	D3DXVECTOR3 normal;		// Vertex normal
-	DWORD colour;
-	float u, v;				// Texture co-ordinates.
-};
+
 
 struct transCoords
 {
@@ -111,31 +114,39 @@ class CUBIE
 							  (dimension * mul/2),
 			0, 0 };
 
-		transCoords vCoords[27] = { {0, -dimension, dimension, 0, dimension, -dimension},
+		transCoords vCoords[27] = { {0, -dimension, dimension, 
+									 0, dimension, -dimension},
 								   {0},
 								   {0},
-								   {0, -dimension, 0, 0, dimension, 0},
+								   {0, -dimension, 0, 
+									0, dimension, 0},
 								   { 0 },
 								   { 0 },
-								   {0, -dimension, 0, -dimension, dimension, dimension },
+								   {0, -dimension, 0, 
+									0, dimension, dimension },
 								   { 0 },
 								   { 0 },
-								   {0, 0, dimension, 0, 0, -dimension},
+								   {0, 0, dimension, 
+									0, 0, -dimension},
 								   { 0 },
 								   { 0 },
 								   { 0 },
 								   { 0 },
 								   { 0 },
-								   {0, 0, -dimension, 0, 0, dimension},
+								   {0, 0, -dimension, 
+									0, 0, dimension},
 								   { 0 },
 								   { 0 },
-								   {0, dimension, dimension, 0, -dimension, -dimension},
+								   {0, dimension, dimension, 
+									0, -dimension, -dimension},
 								   { 0 },
 								   { 0 },
-								   {0, dimension, 0, 0, -dimension, 0 },
+								   {0, dimension, 0, 
+									0, -dimension, 0 },
 								   { 0 },
 								   { 0 },
-								   {0, dimension, -dimension, 0, -dimension, dimension},
+								   {0, dimension, -dimension, 
+									0, -dimension, dimension},
 								   { 0 },
 								   { 0 },
 
@@ -184,13 +195,28 @@ class CUBIE
 
 		void LoadTextures()
 		{
-			D3DXCreateTextureFromFile(render_target_, "BrickTexture.png", &g_pTextures[0]);
+			D3DXCreateTextureFromFile(render_target_, "Green_def.png", &g_pTextures[0]);
+			D3DXCreateTextureFromFile(render_target_, "Green_def.png", &g_pTextures[1]);
+			D3DXCreateTextureFromFile(render_target_, "Green_def.png", &g_pTextures[2]);
+			D3DXCreateTextureFromFile(render_target_, "Green_def.png", &g_pTextures[3]);
+			D3DXCreateTextureFromFile(render_target_, "Green_def.png", &g_pTextures[4]);
+			D3DXCreateTextureFromFile(render_target_, "Green_def.png", &g_pTextures[5]);
+
+			/*D3DXCreateTextureFromFile(render_target_, "Rubik’s_blue.png", &g_pTextures[0]);
+			D3DXCreateTextureFromFile(render_target_, "Rubik’s_green.png", &g_pTextures[1]);
+			D3DXCreateTextureFromFile(render_target_, "Rubik’s_orange.png", &g_pTextures[2]);
+			D3DXCreateTextureFromFile(render_target_, "Rubik’s_red.png", &g_pTextures[3]);
+			D3DXCreateTextureFromFile(render_target_, "Rubik’s_white.png", &g_pTextures[4]);
+			D3DXCreateTextureFromFile(render_target_, "Rubik’s_yellow.png", &g_pTextures[5]);*/
+
+			/*D3DXCreateTextureFromFile(render_target_, "BrickTexture.png", &g_pTextures[0]);
 			D3DXCreateTextureFromFile(render_target_, "CloudTexture.png", &g_pTextures[1]);
 			D3DXCreateTextureFromFile(render_target_, "DXTexture.png", &g_pTextures[2]);
 			D3DXCreateTextureFromFile(render_target_, "TimesSquareTexture.png", &g_pTextures[3]);
 			D3DXCreateTextureFromFile(render_target_, "Pattern1Texture.png", &g_pTextures[4]);
-			D3DXCreateTextureFromFile(render_target_, "TilesTexture.png", &g_pTextures[5]);
-			D3DXCreateTextureFromFile(render_target_, "CircleTexture.png", &g_pTextures[6]);
+			D3DXCreateTextureFromFile(render_target_, "TilesTexture.png", &g_pTextures[5]);*/
+
+			D3DXCreateTextureFromFile(render_target_, "Green_def.png", &g_pTextures[6]);
 		}
 
 		void render(D3DXMATRIX matRotateY, 
@@ -222,7 +248,7 @@ class CUBIE
 			int BufferSize = Vertices * sizeof(CUSTOMVERTEX2);
 
 			// Create the vertex buffer.
-			if (FAILED(render_target_->CreateVertexBuffer(BufferSize, 0, D3DFVF_CUSTOMVERTEX, D3DPOOL_DEFAULT, &g_cubeVertexBuffer, NULL)))
+			if (FAILED(render_target_->CreateVertexBuffer(BufferSize, 0, D3DFVF_CUSTOMVERTEX2, D3DPOOL_DEFAULT, &g_cubeVertexBuffer, NULL)))
 			{
 				return E_FAIL; // if the vertex buffer could not be created.
 			}
@@ -240,7 +266,10 @@ class CUBIE
 
 			DWORD FaceColour = 0x00ff00000;
 
-
+			for (int i = 0; i < 36; i++)
+			{
+				pVertices[i].colour = Black;
+			}
 
 			// Side 1 - Front face
 			pVertices[0].position.x = -cubie_side;	// Vertex co-ordinate.
@@ -577,129 +606,12 @@ class CUBIE
 			// Unlock the vertex buffer...
 			g_cubeVertexBuffer->Unlock();
 
-			panelRed->Setup();
+			//panelRed->Setup();
 
 			return S_OK;
 		}
 				
-		HRESULT SetupCubie()
-		{
-			int cubeVertices = cubeSides * 3;
-			int cubeBufferSize = cubeVertices * sizeof(CUSTOMVERTEX);
-
-			if (FAILED(render_target_->CreateVertexBuffer(cubeBufferSize, 0, D3DFVF_CUSTOMVERTEX, D3DPOOL_DEFAULT, &g_cubeVertexBuffer, NULL)))
-			{
-				return E_FAIL; // if the vertex buffer culd not be created.
-			}
-
-			// Fill the buffer with appropriate vertices to describe the circle.
-
-			// Create a pointer to the first vertex in the buffer
-			// Also lock it, so nothing else can touch it while the values are being inserted.
-			VOID* cVertices;
-			if (FAILED(g_cubeVertexBuffer->Lock(0, 0, (void**)&cVertices, 0)))
-			{
-				return E_FAIL;  // if the pointer to the vertex buffer could not be established.
-			}
-
-			// create the vertices using the CUSTOMVERTEX struct
-
-			CUSTOMVERTEX vertices[] =
-			{
-				/*Back Half   Bottom view  Heights: 3.2(1.6), 9.6(4.8)
-				0	1		2	3
-				2	3		6	7
-				*/
-				{ -cubie_side, cubie_side, -cubie_side /*-12.8f*/, brick_colour /*D3DCOLOR_XRGB(0, 0, 255)*/, },    // vertex 0 
-				{ cubie_side, cubie_side, -cubie_side /*-12.8f*/, brick_colour/*D3DCOLOR_XRGB(0, 255, 0)*/, },     // vertex 1
-				{ -cubie_side, -cubie_side, -cubie_side /*-12.8f*/, brick_colour/*D3DCOLOR_XRGB(255, 0, 0)*/, },   // 2
-				{ cubie_side, -cubie_side, -cubie_side /*-12.8f*/, brick_colour/*D3DCOLOR_XRGB(0, 255, 255)*/, },  // 3
-
-																																															/*Front Half	Top view
-																																															4	5		0	1
-																																															6	7		4	5
-																																															*/
-				{ -cubie_side, cubie_side, cubie_side /*12.8f*/, brick_colour/*D3DCOLOR_XRGB(0, 0, 255)*/, },     // ...
-				{ cubie_side, cubie_side, cubie_side /*12.8f*/, brick_colour/*D3DCOLOR_XRGB(255, 0, 0)*/, },
-				{ -cubie_side, -cubie_side, cubie_side /*12.8f*/, brick_colour/*D3DCOLOR_XRGB(0, 255, 0)*/, },
-				{ cubie_side, -cubie_side, cubie_side /*12.8f*/, brick_colour/*D3DCOLOR_XRGB(0, 255, 255)*/, },
-			};
-
-
-
-
-			//VOID* pVoid;    // a void pointer
-
-			// lock v_buffer and load the vertices into it
-			//v_buffer->Lock(0, 0, (void**)&pVoid, 0);
-			memcpy(cVertices, vertices, sizeof(vertices));
-			//v_buffer->Unlock();
-
-
-
-
-			g_cubeVertexBuffer->Unlock();
-
-			// create the indices using an int array
-			short indices[] =
-			{
-				2, 3, 6,
-				6, 3, 7,
-
-				0, 2, 4,
-				4, 2, 6,
-
-				5, 1, 4,
-				4, 1, 0,
-
-				7, 3, 5,
-				5, 3, 1,
-
-				0, 1, 2,
-				2, 1, 3,
-
-				7, 5, 6,
-				6, 5, 4,
-
-				/*
-				0, 1, 2,    // side 1
-				2, 1, 3,
-
-				4, 0, 6,    // side 2
-				6, 0, 2,
-
-				7, 5, 6,    // side 3
-				6, 5, 4,
-
-				3, 1, 7,    // side 4
-				7, 1, 5,
-
-				4, 5, 0,    // side 5
-				0, 5, 1,
-
-				3, 7, 2,    // side 6
-				2, 7, 6,
-				*/
-			};
-
-
-			render_target_->CreateIndexBuffer(36 * sizeof(short),    // 3 per triangle, 12 triangles
-				0,
-				D3DFMT_INDEX16,
-				D3DPOOL_MANAGED,
-				&i_buffer,
-				NULL);
-
-
-			// lock i_buffer and load the indices into it
-			i_buffer->Lock(0, 0, (void**)&cVertices, 0);
-			memcpy(cVertices, indices, sizeof(indices));
-			i_buffer->Unlock();
-
-			panelRed->Setup();
-
-			return S_OK;
-		}
+		
 
 		
 
@@ -758,8 +670,33 @@ class CUBIE
 
 			//D3DXMatrixMultiply(&WorldMat, &WorldMat, &tMat);
 
+			/*if (count % 3 == 0)
+			{
+				D3DXMatrixTranslation(&tMat, toArr[count], 0.0f, toArr2[count]);
+				D3DXMatrixMultiply(&WorldMat2, &WorldMat2, &tMat);
 
-			if (count < 9)
+				D3DXMatrixIdentity(&WorldMat2);
+
+				D3DXMatrixTranslation(&tMat2, fromArr[count], 0.0f, fromArr2[count]);
+				D3DXMatrixMultiply(&WorldMat2, &WorldMat2, &tMat2);
+				D3DXMatrixMultiply(&WorldMat2, &WorldMat2, &matRotateH);
+
+
+				D3DXMatrixMultiply(&WorldMat3, &WorldMat3, &WorldMat2);
+				D3DXMatrixMultiply(&WorldMat3, &WorldMat3, &tMat3);
+				D3DXMatrixIdentity(&WorldMat3);
+
+				D3DXMatrixMultiply(&WorldMat3, &WorldMat3, &tMat4);
+				D3DXMatrixMultiply(&WorldMat3, &WorldMat3, &matRotateV);
+				D3DXMatrixMultiply(&WorldMat3, &WorldMat3, &emptyMat);
+				D3DXMatrixMultiply(&WorldMat2, &WorldMat2, &WorldMat3);
+
+
+
+				D3DXMatrixMultiply(&WorldMat2, &WorldMat2, &WorldMat);
+			}
+
+			else*/ if ((count < 9))
 			{
 				D3DXMatrixTranslation(&tMat, toArr[count], 0.0f, toArr2[count]);
 				D3DXMatrixMultiply(&WorldMat2, &WorldMat2, &tMat);
@@ -789,18 +726,22 @@ class CUBIE
 
 				D3DXMatrixMultiply(&WorldMat2, &WorldMat2, &matRotateH);
 
-				//if ((count) % 3 == 0)
-				//{
-				//	D3DXMatrixMultiply(&WorldMat3, &WorldMat3, &WorldMat2);
-				//	D3DXMatrixMultiply(&WorldMat3, &WorldMat3, &tMat3);
-				//	D3DXMatrixIdentity(&WorldMat3);
-				//	D3DXMatrixMultiply(&WorldMat3, &WorldMat3, &tMat4);
-				//	D3DXMatrixMultiply(&WorldMat3, &WorldMat3, &matRotateV);
-				//	//D3DXMatrixIdentity(&WorldMat3);
-				//	//D3DXMatrixMultiply(&WorldMat2, &WorldMat2, &WorldMat3);
-				//	D3DXMatrixMultiply(&WorldMat3, &WorldMat3, &emptyMat);
-				//	D3DXMatrixMultiply(&WorldMat2, &WorldMat2, &WorldMat3);
-				//}
+				if ((count) % 3 == 0)
+				{
+					D3DXMatrixMultiply(&WorldMat3, &WorldMat3, &WorldMat2);
+
+					//D3DXMatrixTranslation(&emptyMat, 0.0f, 0.0f, -(0.65f * dimension));
+					//D3DXMatrixMultiply(&WorldMat3, &WorldMat3, &emptyMat);
+					//D3DXMatrixMultiply(&WorldMat3, &WorldMat3, &tMat4);
+					D3DXMatrixIdentity(&WorldMat3);
+					//D3DXMatrixMultiply(&WorldMat3, &WorldMat3, &tMat3);
+					D3DXMatrixMultiply(&WorldMat3, &WorldMat3, &matRotateV);
+					//D3DXMatrixIdentity(&WorldMat3);
+					//D3DXMatrixMultiply(&WorldMat2, &WorldMat2, &WorldMat3);
+					//D3DXMatrixTranslation(&emptyMat, 0.0f, 0.0f, -0.65f);
+					//D3DXMatrixMultiply(&WorldMat3, &WorldMat3, &emptyMat);
+					D3DXMatrixMultiply(&WorldMat2, &WorldMat2, &WorldMat3);
+				}
 
 				/*D3DXMatrixMultiply(&WorldMat3, &WorldMat3, &WorldMat2);
 				D3DXMatrixMultiply(&WorldMat3, &WorldMat3, &tMat3);
@@ -820,7 +761,7 @@ class CUBIE
 			
 
 			///*Middle hRotation
-			else if((count < 18) && (count > 8))
+			else if(/*(count % 3 != 0) && */(count < 18) && (count > 8))
 			{
 			D3DXMatrixTranslation(&tMat, toArr[count - 9], -(dimension), toArr2[count - 9]);
 			D3DXMatrixMultiply(&WorldMat2, &WorldMat2, &tMat);
@@ -831,6 +772,22 @@ class CUBIE
 			D3DXMatrixMultiply(&WorldMat2, &WorldMat2, &tMat2);
 			
 			D3DXMatrixMultiply(&WorldMat2, &WorldMat2, &matRotateH2);
+
+			//if ((count) % 3 == 0)
+			//{
+			//	D3DXMatrixMultiply(&WorldMat3, &WorldMat3, &WorldMat2);
+			//	//D3DXMatrixTranslation(&emptyMat, 0.0f, 0.0f, -(0.65f * dimension));
+			//	//D3DXMatrixMultiply(&WorldMat3, &WorldMat3, &emptyMat);
+			//	//D3DXMatrixMultiply(&WorldMat3, &WorldMat3, &tMat3);
+			//	D3DXMatrixIdentity(&WorldMat3);
+			//	//D3DXMatrixMultiply(&WorldMat3, &WorldMat3, &tMat4);
+			//	D3DXMatrixMultiply(&WorldMat3, &WorldMat3, &matRotateV);
+			//	//D3DXMatrixIdentity(&WorldMat3);
+			//	//D3DXMatrixMultiply(&WorldMat2, &WorldMat2, &WorldMat3);
+			//	//D3DXMatrixTranslation(&emptyMat, 0.0f, 0.0f, -0.65f);
+			//	//D3DXMatrixMultiply(&WorldMat3, &WorldMat3, &emptyMat);
+			//	D3DXMatrixMultiply(&WorldMat2, &WorldMat2, &WorldMat3);
+			//}
 			/*D3DXMatrixMultiply(&WorldMat3, &WorldMat3, &WorldMat2);
 			D3DXMatrixMultiply(&WorldMat3, &WorldMat3, &tMat3);
 			D3DXMatrixIdentity(&WorldMat3);
@@ -867,6 +824,22 @@ class CUBIE
 				D3DXMatrixMultiply(&WorldMat2, &WorldMat2, &tMat2);
 
 				D3DXMatrixMultiply(&WorldMat2, &WorldMat2, &matRotateH3);
+
+				//if ((count) % 3 == 0)
+				//{
+				//	D3DXMatrixMultiply(&WorldMat3, &WorldMat3, &WorldMat2);
+				//	//D3DXMatrixTranslation(&emptyMat, 0.0f, 0.0f, -(0.65f * dimension));
+				//	//D3DXMatrixMultiply(&WorldMat3, &WorldMat3, &emptyMat);
+				//	//D3DXMatrixMultiply(&WorldMat3, &WorldMat3, &tMat3);
+				//	D3DXMatrixIdentity(&WorldMat3);
+				//	//D3DXMatrixMultiply(&WorldMat3, &WorldMat3, &tMat4);
+				//	D3DXMatrixMultiply(&WorldMat3, &WorldMat3, &matRotateV);
+				//	//D3DXMatrixIdentity(&WorldMat3);
+				//	//D3DXMatrixMultiply(&WorldMat2, &WorldMat2, &WorldMat3);
+				//	//D3DXMatrixTranslation(&emptyMat, 0.0f, 0.0f, -0.65f);
+				//	//D3DXMatrixMultiply(&WorldMat3, &WorldMat3, &emptyMat);
+				//	D3DXMatrixMultiply(&WorldMat2, &WorldMat2, &WorldMat3);
+				//}
 				
 
 				D3DXMatrixMultiply(&WorldMat2, &WorldMat2, &WorldMat);
@@ -890,12 +863,14 @@ class CUBIE
 			*/
 
 			// select the vertex and index buffers to use
-			render_target_->SetTexture(0, g_pTextures[0]);
+			//render_target_->SetTexture(0, g_pTextures[0]);
+			render_target_->SetStreamSource(0, g_cubeVertexBuffer, 0, sizeof(CUSTOMVERTEX2));
+			render_target_->SetFVF(D3DFVF_CUSTOMVERTEX2);
 			render_target_->SetTextureStageState(0, D3DTSS_COLORARG1, D3DTA_DIFFUSE);
 			render_target_->SetTextureStageState(0, D3DTSS_COLORARG2, D3DTA_TEXTURE);
 			render_target_->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_MODULATE);
-			render_target_->SetStreamSource(0, g_cubeVertexBuffer, 0, sizeof(CUSTOMVERTEX2));
-			render_target_->SetFVF(D3DFVF_CUSTOMVERTEX2);
+			
+			
 			//render_target_->SetIndices(i_buffer);
 
 			// Render each face in turn, but select a different texture for each one.

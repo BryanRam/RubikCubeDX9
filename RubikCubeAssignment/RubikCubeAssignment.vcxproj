@@ -132,7 +132,15 @@
     <Image Include="CircleTexture.png" />
     <Image Include="CloudTexture.png" />
     <Image Include="DXTexture.png" />
+    <Image Include="Green_def.png" />
     <Image Include="Pattern1Texture.png" />
+    <Image Include="Rubik_green2.png" />
+    <Image Include="Rubik’s_blue.png" />
+    <Image Include="Rubik’s_green.png" />
+    <Image Include="Rubik’s_orange.png" />
+    <Image Include="Rubik’s_red.png" />
+    <Image Include="Rubik’s_white.png" />
+    <Image Include="Rubik’s_yellow.png" />
     <Image Include="TilesTexture.png" />
     <Image Include="TimesSquareTexture.png" />
   </ItemGroup>
