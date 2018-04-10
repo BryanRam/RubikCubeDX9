@@ -4,7 +4,7 @@
 #include <vector>
 #include <algorithm>
 #include <functional>
-#include "Panel.h"
+//#include "Panel.h"
 
 
 // A structure for our custom vertex type
@@ -14,26 +14,26 @@
 //	DWORD colour;       // The vertex color
 //};
 //
-//DWORD Black = 0x00000000;
-//DWORD Blue = 0x000000ff;
-//DWORD White = 0x00ffffff;
-//DWORD Yellow = 0x00ffff00;
-//DWORD Green = 0x008000;
-//DWORD Orange = 0x00ffa500;
-//DWORD Red = 0xff0000;
+DWORD Black = 0x00000000;
+DWORD Blue = 0x000000ff;
+DWORD White = 0x00ffffff;
+DWORD Yellow = 0x00ffff00;
+DWORD Green = 0x008000;
+DWORD Orange = 0x00ffa500;
+DWORD Red = 0xff0000;
 
 // A structure for our custom vertex type
-struct CUSTOMVERTEX2
+struct CUSTOMVERTEX
 {
 	D3DXVECTOR3 position;	// Position
 	D3DXVECTOR3 normal;		// Vertex normal
-	DWORD colour;
 	float u, v;				// Texture co-ordinates.
+	DWORD colour;
 };
 
 
 // The structure of a vertex in our vertex buffer...
-#define D3DFVF_CUSTOMVERTEX2 (D3DFVF_XYZ | D3DFVF_NORMAL | D3DFVF_TEX1)
+#define D3DFVF_CUSTOMVERTEX (D3DFVF_XYZ | D3DFVF_NORMAL | D3DFVF_TEX1)
 #define SAFE_RELEASE(p)      {if(p) {(p)->Release(); (p)=NULL;}}
 
 #pragma once
@@ -67,7 +67,7 @@ class CUBIE
 		float dimension = 1.705f;
 		float cubie_side = dimension/2;
 		DWORD colour = Black;
-		CUBIE_PANEL * panelRed = new CUBIE_PANEL(Red);
+		
 
 
 		LPDIRECT3DDEVICE9 render_target_;
@@ -186,7 +186,6 @@ class CUBIE
 		{
 			// Store the render target for later use...
 			render_target_ = device;
-			panelRed->initialise(device);
 			return S_OK;
 		}
 
@@ -195,21 +194,21 @@ class CUBIE
 
 		void LoadTextures()
 		{
-			D3DXCreateTextureFromFile(render_target_, "Green_def.png", &g_pTextures[0]);
+			/*D3DXCreateTextureFromFile(render_target_, "Green_def.png", &g_pTextures[0]);
 			D3DXCreateTextureFromFile(render_target_, "Green_def.png", &g_pTextures[1]);
 			D3DXCreateTextureFromFile(render_target_, "Green_def.png", &g_pTextures[2]);
 			D3DXCreateTextureFromFile(render_target_, "Green_def.png", &g_pTextures[3]);
 			D3DXCreateTextureFromFile(render_target_, "Green_def.png", &g_pTextures[4]);
-			D3DXCreateTextureFromFile(render_target_, "Green_def.png", &g_pTextures[5]);
+			D3DXCreateTextureFromFile(render_target_, "Green_def.png", &g_pTextures[5]);*/
 
-			/*D3DXCreateTextureFromFile(render_target_, "Rubik’s_blue.png", &g_pTextures[0]);
+			D3DXCreateTextureFromFile(render_target_, "Rubik’s_blue.png", &g_pTextures[0]);
 			D3DXCreateTextureFromFile(render_target_, "Rubik’s_green.png", &g_pTextures[1]);
 			D3DXCreateTextureFromFile(render_target_, "Rubik’s_orange.png", &g_pTextures[2]);
 			D3DXCreateTextureFromFile(render_target_, "Rubik’s_red.png", &g_pTextures[3]);
 			D3DXCreateTextureFromFile(render_target_, "Rubik’s_white.png", &g_pTextures[4]);
-			D3DXCreateTextureFromFile(render_target_, "Rubik’s_yellow.png", &g_pTextures[5]);*/
+			D3DXCreateTextureFromFile(render_target_, "Rubik’s_yellow.png", &g_pTextures[5]);
 
-			/*D3DXCreateTextureFromFile(render_target_, "BrickTexture.png", &g_pTextures[0]);
+			/*D3DXCreateTextureFromFile(render_target_, "Rubik_green2.png", &g_pTextures[0]);
 			D3DXCreateTextureFromFile(render_target_, "CloudTexture.png", &g_pTextures[1]);
 			D3DXCreateTextureFromFile(render_target_, "DXTexture.png", &g_pTextures[2]);
 			D3DXCreateTextureFromFile(render_target_, "TimesSquareTexture.png", &g_pTextures[3]);
@@ -223,7 +222,7 @@ class CUBIE
 			D3DXMATRIX matRotateH, D3DXMATRIX matRotateH2, D3DXMATRIX matRotateH3, 
 			D3DXMATRIX matRotateV, 
 			D3DXMATRIX WorldMat, D3DXMATRIX TranslateMat,
-			D3DXMATRIX TranslateMat2, CUBIE_PANEL panels, int zVal, int count = 1)
+			D3DXMATRIX TranslateMat2, int zVal, int count = 1)
 		{	
 			D3DXMATRIX TranslateMat3;
 			D3DXMatrixTranslation(&TranslateMat3, 0.0f, -24.0f, 0.0f);
@@ -231,7 +230,7 @@ class CUBIE
 			RenderCubie(matRotateY, 
 				matRotateH, matRotateH2, matRotateH3, 
 				matRotateV, WorldMat, TranslateMat, 
-				panelRed, zVal, count);
+				zVal, count);
 
 			//RenderStuds(matRotateY, WorldMat, TranslateMat2, count);
 			//D3DXMatrixIdentity(&WorldMat);								// Set WorldMat to identity matrice
@@ -245,10 +244,10 @@ class CUBIE
 		{
 			// Calculate the number of vertices required, and the size of the buffer to hold them.
 			int Vertices = 2 * 3 * 6;	// Six vertices for each side, six sides.
-			int BufferSize = Vertices * sizeof(CUSTOMVERTEX2);
+			int BufferSize = Vertices * sizeof(CUSTOMVERTEX);
 
 			// Create the vertex buffer.
-			if (FAILED(render_target_->CreateVertexBuffer(BufferSize, 0, D3DFVF_CUSTOMVERTEX2, D3DPOOL_DEFAULT, &g_cubeVertexBuffer, NULL)))
+			if (FAILED(render_target_->CreateVertexBuffer(BufferSize, 0, D3DFVF_CUSTOMVERTEX, D3DPOOL_DEFAULT, &g_cubeVertexBuffer, NULL)))
 			{
 				return E_FAIL; // if the vertex buffer could not be created.
 			}
@@ -256,7 +255,7 @@ class CUBIE
 			// Fill the buffer with appropriate vertices to describe the cube...
 
 			// Create a pointer to the first vertex in the buffer.
-			CUSTOMVERTEX2 *pVertices;
+			CUSTOMVERTEX *pVertices;
 			if (FAILED(g_cubeVertexBuffer->Lock(0, 0, (void**)&pVertices, 0)))
 			{
 				return E_FAIL;  // if the pointer to the vertex buffer could not be established.
@@ -266,11 +265,12 @@ class CUBIE
 
 			DWORD FaceColour = 0x00ff00000;
 
-			for (int i = 0; i < 36; i++)
+			/*for (int i = 0; i < 36; i++)
 			{
 				pVertices[i].colour = Black;
-			}
+			}*/
 
+			/**/
 			// Side 1 - Front face
 			pVertices[0].position.x = -cubie_side;	// Vertex co-ordinate.
 			pVertices[0].position.y = -cubie_side;
@@ -278,6 +278,7 @@ class CUBIE
 			pVertices[0].normal.x = 0;		// Vertex normal.
 			pVertices[0].normal.y = 0;
 			pVertices[0].normal.z = -1;
+			pVertices[0].colour = Black;
 			pVertices[0].u = 0;
 			pVertices[0].v = 0;
 
@@ -287,6 +288,7 @@ class CUBIE
 			pVertices[1].normal.x = 0;
 			pVertices[1].normal.y = 0;
 			pVertices[1].normal.z = -1;
+			pVertices[1].colour = Black;
 			pVertices[1].u = 0;
 			pVertices[1].v = 1;
 
@@ -296,6 +298,7 @@ class CUBIE
 			pVertices[2].normal.x = 0;
 			pVertices[2].normal.y = 0;
 			pVertices[2].normal.z = -1;
+			pVertices[2].colour = Black;
 			pVertices[2].u = 1;
 			pVertices[2].v = 1;
 
@@ -305,6 +308,7 @@ class CUBIE
 			pVertices[3].normal.x = 0;
 			pVertices[3].normal.y = 0;
 			pVertices[3].normal.z = -1;
+			pVertices[3].colour = Black;
 			pVertices[3].u = 1;
 			pVertices[3].v = 0;
 
@@ -314,6 +318,7 @@ class CUBIE
 			pVertices[4].normal.x = 0;
 			pVertices[4].normal.y = 0;
 			pVertices[4].normal.z = -1;
+			pVertices[4].colour = Black;
 			pVertices[4].u = 0;
 			pVertices[4].v = 0;
 
@@ -323,6 +328,7 @@ class CUBIE
 			pVertices[5].normal.x = 0;
 			pVertices[5].normal.y = 0;
 			pVertices[5].normal.z = -1;
+			pVertices[5].colour = Black;
 			pVertices[5].u = 1;
 			pVertices[5].v = 1;
 
@@ -333,6 +339,7 @@ class CUBIE
 			pVertices[6].normal.x = 1;
 			pVertices[6].normal.y = 0;
 			pVertices[6].normal.z = 0;
+			pVertices[6].colour = Black;
 			pVertices[6].u = 0;
 			pVertices[6].v = 0;
 
@@ -342,6 +349,7 @@ class CUBIE
 			pVertices[7].normal.x = 1;
 			pVertices[7].normal.y = 0;
 			pVertices[7].normal.z = 0;
+			pVertices[7].colour = Black;
 			pVertices[7].u = 0;
 			pVertices[7].v = 1;
 
@@ -351,6 +359,7 @@ class CUBIE
 			pVertices[8].normal.x = 1;
 			pVertices[8].normal.y = 0;
 			pVertices[8].normal.z = 0;
+			pVertices[8].colour = Black;
 			pVertices[8].u = 1;
 			pVertices[8].v = 1;
 
@@ -360,6 +369,7 @@ class CUBIE
 			pVertices[9].normal.x = 1;
 			pVertices[9].normal.y = 0;
 			pVertices[9].normal.z = 0;
+			pVertices[9].colour = Black;
 			pVertices[9].u = 1;
 			pVertices[9].v = 0;
 
@@ -369,6 +379,7 @@ class CUBIE
 			pVertices[10].normal.x = 1;
 			pVertices[10].normal.y = 0;
 			pVertices[10].normal.z = 0;
+			pVertices[10].colour = Black;
 			pVertices[10].u = 0;
 			pVertices[10].v = 0;
 
@@ -378,6 +389,7 @@ class CUBIE
 			pVertices[11].normal.x = 1;
 			pVertices[11].normal.y = 0;
 			pVertices[11].normal.z = 0;
+			pVertices[11].colour = Black;
 			pVertices[11].u = 1;
 			pVertices[11].v = 1;
 
@@ -388,6 +400,7 @@ class CUBIE
 			pVertices[12].normal.x = 0;
 			pVertices[12].normal.y = 0;
 			pVertices[12].normal.z = 1;
+			pVertices[12].colour = Black;
 			pVertices[12].u = 0;
 			pVertices[12].v = 0;
 
@@ -397,6 +410,7 @@ class CUBIE
 			pVertices[13].normal.x = 0;
 			pVertices[13].normal.y = 0;
 			pVertices[13].normal.z = 1;
+			pVertices[13].colour = Black;
 			pVertices[13].u = 0;
 			pVertices[13].v = 1;
 
@@ -406,6 +420,7 @@ class CUBIE
 			pVertices[14].normal.x = 0;
 			pVertices[14].normal.y = 0;
 			pVertices[14].normal.z = 1;
+			pVertices[14].colour = Black;
 			pVertices[14].u = 1;
 			pVertices[14].v = 1;
 
@@ -415,6 +430,7 @@ class CUBIE
 			pVertices[15].normal.x = 0;
 			pVertices[15].normal.y = 0;
 			pVertices[15].normal.z = 1;
+			pVertices[15].colour = Black;
 			pVertices[15].u = 1;
 			pVertices[15].v = 0;
 
@@ -424,6 +440,7 @@ class CUBIE
 			pVertices[16].normal.x = 0;
 			pVertices[16].normal.y = 0;
 			pVertices[16].normal.z = 1;
+			pVertices[16].colour = Black;
 			pVertices[16].u = 0;
 			pVertices[16].v = 0;
 
@@ -433,6 +450,7 @@ class CUBIE
 			pVertices[17].normal.x = 0;
 			pVertices[17].normal.y = 0;
 			pVertices[17].normal.z = 1;
+			pVertices[17].colour = Black;
 			pVertices[17].u = 1;
 			pVertices[17].v = 1;
 
@@ -443,6 +461,7 @@ class CUBIE
 			pVertices[18].normal.x = -1;
 			pVertices[18].normal.y = 0;
 			pVertices[18].normal.z = 0;
+			pVertices[18].colour = Black;
 			pVertices[18].u = 0;
 			pVertices[18].v = 0;
 
@@ -452,6 +471,7 @@ class CUBIE
 			pVertices[19].normal.x = -1;
 			pVertices[19].normal.y = 0;
 			pVertices[19].normal.z = 0;
+			pVertices[19].colour = Black;
 			pVertices[19].u = 0;
 			pVertices[19].v = 1;
 
@@ -461,6 +481,7 @@ class CUBIE
 			pVertices[20].normal.x = -1;
 			pVertices[20].normal.y = 0;
 			pVertices[20].normal.z = 0;
+			pVertices[20].colour = Black;
 			pVertices[20].u = 1;
 			pVertices[20].v = 1;
 
@@ -470,6 +491,7 @@ class CUBIE
 			pVertices[21].normal.x = -1;
 			pVertices[21].normal.y = 0;
 			pVertices[21].normal.z = 0;
+			pVertices[21].colour = Black;
 			pVertices[21].u = 1;
 			pVertices[21].v = 0;
 
@@ -479,6 +501,7 @@ class CUBIE
 			pVertices[22].normal.x = -1;
 			pVertices[22].normal.y = 0;
 			pVertices[22].normal.z = 0;
+			pVertices[22].colour = Black;
 			pVertices[22].u = 0;
 			pVertices[22].v = 0;
 
@@ -488,6 +511,7 @@ class CUBIE
 			pVertices[23].normal.x = -1;
 			pVertices[23].normal.y = 0;
 			pVertices[23].normal.z = 0;
+			pVertices[23].colour = Black;
 			pVertices[23].u = 1;
 			pVertices[23].v = 1;
 
@@ -499,6 +523,7 @@ class CUBIE
 			pVertices[24].normal.x = 0;
 			pVertices[24].normal.y = 1;
 			pVertices[24].normal.z = 0;
+			pVertices[24].colour = Black;
 			pVertices[24].u = 0;
 			pVertices[24].v = 0;
 
@@ -508,6 +533,7 @@ class CUBIE
 			pVertices[25].normal.x = 0;
 			pVertices[25].normal.y = 1;
 			pVertices[25].normal.z = 0;
+			pVertices[25].colour = Black;
 			pVertices[25].u = 0;
 			pVertices[25].v = 1;
 
@@ -517,6 +543,7 @@ class CUBIE
 			pVertices[26].normal.x = 0;
 			pVertices[26].normal.y = 1;
 			pVertices[26].normal.z = 0;
+			pVertices[26].colour = Black;
 			pVertices[26].u = 1;
 			pVertices[26].v = 0;
 
@@ -526,6 +553,7 @@ class CUBIE
 			pVertices[27].normal.x = 0;
 			pVertices[27].normal.y = 1;
 			pVertices[27].normal.z = 0;
+			pVertices[27].colour = Black;
 			pVertices[27].u = 1;
 			pVertices[27].v = 0;
 
@@ -535,6 +563,7 @@ class CUBIE
 			pVertices[28].normal.x = 0;
 			pVertices[28].normal.y = 1;
 			pVertices[28].normal.z = 0;
+			pVertices[28].colour = Black;
 			pVertices[28].u = 0;
 			pVertices[28].v = 1;
 
@@ -544,6 +573,7 @@ class CUBIE
 			pVertices[29].normal.x = 0;
 			pVertices[29].normal.y = 1;
 			pVertices[29].normal.z = 0;
+			pVertices[29].colour = Black;
 			pVertices[29].u = 1;
 			pVertices[29].v = 1;
 
@@ -555,6 +585,7 @@ class CUBIE
 			pVertices[30].normal.x = 0;
 			pVertices[30].normal.y = -1;
 			pVertices[30].normal.z = 0;
+			pVertices[30].colour = Black;
 			pVertices[30].u = 0;
 			pVertices[30].v = 0;
 
@@ -564,6 +595,7 @@ class CUBIE
 			pVertices[31].normal.x = 0;
 			pVertices[31].normal.y = -1;
 			pVertices[31].normal.z = 0;
+			pVertices[31].colour = Black;
 			pVertices[31].u = 1;
 			pVertices[31].v = 0;
 
@@ -573,6 +605,7 @@ class CUBIE
 			pVertices[32].normal.x = 0;
 			pVertices[32].normal.y = -1;
 			pVertices[32].normal.z = 0;
+			pVertices[32].colour = Black;
 			pVertices[32].u = 0;
 			pVertices[32].v = 1;
 
@@ -582,6 +615,7 @@ class CUBIE
 			pVertices[33].normal.x = 0;
 			pVertices[33].normal.y = -1;
 			pVertices[33].normal.z = 0;
+			pVertices[33].colour = Black;
 			pVertices[33].u = 1;
 			pVertices[33].v = 0;
 
@@ -591,6 +625,7 @@ class CUBIE
 			pVertices[34].normal.x = 0;
 			pVertices[34].normal.y = -1;
 			pVertices[34].normal.z = 0;
+			pVertices[34].colour = Black;
 			pVertices[34].u = 1;
 			pVertices[34].v = 1;
 
@@ -600,8 +635,10 @@ class CUBIE
 			pVertices[35].normal.x = 0;
 			pVertices[35].normal.y = -1;
 			pVertices[35].normal.z = 0;
+			pVertices[35].colour = Black;
 			pVertices[35].u = 0;
 			pVertices[35].v = 1;
+			//*/
 
 			// Unlock the vertex buffer...
 			g_cubeVertexBuffer->Unlock();
@@ -623,7 +660,7 @@ class CUBIE
 			D3DXMATRIX matRotateH, D3DXMATRIX matRotateH2, D3DXMATRIX matRotateH3, 
 			D3DXMATRIX matRotateV, 
 			D3DXMATRIX WorldMat, D3DXMATRIX TranslateMat, 
-			CUBIE_PANEL* panelRed, int zVal, int count = 1)
+			int zVal, int count = 1)
 		{
 			int k = count / 9;
 			int j;
@@ -864,8 +901,8 @@ class CUBIE
 
 			// select the vertex and index buffers to use
 			//render_target_->SetTexture(0, g_pTextures[0]);
-			render_target_->SetStreamSource(0, g_cubeVertexBuffer, 0, sizeof(CUSTOMVERTEX2));
-			render_target_->SetFVF(D3DFVF_CUSTOMVERTEX2);
+			render_target_->SetStreamSource(0, g_cubeVertexBuffer, 0, sizeof(CUSTOMVERTEX));
+			render_target_->SetFVF(D3DFVF_CUSTOMVERTEX);
 			render_target_->SetTextureStageState(0, D3DTSS_COLORARG1, D3DTA_DIFFUSE);
 			render_target_->SetTextureStageState(0, D3DTSS_COLORARG2, D3DTA_TEXTURE);
 			render_target_->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_MODULATE);

@@ -10,7 +10,7 @@
 #include <d3dx9.h>		// Direct 3D library (for all Direct 3D funtions).
 #include <math.h>
 #include "Cubie.h"
-#include "Panel.h"
+//#include "Panel.h"
 
 //-----------------------------------------------------------------------------
 // Global variables
@@ -35,7 +35,7 @@ float yIndexVRow1 = 0.0f;
 Define different types of bricks
 */
 CUBIE cubie(Black);
-CUBIE_PANEL panel(Red);
+//CUBIE_PANEL panel(Red);
 //LEGO_BRICK brick6X16(6, 16, LEGO_HEIGHT2, Blue);
 //LEGO_BRICK brick2X6Gy(2, 6, LEGO_HEIGHT, White);
 //LEGO_BRICK brick2X6B(2, 6, LEGO_HEIGHT, Yellow);
@@ -102,7 +102,7 @@ HRESULT SetupD3D(HWND hWnd)
 	brick2X6B.initialise(g_pd3dDevice);*/
 //	brick4X2.initialise(g_pd3dDevice);
 	cubie.initialise(g_pd3dDevice);
-	panel.initialise(g_pd3dDevice);
+	//panel.initialise(g_pd3dDevice);
 	/*brick4X2B.initialise(g_pd3dDevice);
 	brick2X4B.initialise(g_pd3dDevice);
 	brick2X2.initialise(g_pd3dDevice);
@@ -299,7 +299,7 @@ void Render()
 				matRotateH, matRotateH2, matRotateH3, 
 				matRotateV, 
 				WorldMat, TranslateMat, TranslateMat2, 
-				panel, zVal, i);
+				zVal, i);
 		}
 		
 		//panel.render(matRotateY, WorldMat/*, (D3DX_PI / 2)*/);
