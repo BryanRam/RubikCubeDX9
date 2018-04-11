@@ -114,27 +114,34 @@ class CUBIE
 							  (dimension * mul/2),
 			0, 0 };
 
-		transCoords vCoords[27] = { {0, -dimension, dimension, 
-									 0, dimension, -dimension},
+		transCoords vCoords[27] = { //0
+									{0, -dimension, (dimension * 2)-0.65f, 
+									 0, dimension, (-dimension * 2)+0.65f},
 								   {0},
 								   {0},
-								   {0, -dimension, 0, 
-									0, dimension, 0},
+								   //3
+								   {0, -dimension, 0-0.65f, 
+									0, dimension, 0+0.65f},
 								   { 0 },
 								   { 0 },
-								   {0, -dimension, 0, 
-									0, dimension, dimension },
+								   //6
+								   {0, -dimension, -(dimension * 2) - 0.65f,
+									0, dimension, (dimension * 2)+ 0.65f },
 								   { 0 },
 								   { 0 },
-								   {0, 0, dimension, 
-									0, 0, -dimension},
+								   //9
+								   {0, dimension, (dimension * 2) - 0.65f,
+									0, -dimension, (-dimension * 2) + 0.65f },
 								   { 0 },
 								   { 0 },
+								   //12
+								   { 0, dimension, 0 - 0.65f,
+								     0, -dimension, 0 + 0.65f },
 								   { 0 },
 								   { 0 },
-								   { 0 },
-								   {0, 0, -dimension, 
-									0, 0, dimension},
+								   //15
+								   {0, dimension, -(dimension * 2) - 0.65f,
+									0, -dimension, (dimension * 2) + 0.65f },
 								   { 0 },
 								   { 0 },
 								   {0, dimension, dimension, 
@@ -215,7 +222,7 @@ class CUBIE
 			D3DXCreateTextureFromFile(render_target_, "Pattern1Texture.png", &g_pTextures[4]);
 			D3DXCreateTextureFromFile(render_target_, "TilesTexture.png", &g_pTextures[5]);*/
 
-			D3DXCreateTextureFromFile(render_target_, "Green_def.png", &g_pTextures[6]);
+			D3DXCreateTextureFromFile(render_target_, "Black_def.png", &g_pTextures[6]);
 		}
 
 		void render(D3DXMATRIX matRotateY, 
@@ -765,13 +772,15 @@ class CUBIE
 
 				if ((count) % 3 == 0)
 				{
+					D3DXMatrixIdentity(&WorldMat3);
 					D3DXMatrixMultiply(&WorldMat3, &WorldMat3, &WorldMat2);
-
+					
 					//D3DXMatrixTranslation(&emptyMat, 0.0f, 0.0f, -(0.65f * dimension));
 					//D3DXMatrixMultiply(&WorldMat3, &WorldMat3, &emptyMat);
-					//D3DXMatrixMultiply(&WorldMat3, &WorldMat3, &tMat4);
+					D3DXMatrixMultiply(&WorldMat3, &WorldMat3, &tMat3);
+					//D3DXMatrixMultiply(&WorldMat3, &WorldMat3, &matRotateV);
 					D3DXMatrixIdentity(&WorldMat3);
-					//D3DXMatrixMultiply(&WorldMat3, &WorldMat3, &tMat3);
+					D3DXMatrixMultiply(&WorldMat3, &WorldMat3, &tMat4);
 					D3DXMatrixMultiply(&WorldMat3, &WorldMat3, &matRotateV);
 					//D3DXMatrixIdentity(&WorldMat3);
 					//D3DXMatrixMultiply(&WorldMat2, &WorldMat2, &WorldMat3);
@@ -810,21 +819,23 @@ class CUBIE
 			
 			D3DXMatrixMultiply(&WorldMat2, &WorldMat2, &matRotateH2);
 
-			//if ((count) % 3 == 0)
-			//{
-			//	D3DXMatrixMultiply(&WorldMat3, &WorldMat3, &WorldMat2);
-			//	//D3DXMatrixTranslation(&emptyMat, 0.0f, 0.0f, -(0.65f * dimension));
-			//	//D3DXMatrixMultiply(&WorldMat3, &WorldMat3, &emptyMat);
-			//	//D3DXMatrixMultiply(&WorldMat3, &WorldMat3, &tMat3);
-			//	D3DXMatrixIdentity(&WorldMat3);
-			//	//D3DXMatrixMultiply(&WorldMat3, &WorldMat3, &tMat4);
-			//	D3DXMatrixMultiply(&WorldMat3, &WorldMat3, &matRotateV);
-			//	//D3DXMatrixIdentity(&WorldMat3);
-			//	//D3DXMatrixMultiply(&WorldMat2, &WorldMat2, &WorldMat3);
-			//	//D3DXMatrixTranslation(&emptyMat, 0.0f, 0.0f, -0.65f);
-			//	//D3DXMatrixMultiply(&WorldMat3, &WorldMat3, &emptyMat);
-			//	D3DXMatrixMultiply(&WorldMat2, &WorldMat2, &WorldMat3);
-			//}
+			if ((count) % 3 == 0)
+			{
+				D3DXMatrixMultiply(&WorldMat3, &WorldMat3, &WorldMat2);
+				D3DXMatrixIdentity(&WorldMat3);
+				//D3DXMatrixTranslation(&emptyMat, 0.0f, 0.0f, -(0.65f * dimension));
+				//D3DXMatrixMultiply(&WorldMat3, &WorldMat3, &emptyMat);
+				D3DXMatrixMultiply(&WorldMat3, &WorldMat3, &tMat3);
+				//D3DXMatrixMultiply(&WorldMat3, &WorldMat3, &matRotateV);
+				D3DXMatrixIdentity(&WorldMat3);
+				D3DXMatrixMultiply(&WorldMat3, &WorldMat3, &tMat4);
+				D3DXMatrixMultiply(&WorldMat3, &WorldMat3, &matRotateV);
+				//D3DXMatrixIdentity(&WorldMat3);
+				//D3DXMatrixMultiply(&WorldMat2, &WorldMat2, &WorldMat3);
+				//D3DXMatrixTranslation(&emptyMat, 0.0f, 0.0f, -0.65f);
+				//D3DXMatrixMultiply(&WorldMat3, &WorldMat3, &emptyMat);
+				D3DXMatrixMultiply(&WorldMat2, &WorldMat2, &WorldMat3);
+			}
 			/*D3DXMatrixMultiply(&WorldMat3, &WorldMat3, &WorldMat2);
 			D3DXMatrixMultiply(&WorldMat3, &WorldMat3, &tMat3);
 			D3DXMatrixIdentity(&WorldMat3);
@@ -914,11 +925,41 @@ class CUBIE
 			for (int i = 0; i < 6; i++)
 			{
 				// Select the texture.
-				render_target_->SetTexture(0, g_pTextures[i]);
+				if ((count % 3 == 0 && i == 1) || (count % 3 == 2 && i == 3))
+				{
+					render_target_->SetTexture(0, g_pTextures[6]);
+					render_target_->DrawPrimitive(D3DPT_TRIANGLELIST, i * 6, 2);
+				}
+				else if ( (k == 0 && i == 5))
+				{
+					render_target_->SetTexture(0, g_pTextures[6]);
+					render_target_->DrawPrimitive(D3DPT_TRIANGLELIST, i * 6, 2);
+					//render_target_->SetTexture(0, g_pTextures[i]);
+				//	render_target_->DrawPrimitive(D3DPT_TRIANGLELIST, i * 6, 2);
+					
+				}
+				else  if ((k == 1 && i == 4) || (k == 1 && i == 5))
+				{
+					render_target_->SetTexture(0, g_pTextures[6]);
+					render_target_->DrawPrimitive(D3DPT_TRIANGLELIST, i * 6, 2);
+				}
+				else if (k == 2 && i == 4)
+				{
+					render_target_->SetTexture(0, g_pTextures[6]);
+					render_target_->DrawPrimitive(D3DPT_TRIANGLELIST, i * 6, 2);
+				}
+				else
+				{
+					render_target_->SetTexture(0, g_pTextures[i]);
 
-				//g_pd3dDevice->DrawPrimitive(D3DPT_TRIANGLELIST, i * 6, 2);
-				// Render the contents of the vertex buffer.
-				render_target_->DrawPrimitive(D3DPT_TRIANGLELIST, i * 6, 2);
+
+
+
+
+					//g_pd3dDevice->DrawPrimitive(D3DPT_TRIANGLELIST, i * 6, 2);
+					// Render the contents of the vertex buffer.
+					render_target_->DrawPrimitive(D3DPT_TRIANGLELIST, i * 6, 2);
+				}
 			}
 
 			// draw the cube
