@@ -684,6 +684,7 @@ class CUBIE
 
 			D3DXQUATERNION Rotation, ScalingRotation;
 			D3DXMatrixIdentity(&WorldMat2);
+			
 			D3DXMatrixIdentity(&WorldMat3);
 			D3DXQuaternionRotationMatrix(&Rotation, &matRotateH);
 			D3DXQuaternionRotationYawPitchRoll(&Rotation, 0.0f, 0.0f, RotateAngle);
@@ -772,7 +773,7 @@ class CUBIE
 
 				if ((count) % 3 == 0)
 				{
-					D3DXMatrixIdentity(&WorldMat3);
+					//D3DXMatrixIdentity(&WorldMat3);
 					D3DXMatrixMultiply(&WorldMat3, &WorldMat3, &WorldMat2);
 					
 					//D3DXMatrixTranslation(&emptyMat, 0.0f, 0.0f, -(0.65f * dimension));
@@ -780,7 +781,7 @@ class CUBIE
 					D3DXMatrixMultiply(&WorldMat3, &WorldMat3, &tMat3);
 					//D3DXMatrixMultiply(&WorldMat3, &WorldMat3, &matRotateV);
 					D3DXMatrixIdentity(&WorldMat3);
-					D3DXMatrixMultiply(&WorldMat3, &WorldMat3, &tMat4);
+					//D3DXMatrixMultiply(&WorldMat3, &WorldMat3, &tMat4);
 					D3DXMatrixMultiply(&WorldMat3, &WorldMat3, &matRotateV);
 					//D3DXMatrixIdentity(&WorldMat3);
 					//D3DXMatrixMultiply(&WorldMat2, &WorldMat2, &WorldMat3);
@@ -822,13 +823,13 @@ class CUBIE
 			if ((count) % 3 == 0)
 			{
 				D3DXMatrixMultiply(&WorldMat3, &WorldMat3, &WorldMat2);
-				D3DXMatrixIdentity(&WorldMat3);
+				//D3DXMatrixIdentity(&WorldMat3);
 				//D3DXMatrixTranslation(&emptyMat, 0.0f, 0.0f, -(0.65f * dimension));
 				//D3DXMatrixMultiply(&WorldMat3, &WorldMat3, &emptyMat);
 				D3DXMatrixMultiply(&WorldMat3, &WorldMat3, &tMat3);
 				//D3DXMatrixMultiply(&WorldMat3, &WorldMat3, &matRotateV);
 				D3DXMatrixIdentity(&WorldMat3);
-				D3DXMatrixMultiply(&WorldMat3, &WorldMat3, &tMat4);
+				//D3DXMatrixMultiply(&WorldMat3, &WorldMat3, &tMat4);
 				D3DXMatrixMultiply(&WorldMat3, &WorldMat3, &matRotateV);
 				//D3DXMatrixIdentity(&WorldMat3);
 				//D3DXMatrixMultiply(&WorldMat2, &WorldMat2, &WorldMat3);
@@ -925,12 +926,27 @@ class CUBIE
 			for (int i = 0; i < 6; i++)
 			{
 				// Select the texture.
-				if ((count % 3 == 0 && i == 1) || (count % 3 == 2 && i == 3))
+				
+				//Add black textures to the cubies	//3 rows, 1 column
+				if ((count % 3 == 0 && i == 1) ||	//Left Row of 9 cubies(, Right side
+					(count % 3 == 2 && i == 3) ||	//Right row of 9 cubies, Left side
+					(count % 3 == 1 && i == 1) ||	//Middle Row of 9 cubies, Left and right sides
+					(count % 3 == 1 && i == 3)
+					)
 				{
 					render_target_->SetTexture(0, g_pTextures[6]);
 					render_target_->DrawPrimitive(D3DPT_TRIANGLELIST, i * 6, 2);
 				}
-				else if ( (k == 0 && i == 5))
+				else if ((zVal == 0 && i == 2) || //Front Row of 9, Back Side
+						 //(zVal == 1 && i == 0) || //Middle Row, Front Side
+						 //(zVal == 1 && i == 2) || //Middle Row, Back Side
+					     (zVal == 2 && i == 0)	  //Back Row, Front Side
+						)
+				{
+					render_target_->SetTexture(0, g_pTextures[6]);
+					render_target_->DrawPrimitive(D3DPT_TRIANGLELIST, i * 6, 2);
+				}
+				else if ( (k == 0 && i == 5)) //Top Row of 9, Bottom side
 				{
 					render_target_->SetTexture(0, g_pTextures[6]);
 					render_target_->DrawPrimitive(D3DPT_TRIANGLELIST, i * 6, 2);
@@ -938,12 +954,14 @@ class CUBIE
 				//	render_target_->DrawPrimitive(D3DPT_TRIANGLELIST, i * 6, 2);
 					
 				}
-				else  if ((k == 1 && i == 4) || (k == 1 && i == 5))
+				else  if ((k == 1 && i == 4) || //Middle row of 9, Top Side 
+						  (k == 1 && i == 5)    //Middle row of 9, Bottom Side
+						 )
 				{
 					render_target_->SetTexture(0, g_pTextures[6]);
 					render_target_->DrawPrimitive(D3DPT_TRIANGLELIST, i * 6, 2);
 				}
-				else if (k == 2 && i == 4)
+				else if (k == 2 && i == 4) //Bottom row of 9, Top Side
 				{
 					render_target_->SetTexture(0, g_pTextures[6]);
 					render_target_->DrawPrimitive(D3DPT_TRIANGLELIST, i * 6, 2);
