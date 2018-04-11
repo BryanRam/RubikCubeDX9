@@ -2,6 +2,7 @@
 #include <stdlib.h>		// Included for the random number generator routines.
 #include <d3dx9.h>		// Direct 3D library (for all Direct 3D funtions).
 #include <vector>
+#include <map>
 #include <algorithm>
 #include <functional>
 //#include "Panel.h"
@@ -59,6 +60,16 @@ struct transCoords
 	float fromX, fromY, fromZ;
 };
 
+struct faces
+{
+	int frontSide,
+		backSide,
+		leftSide,
+		rightSide,
+		topSide,
+		bottomSide;
+};
+
 
 class CUBIE
 {
@@ -79,6 +90,8 @@ class CUBIE
 		float stud_height, stud_radius;
 		DWORD brick_colour;
 		std::vector<float> transXCoordsToCenter;
+		std::map<int, faces> textureStore;
+		std::map<int, faces>::iterator ts_it;
 		float toArr[9] = { dimension, 0.0f, -(dimension), 
 						    dimension, 0.0f, -(dimension), 
 						  dimension, 0.0f, -dimension
@@ -158,6 +171,9 @@ class CUBIE
 								   { 0 },
 
 		                          };
+
+		//faces textureStore[27];
+		
 		//transXCoordsToCenter.insert(transXCoordsToCenter.begin(), {1, -(dimension)+1, -(dimension*2)+1, 0,0,0,0,0,0, 1, 0, -1, 1, 0, -1});
 
 		 
@@ -936,6 +952,20 @@ class CUBIE
 				{
 					render_target_->SetTexture(0, g_pTextures[6]);
 					render_target_->DrawPrimitive(D3DPT_TRIANGLELIST, i * 6, 2);
+					ts_it = textureStore.find(count);
+					if (ts_it != textureStore.end())
+					{
+						switch (i)
+						{
+							case 1:
+								ts_it->second.rightSide = 6;
+								break;
+							case 3:
+								ts_it->second.leftSide = 6;
+								break;
+						}
+						
+					}
 				}
 				else if ((zVal == 0 && i == 2) || //Front Row of 9, Back Side
 						 //(zVal == 1 && i == 0) || //Middle Row, Front Side
@@ -972,7 +1002,24 @@ class CUBIE
 
 
 
+					ts_it = textureStore.find(count);
+					if (ts_it != textureStore.end())
+					{
+						switch (i)
+						{
+						case 1:
+							ts_it->second.rightSide = 6;
+							break;
+						case 3:
+							ts_it->second.leftSide = 6;
+							break;
+						}
 
+					}
+					else
+					{
+						//textureStore.insert(std::make_pair(count,))
+					}
 
 					//g_pd3dDevice->DrawPrimitive(D3DPT_TRIANGLELIST, i * 6, 2);
 					// Render the contents of the vertex buffer.
