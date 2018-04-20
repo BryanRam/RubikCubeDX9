@@ -285,6 +285,7 @@ void Render()
 		D3DXMatrixIdentity(&WorldMat);								// Set WorldMat to identity matrice
 		D3DXMatrixIdentity(&WorldMat2);
 
+		cubie.setY(yIndexVRow1);
 		
 		int zVal = 0;
 		for (int i = 0; i < 27; i++)
