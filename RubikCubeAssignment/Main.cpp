@@ -50,13 +50,17 @@ CUBIE cubie(Black);
 static float g_RotationAngle = 0.0f;
 static float g_RotationAngleH2 = 0.0f;
 static float g_RotationAngleH3 = 0.0f;
+static float g_RotationAngleV1 = 0.0f;
+
 static int count = 1;
 static int countH2 = 1;
 static int countH3 = 1;
+static int countV1 = 1;
+
 bool isRotating = false;
 bool isRotatingH2 = false;
 bool isRotatingH3 = false;
-
+bool isRotatingV1 = false;
 
 // The structure of a vertex in our vertex buffer...
 //#define D3DFVF_CUSTOMVERTEX (D3DFVF_XYZ | D3DFVF_DIFFUSE)
@@ -272,6 +276,7 @@ void Render()
 		SetupViewMatrices();
 
 		xIndexHRow1 = g_RotationAngle;
+		yIndexVRow1 = g_RotationAngleV1;
 
 		D3DXMatrixRotationYawPitchRoll(&matRotateY, /*index*//*0*/xIndex, yIndex/*0*//*index*/, 0/*index*/);
 		D3DXMatrixRotationYawPitchRoll(&matRotateH, xIndexHRow1, 0, 0);
@@ -351,6 +356,21 @@ void Render()
 				g_RotationAngleH3 += 0.035f;
 			}
 		}
+
+		if (isRotatingV1)
+		{
+
+			if (g_RotationAngleV1 >= (D3DX_PI / 2 * countV1))
+			{
+				isRotatingV1 = !isRotatingV1;
+				g_RotationAngleV1 = D3DX_PI / 2 * countV1;
+				++countV1;
+			}
+			else
+			{
+				g_RotationAngleV1 += 0.035f;
+			}
+		}
     }
 
     // Present the backbuffer to the display.
@@ -427,6 +447,10 @@ LRESULT WINAPI MsgProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 
 			case 'h':
 				yIndexVRow1 += 0.1f;
+				return 0;
+				break;
+			case 'j':
+				isRotatingV1 = !isRotatingV1;
 				return 0;
 				break;
 			case 'o':

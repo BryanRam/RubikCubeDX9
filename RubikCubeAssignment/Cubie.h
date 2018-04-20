@@ -771,20 +771,23 @@ class CUBIE
 			//	D3DXQUATERNION  qR;
 			//	D3DXQuaternionRotationAxis(&qR, &D3DXVECTOR3(1.0f, 0.0f, 0.0f), yIndexRowV1);
 
-			//	D3DXVECTOR3 rotCentre(0.0f, -dimension, dimension + 0.65f);
+			//	D3DXVECTOR3 rotCentre(0.0f, 0, dimension-0.425f);
 			//	D3DXMatrixTransformation(&matRotateV, NULL, NULL, NULL, &rotCentre, &qR, /*&D3DXVECTOR3(vCoords[count].toX, vCoords[count].toY, vCoords[count].toZ)*/NULL);
-			//	D3DXMatrixMultiply(&WorldMat2, &WorldMat2, &tMat3);
+			//	D3DXMatrixMultiply(&WorldMat3, &WorldMat3, &tMat3);
 
-			//	D3DXMatrixIdentity(&WorldMat2);
+			//	D3DXMatrixIdentity(&WorldMat3);
 
-			//	D3DXMatrixMultiply(&WorldMat2, &WorldMat2, &tMat4);
+			//	D3DXMatrixMultiply(&WorldMat3, &WorldMat3, &tMat4);
 			//	
-			//	WorldMat2 *= matRotateV;
+			//	WorldMat3 *= matRotateV;
 			//	D3DXMATRIX fixMat;
 			//	D3DXMatrixTranslation(&fixMat, 0.0f, -dimension, dimension-0.65f);
-			//	WorldMat2 *= fixMat;
+			//	WorldMat3 *= fixMat;
+			//	WorldMat2 *= WorldMat3;
 			//	//D3DXMatrixIdentity(&WorldMat2);
 			//}
+
+
 			
 			if ((count < 9))
 			{
@@ -902,13 +905,14 @@ class CUBIE
 
 				D3DXMatrixMultiply(&WorldMat2, &WorldMat2, &WorldMat);
 			}
+			//WorldMat2 *= WorldMat3;
 			if ((count) % 3 == 0)
 			{
 				D3DXQUATERNION  qR;
 				D3DXQuaternionRotationAxis(&qR, &D3DXVECTOR3(1.0f, 0.0f, 0.0f), yIndexRowV1);
 
 				D3DXVECTOR3 rotCentre (0.0f, -dimension, dimension + 0.65f);
-				D3DXMatrixTransformation(&matRotateV, NULL, NULL, NULL, &rotCentre, &qR, /*&D3DXVECTOR3(vCoords[count].toX, vCoords[count].toY, vCoords[count].toZ)*/NULL);
+				D3DXMatrixTransformation(&matRotateV, NULL, NULL, NULL, &rotCentre, &qR, NULL);
 				WorldMat2 *= matRotateV;
 			}
 			D3DXMatrixMultiply(&WorldMat2, &WorldMat2, &matRotateY);
