@@ -63,9 +63,9 @@ struct transCoords
 struct faces
 {
 	int frontSide,	//0
-		backSide,	//1
-		leftSide,	//2
-		rightSide,	//3
+		rightSide,	//1
+		backSide,	//2
+		leftSide,	//3
 		topSide,	//4
 		bottomSide; //5
 };
@@ -243,6 +243,42 @@ class CUBIE
 			D3DXCreateTextureFromFile(render_target_, "TilesTexture.png", &g_pTextures[5]);*/
 
 			D3DXCreateTextureFromFile(render_target_, "Black_def.png", &g_pTextures[6]);
+		}
+
+		void SetupTextureCoords(int count = 27)
+		{
+			for (int i = 0; i < count; i++)
+			{
+				faces newFaces;
+				textureStore.insert(std::make_pair(i, newFaces));
+				for (int j = 0; j < 6; j++)
+				{
+					ts_it = textureStore.find(i);
+					switch (j)
+					{
+					case 0:
+						ts_it->second.frontSide = j;
+						break;
+					case 1:
+						ts_it->second.rightSide = j;
+						break;
+					case 2:
+						ts_it->second.backSide = j;
+						break;
+					case 3:
+						ts_it->second.leftSide = j;
+						break;
+					case 4:
+						ts_it->second.topSide = j;
+						break;
+					case 5:
+						ts_it->second.bottomSide = j;
+						break;
+					}
+				}
+				
+				
+			}
 		}
 
 		void render(D3DXMATRIX matRotateY, 
@@ -909,7 +945,7 @@ class CUBIE
 				D3DXMatrixMultiply(&WorldMat2, &WorldMat2, &WorldMat);
 			}
 			//WorldMat2 *= WorldMat3;
-			if ((count) % 3 == 0)
+			if (((count) % 3 == 0) /*|| ((count) % 3 == 2)*/)
 			{
 				D3DXQUATERNION  qR;
 				D3DXQuaternionRotationAxis(&qR, &D3DXVECTOR3(1.0f, 0.0f, 0.0f), yIndexRowV1);
@@ -1011,23 +1047,67 @@ class CUBIE
 					{
 						switch (i)
 						{
+						case 0:
+							render_target_->DrawPrimitive(D3DPT_TRIANGLELIST, ts_it->second.frontSide * 6, 2);
+							//ts_it->second.frontSide = i;
+							break;
 						case 1:
-							ts_it->second.rightSide = 6;
+							render_target_->DrawPrimitive(D3DPT_TRIANGLELIST, ts_it->second.rightSide * 6, 2);
+							//ts_it->second.rightSide = i;
+							break;
+						case 2:
+							render_target_->DrawPrimitive(D3DPT_TRIANGLELIST, ts_it->second.backSide * 6, 2);
+							//ts_it->second.backSide = i;
 							break;
 						case 3:
-							ts_it->second.leftSide = 6;
+							render_target_->DrawPrimitive(D3DPT_TRIANGLELIST, ts_it->second.leftSide * 6, 2);
+							//ts_it->second.leftSide = i;
+							break;
+						case 4:
+							render_target_->DrawPrimitive(D3DPT_TRIANGLELIST, ts_it->second.topSide * 6, 2);
+							//ts_it->second.topSide = i;
+							break;
+						case 5:
+							render_target_->DrawPrimitive(D3DPT_TRIANGLELIST, ts_it->second.bottomSide * 6, 2);
+							//ts_it->second.bottomSide = i;
 							break;
 						}
 
 					}
 					else
 					{
+						faces newFaces;
+						textureStore.insert(std::make_pair(count, newFaces));
+						ts_it = textureStore.find(count);
+						switch (i)
+						{
+							case 0:
+								ts_it->second.frontSide = i;
+								break;
+							case 1:
+								ts_it->second.rightSide = i;
+								break;
+							case 2:
+								ts_it->second.backSide = i;
+								break;
+							case 3:
+								ts_it->second.leftSide = i;
+								break;
+							case 4:
+								ts_it->second.topSide = i;
+								break;
+							case 5:
+								ts_it->second.bottomSide = i;
+								break;
+						}
+
+						render_target_->DrawPrimitive(D3DPT_TRIANGLELIST, i * 6, 2);
 						//textureStore.insert(std::make_pair(count,))
 					}
 
 					//g_pd3dDevice->DrawPrimitive(D3DPT_TRIANGLELIST, i * 6, 2);
 					// Render the contents of the vertex buffer.
-					render_target_->DrawPrimitive(D3DPT_TRIANGLELIST, i * 6, 2);
+					//render_target_->DrawPrimitive(D3DPT_TRIANGLELIST, i * 6, 2);
 				}
 			}
 

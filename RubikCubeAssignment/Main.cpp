@@ -291,6 +291,7 @@ void Render()
 		D3DXMatrixIdentity(&WorldMat2);
 
 		cubie.setY(yIndexVRow1);
+		cubie.SetupTextureCoords();
 		
 		int zVal = 0;
 		for (int i = 0; i < 27; i++)
