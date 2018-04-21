@@ -176,6 +176,8 @@ class CUBIE
 
 		                          };
 
+		int vRow1[9];
+
 		//faces textureStore[27];
 		
 		//transXCoordsToCenter.insert(transXCoordsToCenter.begin(), {1, -(dimension)+1, -(dimension*2)+1, 0,0,0,0,0,0, 1, 0, -1, 1, 0, -1});
@@ -718,6 +720,15 @@ class CUBIE
 		{
 			yIndexRowV1= yIndex;
 		}
+
+		void setVRow1(int* vRow)
+		{
+			for (int i = 0; i < 9; i++)
+			{
+				vRow1[i] = vRow[i];
+			}
+		}
+
 		
 		void changeTextures()
 		{
@@ -957,6 +968,7 @@ class CUBIE
 			}
 			//WorldMat2 *= WorldMat3;
 			if (((count) % 3 == 0) /*|| ((count) % 3 == 2)*/)
+			//if (vRow1[count] == count)
 			{
 				D3DXQUATERNION  qR;
 				D3DXQuaternionRotationAxis(&qR, &D3DXVECTOR3(1.0f, 0.0f, 0.0f), yIndexRowV1);

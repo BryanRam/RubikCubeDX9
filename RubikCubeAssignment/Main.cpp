@@ -56,6 +56,7 @@ static int count = 1;
 static int countH2 = 1;
 static int countH3 = 1;
 static int countV1 = 1;
+static int vRowPos1[9];
 
 bool isRotating = false;
 bool isRotatingH2 = false;
@@ -277,7 +278,7 @@ void Render()
 		SetupViewMatrices();
 
 		xIndexHRow1 = g_RotationAngle;
-		yIndexVRow1 = g_RotationAngleV1;
+		//yIndexVRow1 = g_RotationAngleV1;
 
 		D3DXMatrixRotationYawPitchRoll(&matRotateY, /*index*//*0*/xIndex, yIndex/*0*//*index*/, 0/*index*/);
 		D3DXMatrixRotationYawPitchRoll(&matRotateH, xIndexHRow1, 0, 0);
@@ -292,7 +293,7 @@ void Render()
 		D3DXMatrixIdentity(&WorldMat2);
 
 		cubie.setY(yIndexVRow1);
-		
+		cubie.setVRow1(vRowPos1);
 		
 		int zVal = 0;
 		for (int i = 0; i < 27; i++)
@@ -324,6 +325,10 @@ void Render()
 				isRotating = !isRotating;
 				g_RotationAngle = D3DX_PI / 2 * count;
 				++count;
+				for (int i = 0; i < 3; i++)
+				{
+					vRowPos1[i] = (i * 3) + 2;
+				}
 			}
 			else
 			{
@@ -500,6 +505,10 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE, LPSTR, int)
         {
 			cubie.LoadTextures();
 			cubie.SetupTextureCoords();
+			for (int i = 0; i < 9; i++)
+			{
+				vRowPos1[i] = i * 3;
+			}
 
             // Show the window
             ShowWindow(hWnd, SW_SHOWDEFAULT);
