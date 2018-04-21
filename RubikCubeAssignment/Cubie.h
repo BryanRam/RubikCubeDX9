@@ -62,12 +62,12 @@ struct transCoords
 
 struct faces
 {
-	int frontSide,
-		backSide,
-		leftSide,
-		rightSide,
-		topSide,
-		bottomSide;
+	int frontSide,	//0
+		backSide,	//1
+		leftSide,	//2
+		rightSide,	//3
+		topSide,	//4
+		bottomSide; //5
 };
 
 
@@ -681,7 +681,10 @@ class CUBIE
 			yIndexRowV1= yIndex;
 		}
 		
+		void changeTextures()
+		{
 
+		}
 		
 	private:
 		
