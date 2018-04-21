@@ -51,7 +51,7 @@ std::vector<float> transYCoordsFromCenter;
 // Global variables
 const int Textures = 7;
 LPDIRECT3DTEXTURE9		g_pTextures[Textures];   // Array of pointers for the textures.
-
+LPDIRECT3DTEXTURE9		g_pTexturesCopy[Textures];   // Array of pointers for the textures.
 
 
 struct transCoords
@@ -243,6 +243,8 @@ class CUBIE
 			D3DXCreateTextureFromFile(render_target_, "TilesTexture.png", &g_pTextures[5]);*/
 
 			D3DXCreateTextureFromFile(render_target_, "Black_def.png", &g_pTextures[6]);
+
+			//g_pTexturesCopy = g_pTextures;
 		}
 
 		void SetupTextureCoords(int count = 27)
@@ -719,7 +721,16 @@ class CUBIE
 		
 		void changeTextures()
 		{
-
+			for (int i = 0; i < 27; i++)
+			{
+				if (i % 3 == 0)
+				{
+					ts_it = textureStore.find(i);
+					ts_it->second.frontSide += 5;
+					ts_it->second.topSide -= 4;
+					//ts_it->second.frontSide = 6;
+				}
+			}
 		}
 		
 	private:
@@ -1038,72 +1049,78 @@ class CUBIE
 				}
 				else
 				{
-					render_target_->SetTexture(0, g_pTextures[i]);
+					//render_target_->SetTexture(0, g_pTextures[i]);
 
 
 
 					ts_it = textureStore.find(count);
-					if (ts_it != textureStore.end())
-					{
+					//if (ts_it != textureStore.end())
+					//{
 						switch (i)
 						{
 						case 0:
-							render_target_->DrawPrimitive(D3DPT_TRIANGLELIST, ts_it->second.frontSide * 6, 2);
+							render_target_->SetTexture(0, g_pTextures[ts_it->second.frontSide]);
+							render_target_->DrawPrimitive(D3DPT_TRIANGLELIST, i * 6, 2);
 							//ts_it->second.frontSide = i;
 							break;
 						case 1:
-							render_target_->DrawPrimitive(D3DPT_TRIANGLELIST, ts_it->second.rightSide * 6, 2);
+							render_target_->SetTexture(0, g_pTextures[ts_it->second.rightSide]);
+							render_target_->DrawPrimitive(D3DPT_TRIANGLELIST, i * 6, 2);
 							//ts_it->second.rightSide = i;
 							break;
 						case 2:
-							render_target_->DrawPrimitive(D3DPT_TRIANGLELIST, ts_it->second.backSide * 6, 2);
+							render_target_->SetTexture(0, g_pTextures[ts_it->second.backSide]);
+							render_target_->DrawPrimitive(D3DPT_TRIANGLELIST, i * 6, 2);
 							//ts_it->second.backSide = i;
 							break;
 						case 3:
-							render_target_->DrawPrimitive(D3DPT_TRIANGLELIST, ts_it->second.leftSide * 6, 2);
+							render_target_->SetTexture(0, g_pTextures[ts_it->second.leftSide]);
+							render_target_->DrawPrimitive(D3DPT_TRIANGLELIST, i * 6, 2);
 							//ts_it->second.leftSide = i;
 							break;
 						case 4:
-							render_target_->DrawPrimitive(D3DPT_TRIANGLELIST, ts_it->second.topSide * 6, 2);
+							render_target_->SetTexture(0, g_pTextures[ts_it->second.topSide]);
+							render_target_->DrawPrimitive(D3DPT_TRIANGLELIST, i * 6, 2);
 							//ts_it->second.topSide = i;
 							break;
 						case 5:
-							render_target_->DrawPrimitive(D3DPT_TRIANGLELIST, ts_it->second.bottomSide * 6, 2);
+							render_target_->SetTexture(0, g_pTextures[ts_it->second.bottomSide]);
+							render_target_->DrawPrimitive(D3DPT_TRIANGLELIST, i * 6, 2);
 							//ts_it->second.bottomSide = i;
 							break;
 						}
 
-					}
-					else
-					{
-						faces newFaces;
-						textureStore.insert(std::make_pair(count, newFaces));
-						ts_it = textureStore.find(count);
-						switch (i)
-						{
-							case 0:
-								ts_it->second.frontSide = i;
-								break;
-							case 1:
-								ts_it->second.rightSide = i;
-								break;
-							case 2:
-								ts_it->second.backSide = i;
-								break;
-							case 3:
-								ts_it->second.leftSide = i;
-								break;
-							case 4:
-								ts_it->second.topSide = i;
-								break;
-							case 5:
-								ts_it->second.bottomSide = i;
-								break;
-						}
+					//}
+					//else
+					//{
+					//	faces newFaces;
+					//	textureStore.insert(std::make_pair(count, newFaces));
+					//	ts_it = textureStore.find(count);
+					//	switch (i)
+					//	{
+					//		case 0:
+					//			ts_it->second.frontSide = i;
+					//			break;
+					//		case 1:
+					//			ts_it->second.rightSide = i;
+					//			break;
+					//		case 2:
+					//			ts_it->second.backSide = i;
+					//			break;
+					//		case 3:
+					//			ts_it->second.leftSide = i;
+					//			break;
+					//		case 4:
+					//			ts_it->second.topSide = i;
+					//			break;
+					//		case 5:
+					//			ts_it->second.bottomSide = i;
+					//			break;
+					//	}
 
-						render_target_->DrawPrimitive(D3DPT_TRIANGLELIST, i * 6, 2);
-						//textureStore.insert(std::make_pair(count,))
-					}
+					//	render_target_->DrawPrimitive(D3DPT_TRIANGLELIST, i * 6, 2);
+					//	//textureStore.insert(std::make_pair(count,))
+					//}
 
 					//g_pd3dDevice->DrawPrimitive(D3DPT_TRIANGLELIST, i * 6, 2);
 					// Render the contents of the vertex buffer.

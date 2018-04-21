@@ -62,6 +62,7 @@ bool isRotatingH2 = false;
 bool isRotatingH3 = false;
 bool isRotatingV1 = false;
 
+
 // The structure of a vertex in our vertex buffer...
 //#define D3DFVF_CUSTOMVERTEX (D3DFVF_XYZ | D3DFVF_DIFFUSE)
 
@@ -291,7 +292,7 @@ void Render()
 		D3DXMatrixIdentity(&WorldMat2);
 
 		cubie.setY(yIndexVRow1);
-		cubie.SetupTextureCoords();
+		
 		
 		int zVal = 0;
 		for (int i = 0; i < 27; i++)
@@ -364,8 +365,9 @@ void Render()
 			if (g_RotationAngleV1 >= (D3DX_PI / 2 * countV1))
 			{
 				isRotatingV1 = !isRotatingV1;
-				g_RotationAngleV1 = D3DX_PI / 2 * countV1;
-				++countV1;
+				g_RotationAngleV1 = 0;
+				cubie.changeTextures();
+				//++countV1;
 			}
 			else
 			{
@@ -497,6 +499,7 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE, LPSTR, int)
         if (SUCCEEDED(SetupGeometry()))
         {
 			cubie.LoadTextures();
+			cubie.SetupTextureCoords();
 
             // Show the window
             ShowWindow(hWnd, SW_SHOWDEFAULT);
