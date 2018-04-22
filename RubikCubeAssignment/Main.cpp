@@ -56,13 +56,18 @@ static int count = 1;
 static int countH2 = 1;
 static int countH3 = 1;
 static int countV1 = 1;
-static int vRowPos1[9];
+static int vRowPos1[27];
+static int hRowTop[3][3];
+static int hRowTemp[3][3];
+static int hRowMid[27];
+static int hRowBottom[27];
 
 bool isRotating = false;
 bool isRotatingH2 = false;
 bool isRotatingH3 = false;
 bool isRotatingV1 = false;
 
+void UpdateTempRow();
 
 // The structure of a vertex in our vertex buffer...
 //#define D3DFVF_CUSTOMVERTEX (D3DFVF_XYZ | D3DFVF_DIFFUSE)
@@ -318,17 +323,39 @@ void Render()
         // End the scene.
         g_pd3dDevice -> EndScene();
 
-		if (isRotating)
+		if (isRotating)	
 		{
 			if (g_RotationAngle >= (D3DX_PI/2 * count))
 			{
 				isRotating = !isRotating;
 				g_RotationAngle = D3DX_PI / 2 * count;
 				++count;
-				for (int i = 0; i < 3; i++)
+				/*for (int i = 0; i < 9; i++)
 				{
-					vRowPos1[i] = (i * 3) + 2;
+					if (i % 3 == 0)
+					{
+						vRowPos1[i] = 1;
+					}
+					if (i < 3)
+					{
+						vRowPos1[i] = 3;
+					}
+				}*/
+				for (int i = 0; i<3; ++i) {
+					for (int j = 0; j<3; ++j) {
+						hRowTop[i][j] = hRowTemp[3 - j - 1][i]; //rotate clockwise 90 degrees
+					}
 				}
+
+				for (int i = 0; i<3; ++i) {
+					for (int j = 0; j<3; ++j) {
+						if (i == 0)
+							vRowPos1[j] = hRowTop[i][j];
+						else
+							vRowPos1[(i * 3) + j] = hRowTop[i][j];
+					}
+				}
+				UpdateTempRow();
 			}
 			else
 			{
@@ -386,7 +413,16 @@ void Render()
 }
 
 
-
+void UpdateTempRow()
+{
+	for (int i = 0; i < 3; i++)
+	{
+		for (int j = 0; j < 3; j++)
+		{
+				hRowTemp[i][j] = hRowTop[i][j];
+		}
+	}
+}
 
 //-----------------------------------------------------------------------------
 // The window's message handling function.
@@ -505,9 +541,29 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE, LPSTR, int)
         {
 			cubie.LoadTextures();
 			cubie.SetupTextureCoords();
-			for (int i = 0; i < 9; i++)
+			for (int i = 0; i < 27; i++)
 			{
-				vRowPos1[i] = i * 3;
+				if (i % 3 == 0)
+					vRowPos1[i] = 3;
+				else
+					vRowPos1[i] = 1;
+			}
+
+			for (int i = 0; i < 3; i++)
+			{
+				for (int j = 0; j < 3; j++)
+				{
+					if (j == 0)
+					{
+						hRowTop[i][j] = 3;
+						hRowTemp[i][j] = hRowTop[i][j];
+					}
+					else
+					{
+						hRowTop[i][j] = 1;
+						hRowTemp[i][j] = hRowTop[i][j];
+					}
+				}
 			}
 
             // Show the window

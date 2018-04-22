@@ -176,7 +176,7 @@ class CUBIE
 
 		                          };
 
-		int vRow1[9];
+		int vRow1[27];
 
 		//faces textureStore[27];
 		
@@ -723,7 +723,7 @@ class CUBIE
 
 		void setVRow1(int* vRow)
 		{
-			for (int i = 0; i < 9; i++)
+			for (int i = 0; i < 27; i++)
 			{
 				vRow1[i] = vRow[i];
 			}
@@ -967,8 +967,8 @@ class CUBIE
 				D3DXMatrixMultiply(&WorldMat2, &WorldMat2, &WorldMat);
 			}
 			//WorldMat2 *= WorldMat3;
-			if (((count) % 3 == 0) /*|| ((count) % 3 == 2)*/)
-			//if (vRow1[count] == count)
+			//if (((count) % 3 == 0) /*|| ((count) % 3 == 2)*/)
+			if (vRow1[count] % 3 == 0)
 			{
 				D3DXQUATERNION  qR;
 				D3DXQuaternionRotationAxis(&qR, &D3DXVECTOR3(1.0f, 0.0f, 0.0f), yIndexRowV1);
