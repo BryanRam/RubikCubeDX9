@@ -54,13 +54,17 @@ static float g_RotationAngleV1 = 0.0f;
 
 static int count = 0;
 static int countH2 = 0;
-static int countH3 = 1;
+static int countH3 = 0;
 static int countV1 = 1;
 static int vRowPos1[27];
 static int hRowTop[3][3];
 static int hRowTemp[3][3];
-static int hRowMid[27];
-static int hRowBottom[27];
+
+static int hRowMid[3][3];
+static int hRowTemp2[3][3];
+
+static int hRowBottom[3][3];
+static int hRowTemp3[3][3];
 
 bool isRotating = false;
 bool isRotatingH2 = false;
@@ -68,7 +72,7 @@ bool isRotatingH3 = false;
 bool isRotatingV1 = false;
 bool cw, ccw = false;
 
-void UpdateTempRow();
+void UpdateTempRow(int);
 
 // The structure of a vertex in our vertex buffer...
 //#define D3DFVF_CUSTOMVERTEX (D3DFVF_XYZ | D3DFVF_DIFFUSE)
@@ -381,7 +385,7 @@ void Render()
 								vRowPos1[(i * 3) + j] = hRowTop[i][j];
 						}
 					}
-					UpdateTempRow();
+					UpdateTempRow(0);
 				}
 				else
 				{
@@ -411,7 +415,7 @@ void Render()
 								vRowPos1[(i * 3) + j] = hRowTop[i][j];
 						}
 					}
-					UpdateTempRow();
+					UpdateTempRow(0);
 				}
 				else
 				{
@@ -430,7 +434,19 @@ void Render()
 					isRotatingH2 = !isRotatingH2;
 					++countH2;
 					g_RotationAngleH2 = D3DX_PI / 2 * countH2;
-					
+
+					for (int i = 0; i < 3; ++i) {
+						for (int j = 0; j < 3; ++j) {
+							hRowMid[i][j] = hRowTemp2[3 - j - 1][i]; //rotate clockwise 90 degrees
+						}
+					}
+
+					for (int i = 3; i < 6; ++i) {
+						for (int j = 0; j < 3; ++j) {
+							vRowPos1[(i * 3) + j] = hRowMid[i % 3][j];
+						}
+					}
+					UpdateTempRow(1);
 				}
 				else
 				{
@@ -445,6 +461,22 @@ void Render()
 					ccw = !ccw;
 					--countH2;
 					g_RotationAngleH2 = D3DX_PI / 2 * countH2;
+
+					for (int i = 0; i<3; ++i) {
+						for (int j = 0; j<3; ++j) {
+							hRowMid[i][j] = hRowTemp2[j][3 - i - 1]; //rotate counter-clockwise 90 degrees
+						}
+					}
+
+					for (int i = 3; i < 6; ++i) {
+						for (int j = 0; j < 3; ++j) {
+							/*if (i == 3)
+								vRowPos1[i*3] = hRowMid[(i / 3) - 1][j];
+							else*/
+								vRowPos1[(i * 3) + j] = hRowMid[(i % 3)][j];
+						}
+					}
+					UpdateTempRow(1);
 					
 				}
 				else
@@ -458,11 +490,25 @@ void Render()
 		{
 			if (cw)
 			{
-				if (g_RotationAngleH3 >= (D3DX_PI / 2 * countH3))
+				if (g_RotationAngleH3 >= (D3DX_PI / 2 * (countH3+1)))
 				{
 					isRotatingH3 = !isRotatingH3;
-					g_RotationAngleH3 = D3DX_PI / 2 * countH3;
+					cw = !cw;
 					++countH3;
+					g_RotationAngleH3 = D3DX_PI / 2 * countH3;
+					
+					for (int i = 0; i < 3; ++i) {
+						for (int j = 0; j < 3; ++j) {
+							hRowBottom[i][j] = hRowTemp3[3 - j - 1][i]; //rotate clockwise 90 degrees
+						}
+					}
+
+					for (int i = 6; i < 9; ++i) {
+						for (int j = 0; j < 3; ++j) {
+							vRowPos1[(i * 3) + j] = hRowBottom[i % 3][j];
+						}
+					}
+					UpdateTempRow(2);
 				}
 				else
 				{
@@ -471,6 +517,34 @@ void Render()
 			}
 			if(ccw)
 			{
+				if (g_RotationAngleH3 <= (D3DX_PI / 2 * (countH3 - 1)))
+				{
+					isRotatingH3 = !isRotatingH3;
+					ccw = !ccw;
+					--countH3;
+					g_RotationAngleH3 = D3DX_PI / 2 * countH3;
+
+					for (int i = 0; i<3; ++i) {
+						for (int j = 0; j<3; ++j) {
+							hRowBottom[i][j] = hRowTemp3[j][3 - i - 1]; //rotate counter-clockwise 90 degrees
+						}
+					}
+
+					for (int i = 6; i < 9; ++i) {
+						for (int j = 0; j < 3; ++j) {
+							/*if (i == 3)
+							vRowPos1[i*3] = hRowMid[(i / 3) - 1][j];
+							else*/
+							vRowPos1[(i * 3) + j] = hRowBottom[(i % 3)][j];
+						}
+					}
+					UpdateTempRow(2);
+
+				}
+				else
+				{
+					g_RotationAngleH3 -= 0.035f;
+				}
 
 			}
 			
@@ -498,15 +572,41 @@ void Render()
 }
 
 
-void UpdateTempRow()
+void UpdateTempRow(int num)
 {
-	for (int i = 0; i < 3; i++)
+	if (num == 0)
 	{
-		for (int j = 0; j < 3; j++)
+		for (int i = 0; i < 3; i++)
 		{
+			for (int j = 0; j < 3; j++)
+			{
 				hRowTemp[i][j] = hRowTop[i][j];
+			}
 		}
 	}
+
+	else if (num == 1)
+	{
+		for (int i = 0; i < 3; i++)
+		{
+			for (int j = 0; j < 3; j++)
+			{
+				hRowTemp2[i][j] = hRowMid[i][j];
+			}
+		}
+	}
+
+	else if (num == 2)
+	{
+		for (int i = 0; i < 3; i++)
+		{
+			for (int j = 0; j < 3; j++)
+			{
+				hRowTemp3[i][j] = hRowBottom[i][j];
+			}
+		}
+	}
+	
 }
 
 //-----------------------------------------------------------------------------
@@ -597,7 +697,7 @@ LRESULT WINAPI MsgProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 				break;
 			case '.':
 				isRotatingH3 = !isRotatingH3;
-				ccw = true;
+				cw = true;
 				return 0;
 				break;
 
@@ -665,13 +765,13 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE, LPSTR, int)
 				{
 					if (j == 0)
 					{
-						hRowTop[i][j] = 3;
-						hRowTemp[i][j] = hRowTop[i][j];
+						hRowTop[i][j] = hRowMid[i][j] = hRowBottom[i][j] = 3;
+						hRowTemp[i][j] = hRowTemp2[i][j] = hRowTemp3[i][j] = hRowTop[i][j];
 					}
 					else
 					{
-						hRowTop[i][j] = 1;
-						hRowTemp[i][j] = hRowTop[i][j];
+						hRowTop[i][j] = hRowMid[i][j] = hRowBottom[i][j] = 1;
+						hRowTemp[i][j] = hRowTemp2[i][j] = hRowTemp3[i][j] = hRowTop[i][j];
 					}
 				}
 			}
