@@ -53,7 +53,7 @@ static float g_RotationAngleH3 = 0.0f;
 static float g_RotationAngleV1 = 0.0f;
 
 static int count = 0;
-static int countH2 = 1;
+static int countH2 = 0;
 static int countH3 = 1;
 static int countV1 = 1;
 static int vRowPos1[27];
@@ -422,30 +422,58 @@ void Render()
 
 		if (isRotatingH2)
 		{
-			if (g_RotationAngleH2 >= (D3DX_PI / 2 * countH2))
+			if (cw)
 			{
-				isRotatingH2 = !isRotatingH2;
-				g_RotationAngleH2 = D3DX_PI / 2 * countH2;
-				++countH2;
+				if (g_RotationAngleH2 >= (D3DX_PI / 2 * (countH2+1)))
+				{
+					cw = !cw;
+					isRotatingH2 = !isRotatingH2;
+					++countH2;
+					g_RotationAngleH2 = D3DX_PI / 2 * countH2;
+					
+				}
+				else
+				{
+					g_RotationAngleH2 += 0.035f;
+				}
 			}
-			else
+			if (ccw)
 			{
-				g_RotationAngleH2 += 0.035f;
+				if (g_RotationAngleH2 <= (D3DX_PI / 2 * (countH2-1)))
+				{
+					isRotatingH2 = !isRotatingH2;
+					ccw = !ccw;
+					--countH2;
+					g_RotationAngleH2 = D3DX_PI / 2 * countH2;
+					
+				}
+				else
+				{
+					g_RotationAngleH2 -= 0.035f;
+				}
 			}
 		}
 
 		if (isRotatingH3)
 		{
-			if (g_RotationAngleH3 >= (D3DX_PI / 2 * countH3))
+			if (cw)
 			{
-				isRotatingH3 = !isRotatingH3;
-				g_RotationAngleH3 = D3DX_PI / 2 * countH3;
-				++countH3;
+				if (g_RotationAngleH3 >= (D3DX_PI / 2 * countH3))
+				{
+					isRotatingH3 = !isRotatingH3;
+					g_RotationAngleH3 = D3DX_PI / 2 * countH3;
+					++countH3;
+				}
+				else
+				{
+					g_RotationAngleH3 += 0.035f;
+				}
 			}
-			else
+			if(ccw)
 			{
-				g_RotationAngleH3 += 0.035f;
+
 			}
+			
 		}
 
 		if (isRotatingV1)
