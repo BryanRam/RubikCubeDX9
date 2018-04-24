@@ -56,7 +56,10 @@ static int count = 0;
 static int countH2 = 0;
 static int countH3 = 0;
 static int countV1 = 1;
+
 static int vRowPos1[27];
+static int vRowTemp[3][3];
+
 static int hRowTop[3][3];
 static int hRowTemp[3][3];
 
@@ -303,6 +306,7 @@ void Render()
 		D3DXMatrixIdentity(&WorldMat2);
 
 		cubie.setY(yIndexVRow1);
+		//cubie.setY(g_RotationAngleV1);
 		cubie.setVRow1(vRowPos1);
 		
 		int zVal = 0;
@@ -559,6 +563,31 @@ void Render()
 				g_RotationAngleV1 = 0;
 				cubie.changeTextures();
 				//++countV1;
+				//	0	3	6
+				//	9	12	15
+				//	18	21	24
+				
+				// 02, 12, 22, 01, 11, 21, 00, 10, 20
+				//	cw
+				//	6	15	24
+				//	3	12	21
+				//	0	9	18
+				//for (int i = 0; i<3; ++i) {
+				//	for (int j = 0; j<3; ++j) {
+				//		vRowPos[(i * 9)+(j*3)] = hRowTemp3[j][3 - i - 1]; //rotate clockwise 90 degrees
+				//	}
+				//}
+				
+				// 20, 10, 00, 21, 11, 01, 22, 12, 02
+				//	ccw
+				//	18	9	0
+				//	21	12	3
+				//	24	15	6
+				//for (int i = 0; i<3; ++i) {
+				//	for (int j = 0; j<3; ++j) {
+				//		vRowPos[(i * 9)+(j*3)] = hRowTemp3[3 - j - 1][i]; //rotate counter-clockwise 90 degrees
+				//	}
+				//}
 			}
 			else
 			{
@@ -757,6 +786,14 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE, LPSTR, int)
 					vRowPos1[i] = 3;
 				else
 					vRowPos1[i] = 1;
+			}
+
+			for (int i = 0; i < 3; i++)
+			{
+				for (int j = 0; j < 3; j++)
+				{
+					vRowTemp[i][j] = vRowPos1[(i * 9) + (j * 3)];
+				}
 			}
 
 			for (int i = 0; i < 3; i++)
