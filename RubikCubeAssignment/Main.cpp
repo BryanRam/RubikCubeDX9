@@ -55,7 +55,7 @@ static float g_RotationAngleV1 = 0.0f;
 static int count = 0;
 static int countH2 = 0;
 static int countH3 = 0;
-static int countV1 = 1;
+static int countV1 = 0;
 
 static int vRowPos1[27];
 static int vRowTemp[3][3];
@@ -306,7 +306,7 @@ void Render()
 		D3DXMatrixIdentity(&WorldMat2);
 
 		cubie.setY(yIndexVRow1);
-		//cubie.setY(g_RotationAngleV1);
+		cubie.setY(g_RotationAngleV1);
 		cubie.setVRow1(vRowPos1);
 		
 		int zVal = 0;
@@ -557,11 +557,23 @@ void Render()
 		if (isRotatingV1)
 		{
 
-			if (g_RotationAngleV1 >= (D3DX_PI / 2 * countV1))
+			if (g_RotationAngleV1 >= (D3DX_PI / 2 * (countV1+1)))
 			{
 				isRotatingV1 = !isRotatingV1;
-				g_RotationAngleV1 = 0;
-				cubie.changeTextures();
+				++countV1;
+				g_RotationAngleV1 = D3DX_PI / 2 * countV1;
+
+				for (int i = 0; i<3; ++i) {
+					/*hRowTop[i][0] = 1;
+					hRowMid[i][0] = 1;
+					hRowBottom[i][0] = 1;*/
+					for (int j = 0; j<3; ++j) {
+						
+						vRowPos1[(i * 9)+(j*3)] = vRowTemp[3 - j - 1][i]; //rotate counter-clockwise 90 degrees
+					}
+				}
+
+				//cubie.changeTextures();
 				//++countV1;
 				//	0	3	6
 				//	9	12	15
@@ -574,7 +586,7 @@ void Render()
 				//	0	9	18
 				//for (int i = 0; i<3; ++i) {
 				//	for (int j = 0; j<3; ++j) {
-				//		vRowPos[(i * 9)+(j*3)] = hRowTemp3[j][3 - i - 1]; //rotate clockwise 90 degrees
+				//		vRowPos1[(i * 9)+(j*3)] = hRowTemp3[j][3 - i - 1]; //rotate clockwise 90 degrees
 				//	}
 				//}
 				
@@ -585,7 +597,7 @@ void Render()
 				//	24	15	6
 				//for (int i = 0; i<3; ++i) {
 				//	for (int j = 0; j<3; ++j) {
-				//		vRowPos[(i * 9)+(j*3)] = hRowTemp3[3 - j - 1][i]; //rotate counter-clockwise 90 degrees
+				//		vRowPos1[(i * 9)+(j*3)] = hRowTemp3[3 - j - 1][i]; //rotate counter-clockwise 90 degrees
 				//	}
 				//}
 			}
