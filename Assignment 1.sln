@@ -1,6 +1,6 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.26730.16
+VisualStudioVersion = 15.0.26730.3
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "RubikCubeAssignment", "RubikCubeAssignment\RubikCubeAssignment.vcxproj", "{90919258-540D-4FCF-B0A4-9320F4682F2A}"
 EndProject

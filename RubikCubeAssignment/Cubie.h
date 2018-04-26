@@ -177,6 +177,7 @@ class CUBIE
 		                          };
 
 		int vRow1[27];
+		int vRowTest[27];
 
 		//faces textureStore[27];
 		
@@ -729,6 +730,13 @@ class CUBIE
 			}
 		}
 
+		void setVRowTest(int* vRow)
+		{
+			for (int i = 0; i < 27; i++)
+			{
+				vRowTest[i] = vRow[i];
+			}
+		}
 		
 		void changeTextures()
 		{
@@ -848,7 +856,10 @@ class CUBIE
 			//	//D3DXMatrixIdentity(&WorldMat2);
 			//}
 
+			/*for (int i = 0; i < 9; i++)
+			{
 
+			}*/
 			
 			if ((count < 9))
 			{

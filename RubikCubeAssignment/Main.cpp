@@ -58,7 +58,9 @@ static int countH3 = 0;
 static int countV1 = 0;
 
 static int vRowPos1[27];
+static int vRowPosTest[27];
 static int vRowTemp[3][3];
+static int vRowTempTest[3][3];
 
 static int hRowTop[3][3];
 static int hRowTemp[3][3];
@@ -306,8 +308,9 @@ void Render()
 		D3DXMatrixIdentity(&WorldMat2);
 
 		cubie.setY(yIndexVRow1);
-		cubie.setY(g_RotationAngleV1);
+		//cubie.setY(g_RotationAngleV1);
 		cubie.setVRow1(vRowPos1);
+		cubie.setVRowTest(vRowPosTest);
 		
 		int zVal = 0;
 		for (int i = 0; i < 27; i++)
@@ -568,7 +571,7 @@ void Render()
 					hRowMid[i][0] = 1;
 					hRowBottom[i][0] = 1;*/
 					for (int j = 0; j<3; ++j) {
-						
+						vRowPosTest[(i * 9) + (j * 3)] = vRowTempTest[3 - j - 1][i];
 						vRowPos1[(i * 9)+(j*3)] = vRowTemp[3 - j - 1][i]; //rotate counter-clockwise 90 degrees
 					}
 				}
@@ -794,6 +797,7 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE, LPSTR, int)
 			cubie.SetupTextureCoords();
 			for (int i = 0; i < 27; i++)
 			{
+				vRowPosTest[i] = i;
 				if (i % 3 == 0)
 					vRowPos1[i] = 3;
 				else
@@ -805,6 +809,7 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE, LPSTR, int)
 				for (int j = 0; j < 3; j++)
 				{
 					vRowTemp[i][j] = vRowPos1[(i * 9) + (j * 3)];
+					vRowTempTest[i][j] = vRowPos1[(i * 9) + (j * 3)];
 				}
 			}
 
