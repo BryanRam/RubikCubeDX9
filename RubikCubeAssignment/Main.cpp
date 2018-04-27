@@ -308,7 +308,9 @@ void Render()
 		D3DXMatrixIdentity(&WorldMat2);
 
 		cubie.setY(yIndexVRow1);
-		//cubie.setY(g_RotationAngleV1);
+		cubie.setY(g_RotationAngleV1);
+		cubie.SetX1(xIndexHRow1);
+		cubie.SetX2(g_RotationAngleH2);
 		cubie.setVRow1(vRowPos1);
 		cubie.setVRowTest(vRowPosTest);
 		
@@ -567,9 +569,7 @@ void Render()
 				g_RotationAngleV1 = D3DX_PI / 2 * countV1;
 
 				for (int i = 0; i<3; ++i) {
-					/*hRowTop[i][0] = 1;
-					hRowMid[i][0] = 1;
-					hRowBottom[i][0] = 1;*/
+					
 					for (int j = 0; j<3; ++j) {
 						vRowPosTest[(i * 9) + (j * 3)] = vRowTempTest[3 - j - 1][i];
 						vRowPos1[(i * 9)+(j*3)] = vRowTemp[3 - j - 1][i]; //rotate counter-clockwise 90 degrees
@@ -809,7 +809,7 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE, LPSTR, int)
 				for (int j = 0; j < 3; j++)
 				{
 					vRowTemp[i][j] = vRowPos1[(i * 9) + (j * 3)];
-					vRowTempTest[i][j] = vRowPos1[(i * 9) + (j * 3)];
+					vRowTempTest[i][j] = vRowPosTest[(i * 9) + (j * 3)];
 				}
 			}
 

@@ -178,6 +178,7 @@ class CUBIE
 
 		int vRow1[27];
 		int vRowTest[27];
+		float xTest1, xTest2;
 
 		//faces textureStore[27];
 		
@@ -722,6 +723,15 @@ class CUBIE
 			yIndexRowV1= yIndex;
 		}
 
+		void SetX1(float xIndex)
+		{
+			xTest1 = xIndex;
+		}
+		void SetX2(float xIndex)
+		{
+			xTest2 = xIndex;
+		}
+
 		void setVRow1(int* vRow)
 		{
 			for (int i = 0; i < 27; i++)
@@ -856,92 +866,154 @@ class CUBIE
 			//	//D3DXMatrixIdentity(&WorldMat2);
 			//}
 
-			/*for (int i = 0; i < 9; i++)
+			//for (int i = 0; i < 9; i++)
+			//{
+			//	if(vRowTest[i] == count)
+			//	{
+			//		D3DXMatrixTranslation(&tMat, toArr[count], 0.0f, toArr2[count]);
+			//	D3DXMatrixMultiply(&WorldMat2, &WorldMat2, &tMat);
+
+			//	D3DXMatrixIdentity(&WorldMat2);
+
+			//	D3DXMatrixTranslation(&tMat2, fromArr[count], 0.0f, fromArr2[count]);
+			//	D3DXMatrixMultiply(&WorldMat2, &WorldMat2, &tMat2);
+
+			//	
+
+			//	D3DXMatrixMultiply(&WorldMat2, &WorldMat2, &matRotateH);
+
+			//	if ((count) % 3 == 0)
+			//	{
+			//		////D3DXMatrixIdentity(&WorldMat3);
+			//		//D3DXMatrixMultiply(&WorldMat3, &WorldMat3, &WorldMat2);
+			//		//
+			//		////D3DXMatrixTranslation(&emptyMat, 0.0f, 0.0f, -(0.65f * dimension));
+			//		////D3DXMatrixMultiply(&WorldMat3, &WorldMat3, &emptyMat);
+			//		//D3DXMatrixMultiply(&WorldMat3, &WorldMat3, &tMat3);
+			//		////D3DXMatrixMultiply(&WorldMat3, &WorldMat3, &matRotateV);
+			//		//D3DXMatrixIdentity(&WorldMat3);
+			//		////D3DXMatrixMultiply(&WorldMat3, &WorldMat3, &tMat4);
+			//		//D3DXMatrixMultiply(&WorldMat3, &WorldMat3, &matRotateV);
+			//		////D3DXMatrixIdentity(&WorldMat3);
+			//		////D3DXMatrixMultiply(&WorldMat2, &WorldMat2, &WorldMat3);
+			//		////D3DXMatrixTranslation(&emptyMat, 0.0f, 0.0f, -0.65f);
+			//		////D3DXMatrixMultiply(&WorldMat3, &WorldMat3, &emptyMat);
+			//		//D3DXMatrixMultiply(&WorldMat2, &WorldMat2, &WorldMat3);
+			//		//D3DXMatrixRotationAxis(&matRotateV, &axis, yIndexRowV1);
+
+			//		//WorldMat2 *= matRotateV;
+			//	}
+
+			//	
+
+			//	//D3DXMatrixMultiply(&WorldMat2, &WorldMat2, &WorldMat);
+
+			//	D3DXMatrixMultiply(&WorldMat2, &WorldMat2, &WorldMat);
+			//	}
+			//}
+			if (count < 9)
 			{
+				D3DXMATRIX matRotateHT;
+				D3DXQUATERNION  qR;
+				D3DXQuaternionRotationAxis(&qR, &D3DXVECTOR3(0.0f, 1.0f, 0.0f), xTest1);
 
-			}*/
-			
-			if ((count < 9))
-			{
-				D3DXMatrixTranslation(&tMat, toArr[count], 0.0f, toArr2[count]);
-				D3DXMatrixMultiply(&WorldMat2, &WorldMat2, &tMat);
-
-				D3DXMatrixIdentity(&WorldMat2);
-
-				D3DXMatrixTranslation(&tMat2, fromArr[count], 0.0f, fromArr2[count]);
-				D3DXMatrixMultiply(&WorldMat2, &WorldMat2, &tMat2);
-
-				
-
-				D3DXMatrixMultiply(&WorldMat2, &WorldMat2, &matRotateH);
-
-				if ((count) % 3 == 0)
-				{
-					////D3DXMatrixIdentity(&WorldMat3);
-					//D3DXMatrixMultiply(&WorldMat3, &WorldMat3, &WorldMat2);
-					//
-					////D3DXMatrixTranslation(&emptyMat, 0.0f, 0.0f, -(0.65f * dimension));
-					////D3DXMatrixMultiply(&WorldMat3, &WorldMat3, &emptyMat);
-					//D3DXMatrixMultiply(&WorldMat3, &WorldMat3, &tMat3);
-					////D3DXMatrixMultiply(&WorldMat3, &WorldMat3, &matRotateV);
-					//D3DXMatrixIdentity(&WorldMat3);
-					////D3DXMatrixMultiply(&WorldMat3, &WorldMat3, &tMat4);
-					//D3DXMatrixMultiply(&WorldMat3, &WorldMat3, &matRotateV);
-					////D3DXMatrixIdentity(&WorldMat3);
-					////D3DXMatrixMultiply(&WorldMat2, &WorldMat2, &WorldMat3);
-					////D3DXMatrixTranslation(&emptyMat, 0.0f, 0.0f, -0.65f);
-					////D3DXMatrixMultiply(&WorldMat3, &WorldMat3, &emptyMat);
-					//D3DXMatrixMultiply(&WorldMat2, &WorldMat2, &WorldMat3);
-					//D3DXMatrixRotationAxis(&matRotateV, &axis, yIndexRowV1);
-
-					//WorldMat2 *= matRotateV;
-				}
-
-				
-
-				//D3DXMatrixMultiply(&WorldMat2, &WorldMat2, &WorldMat);
-
-				D3DXMatrixMultiply(&WorldMat2, &WorldMat2, &WorldMat);
-
-
+				D3DXVECTOR3 rotCentre(dimension, 0.0f, dimension + 0.65f);
+				D3DXMatrixTransformation(&matRotateHT, NULL, NULL, NULL, &rotCentre, &qR, NULL);
+				WorldMat2 *= matRotateHT;
 			}
+
 			
+			//if ((count < 9))
+			//{
+			//	D3DXMatrixTranslation(&tMat, toArr[count], 0.0f, toArr2[count]);
+			//	D3DXMatrixMultiply(&WorldMat2, &WorldMat2, &tMat);
+
+			//	D3DXMatrixIdentity(&WorldMat2);
+
+			//	D3DXMatrixTranslation(&tMat2, fromArr[count], 0.0f, fromArr2[count]);
+			//	D3DXMatrixMultiply(&WorldMat2, &WorldMat2, &tMat2);
+
+			//	
+
+			//	D3DXMatrixMultiply(&WorldMat2, &WorldMat2, &matRotateH);
+
+			//	if ((count) % 3 == 0)
+			//	{
+			//		////D3DXMatrixIdentity(&WorldMat3);
+			//		//D3DXMatrixMultiply(&WorldMat3, &WorldMat3, &WorldMat2);
+			//		//
+			//		////D3DXMatrixTranslation(&emptyMat, 0.0f, 0.0f, -(0.65f * dimension));
+			//		////D3DXMatrixMultiply(&WorldMat3, &WorldMat3, &emptyMat);
+			//		//D3DXMatrixMultiply(&WorldMat3, &WorldMat3, &tMat3);
+			//		////D3DXMatrixMultiply(&WorldMat3, &WorldMat3, &matRotateV);
+			//		//D3DXMatrixIdentity(&WorldMat3);
+			//		////D3DXMatrixMultiply(&WorldMat3, &WorldMat3, &tMat4);
+			//		//D3DXMatrixMultiply(&WorldMat3, &WorldMat3, &matRotateV);
+			//		////D3DXMatrixIdentity(&WorldMat3);
+			//		////D3DXMatrixMultiply(&WorldMat2, &WorldMat2, &WorldMat3);
+			//		////D3DXMatrixTranslation(&emptyMat, 0.0f, 0.0f, -0.65f);
+			//		////D3DXMatrixMultiply(&WorldMat3, &WorldMat3, &emptyMat);
+			//		//D3DXMatrixMultiply(&WorldMat2, &WorldMat2, &WorldMat3);
+			//		//D3DXMatrixRotationAxis(&matRotateV, &axis, yIndexRowV1);
+
+			//		//WorldMat2 *= matRotateV;
+			//	}
+
+			//	
+
+			//	//D3DXMatrixMultiply(&WorldMat2, &WorldMat2, &WorldMat);
+
+			//	D3DXMatrixMultiply(&WorldMat2, &WorldMat2, &WorldMat);
+
+
+			//}
+			
+			else if (/*(count % 3 != 0) && */(count < 18) && (count > 8))
+			{
+				D3DXMATRIX matRotateHT;
+				D3DXQUATERNION  qR;
+				D3DXQuaternionRotationAxis(&qR, &D3DXVECTOR3(0.0f, 1.0f, 0.0f), xTest2);
+
+				D3DXVECTOR3 rotCentre(dimension, 0.0f, dimension + 0.65f);
+				D3DXMatrixTransformation(&matRotateHT, NULL, NULL, NULL, &rotCentre, &qR, NULL);
+				WorldMat2 *= matRotateHT;
+			}
 
 			///*Middle hRotation
-			else if(/*(count % 3 != 0) && */(count < 18) && (count > 8))
-			{
-			D3DXMatrixTranslation(&tMat, toArr[count - 9], -(dimension), toArr2[count - 9]);
-			D3DXMatrixMultiply(&WorldMat2, &WorldMat2, &tMat);
+			//else if(/*(count % 3 != 0) && */(count < 18) && (count > 8))
+			//{
+			//D3DXMatrixTranslation(&tMat, toArr[count - 9], -(dimension), toArr2[count - 9]);
+			//D3DXMatrixMultiply(&WorldMat2, &WorldMat2, &tMat);
 
-			D3DXMatrixIdentity(&WorldMat2);
+			//D3DXMatrixIdentity(&WorldMat2);
 
-			D3DXMatrixTranslation(&tMat2, fromArr[count - 9], -(dimension), fromArr2[count - 9]);
-			D3DXMatrixMultiply(&WorldMat2, &WorldMat2, &tMat2);
-			
-			D3DXMatrixMultiply(&WorldMat2, &WorldMat2, &matRotateH2);
+			//D3DXMatrixTranslation(&tMat2, fromArr[count - 9], -(dimension), fromArr2[count - 9]);
+			//D3DXMatrixMultiply(&WorldMat2, &WorldMat2, &tMat2);
+			//
+			//D3DXMatrixMultiply(&WorldMat2, &WorldMat2, &matRotateH2);
 
-			if ((count) % 3 == 0)
-			{
-				//D3DXMatrixMultiply(&WorldMat3, &WorldMat3, &WorldMat2);
-				////D3DXMatrixIdentity(&WorldMat3);
-				////D3DXMatrixTranslation(&emptyMat, 0.0f, 0.0f, -(0.65f * dimension));
-				////D3DXMatrixMultiply(&WorldMat3, &WorldMat3, &emptyMat);
-				//D3DXMatrixMultiply(&WorldMat3, &WorldMat3, &tMat3);
-				////D3DXMatrixMultiply(&WorldMat3, &WorldMat3, &matRotateV);
-				//D3DXMatrixIdentity(&WorldMat3);
-				////D3DXMatrixMultiply(&WorldMat3, &WorldMat3, &tMat4);
-				//D3DXMatrixMultiply(&WorldMat3, &WorldMat3, &matRotateV);
-				////D3DXMatrixIdentity(&WorldMat3);
-				////D3DXMatrixMultiply(&WorldMat2, &WorldMat2, &WorldMat3);
-				////D3DXMatrixTranslation(&emptyMat, 0.0f, 0.0f, -0.65f);
-				////D3DXMatrixMultiply(&WorldMat3, &WorldMat3, &emptyMat);
-				//D3DXMatrixMultiply(&WorldMat2, &WorldMat2, &WorldMat3);
-			}
-			
+			//if ((count) % 3 == 0)
+			//{
+			//	//D3DXMatrixMultiply(&WorldMat3, &WorldMat3, &WorldMat2);
+			//	////D3DXMatrixIdentity(&WorldMat3);
+			//	////D3DXMatrixTranslation(&emptyMat, 0.0f, 0.0f, -(0.65f * dimension));
+			//	////D3DXMatrixMultiply(&WorldMat3, &WorldMat3, &emptyMat);
+			//	//D3DXMatrixMultiply(&WorldMat3, &WorldMat3, &tMat3);
+			//	////D3DXMatrixMultiply(&WorldMat3, &WorldMat3, &matRotateV);
+			//	//D3DXMatrixIdentity(&WorldMat3);
+			//	////D3DXMatrixMultiply(&WorldMat3, &WorldMat3, &tMat4);
+			//	//D3DXMatrixMultiply(&WorldMat3, &WorldMat3, &matRotateV);
+			//	////D3DXMatrixIdentity(&WorldMat3);
+			//	////D3DXMatrixMultiply(&WorldMat2, &WorldMat2, &WorldMat3);
+			//	////D3DXMatrixTranslation(&emptyMat, 0.0f, 0.0f, -0.65f);
+			//	////D3DXMatrixMultiply(&WorldMat3, &WorldMat3, &emptyMat);
+			//	//D3DXMatrixMultiply(&WorldMat2, &WorldMat2, &WorldMat3);
+			//}
+			//
 
-			D3DXMatrixMultiply(&WorldMat2, &WorldMat2, &WorldMat);
-			
-		    }
+			//D3DXMatrixMultiply(&WorldMat2, &WorldMat2, &WorldMat);
+			//
+		 //   }
 
 			
 
