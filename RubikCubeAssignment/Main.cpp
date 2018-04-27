@@ -64,6 +64,12 @@ static int vRowTempTest[3][3];
 
 static int hRowTop[3][3];
 static int hRowTemp[3][3];
+static int hRowTopTest[9];
+static int hRowTTTemp[3][3];
+static int hRowMidTest[9];
+static int hRowMTTemp[3][3];
+static int hRowBotTest[9];
+static int hRowBTTemp[3][3];
 
 static int hRowMid[3][3];
 static int hRowTemp2[3][3];
@@ -311,6 +317,10 @@ void Render()
 		cubie.setY(g_RotationAngleV1);
 		cubie.SetX1(xIndexHRow1);
 		cubie.SetX2(g_RotationAngleH2);
+		cubie.SetX3(g_RotationAngleH3);
+		cubie.SetH1(hRowTopTest);
+		cubie.SetH2(hRowMidTest);
+		cubie.SetH3(hRowBotTest);
 		cubie.setVRow1(vRowPos1);
 		cubie.setVRowTest(vRowPosTest);
 		
@@ -383,6 +393,7 @@ void Render()
 					for (int i = 0; i < 3; ++i) {
 						for (int j = 0; j < 3; ++j) {
 							hRowTop[i][j] = hRowTemp[3 - j - 1][i]; //rotate clockwise 90 degrees
+							hRowTopTest[(i * 3) + (j)] = hRowTTTemp[3 - j - 1][i]; //rotate clockwise 90 degrees
 						}
 					}
 
@@ -413,6 +424,7 @@ void Render()
 					for (int i = 0; i<3; ++i) {
 						for (int j = 0; j<3; ++j) {
 							hRowTop[i][j] = hRowTemp[j][3 - i - 1]; //rotate counter-clockwise 90 degrees
+							hRowTopTest[(i * 3) + (j)] = hRowTTTemp[j][3 - i - 1]; //rotate clockwise 90 degrees
 						}
 					}
 
@@ -447,6 +459,7 @@ void Render()
 					for (int i = 0; i < 3; ++i) {
 						for (int j = 0; j < 3; ++j) {
 							hRowMid[i][j] = hRowTemp2[3 - j - 1][i]; //rotate clockwise 90 degrees
+							hRowMidTest[(i * 3) + (j)] = hRowMTTemp[3 - j - 1][i]; //rotate clockwise 90 degrees
 						}
 					}
 
@@ -474,6 +487,7 @@ void Render()
 					for (int i = 0; i<3; ++i) {
 						for (int j = 0; j<3; ++j) {
 							hRowMid[i][j] = hRowTemp2[j][3 - i - 1]; //rotate counter-clockwise 90 degrees
+							hRowMidTest[(i * 3) + (j)] = hRowMTTemp[j][3 - i - 1]; //rotate clockwise 90 degrees
 						}
 					}
 
@@ -509,6 +523,7 @@ void Render()
 					for (int i = 0; i < 3; ++i) {
 						for (int j = 0; j < 3; ++j) {
 							hRowBottom[i][j] = hRowTemp3[3 - j - 1][i]; //rotate clockwise 90 degrees
+							hRowBotTest[(i * 3) + (j)] = hRowBTTemp[3 - j - 1][i]; //rotate clockwise 90 degrees
 						}
 					}
 
@@ -536,6 +551,7 @@ void Render()
 					for (int i = 0; i<3; ++i) {
 						for (int j = 0; j<3; ++j) {
 							hRowBottom[i][j] = hRowTemp3[j][3 - i - 1]; //rotate counter-clockwise 90 degrees
+							hRowBotTest[(i * 3) + (j)] = hRowBTTemp[j][3 - i - 1]; //rotate clockwise 90 degrees
 						}
 					}
 
@@ -576,6 +592,22 @@ void Render()
 					}
 				}
 
+				for (int i = 0; i < 3; i++)
+				{
+					if (i == 0)
+					{
+						hRowTopTest[i] = vRowPosTest[i];
+						/*hRowMidTest[i] = vRowPosTest[(i+1)*9];
+						hRowBotTest[i] = vRowPosTest[(i+1)*18];*/
+						
+					}
+					else
+					{
+						hRowTopTest[i*3] = vRowPosTest[i*3];
+						/*hRowMidTest[i*3] = vRowPosTest[9 + (i*3)];
+						hRowBotTest[i*3] = vRowPosTest[18 + (i*3)];*/
+					}
+				}
 				//cubie.changeTextures();
 				//++countV1;
 				//	0	3	6
@@ -625,6 +657,7 @@ void UpdateTempRow(int num)
 			for (int j = 0; j < 3; j++)
 			{
 				hRowTemp[i][j] = hRowTop[i][j];
+				hRowTTTemp[i][j] = hRowTopTest[(i * 3) + j];
 			}
 		}
 	}
@@ -636,6 +669,7 @@ void UpdateTempRow(int num)
 			for (int j = 0; j < 3; j++)
 			{
 				hRowTemp2[i][j] = hRowMid[i][j];
+				hRowMTTemp[i][j] = hRowMidTest[(i * 3) + j];
 			}
 		}
 	}
@@ -647,6 +681,7 @@ void UpdateTempRow(int num)
 			for (int j = 0; j < 3; j++)
 			{
 				hRowTemp3[i][j] = hRowBottom[i][j];
+				hRowBTTemp[i][j] = hRowBotTest[(i * 3) + j];
 			}
 		}
 	}
@@ -798,6 +833,12 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE, LPSTR, int)
 			for (int i = 0; i < 27; i++)
 			{
 				vRowPosTest[i] = i;
+				if (i<9)
+					hRowTopTest[i] = i;
+				else if (i > 8 && i < 18)
+					hRowMidTest[i - 9] = i;
+				else if (i > 17 && i < 27)
+					hRowBotTest[i - 18] = i;
 				if (i % 3 == 0)
 					vRowPos1[i] = 3;
 				else
@@ -817,10 +858,15 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE, LPSTR, int)
 			{
 				for (int j = 0; j < 3; j++)
 				{
+					hRowTTTemp[i][j] = hRowTopTest[(i * 3) + (j)];
+					hRowMTTemp[i][j] = hRowMidTest[(i * 3) + (j)];
+					hRowBTTemp[i][j] = hRowBotTest[(i * 3) + (j)];
+
 					if (j == 0)
 					{
 						hRowTop[i][j] = hRowMid[i][j] = hRowBottom[i][j] = 3;
 						hRowTemp[i][j] = hRowTemp2[i][j] = hRowTemp3[i][j] = hRowTop[i][j];
+
 					}
 					else
 					{
