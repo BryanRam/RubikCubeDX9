@@ -64,6 +64,7 @@ static int vRowTempTest[3][3];
 
 static int hRowTop[3][3];
 static int hRowTemp[3][3];
+static bool isY[9];
 static int hRowTopTest[9];
 static int hRowTTTemp[3][3];
 static int hRowMidTest[9];
@@ -318,7 +319,7 @@ void Render()
 		cubie.SetX1(xIndexHRow1);
 		cubie.SetX2(g_RotationAngleH2);
 		cubie.SetX3(g_RotationAngleH3);
-		cubie.SetH1(hRowTopTest);
+		cubie.SetH1(hRowTopTest, isY);
 		cubie.SetH2(hRowMidTest);
 		cubie.SetH3(hRowBotTest);
 		cubie.setVRow1(vRowPos1);
@@ -597,6 +598,7 @@ void Render()
 					if (i == 0)
 					{
 						hRowTopTest[i] = vRowPosTest[i];
+						isY[i] = !isY[i];
 						/*hRowMidTest[i] = vRowPosTest[(i+1)*9];
 						hRowBotTest[i] = vRowPosTest[(i+1)*18];*/
 						
@@ -604,6 +606,7 @@ void Render()
 					else
 					{
 						hRowTopTest[i*3] = vRowPosTest[i*3];
+						isY[i*3] = !isY[i*3];
 						/*hRowMidTest[i*3] = vRowPosTest[9 + (i*3)];
 						hRowBotTest[i*3] = vRowPosTest[18 + (i*3)];*/
 					}
@@ -833,8 +836,11 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE, LPSTR, int)
 			for (int i = 0; i < 27; i++)
 			{
 				vRowPosTest[i] = i;
-				if (i<9)
+				if (i < 9)
+				{
 					hRowTopTest[i] = i;
+					isY[i] = true;
+				}
 				else if (i > 8 && i < 18)
 					hRowMidTest[i - 9] = i;
 				else if (i > 17 && i < 27)

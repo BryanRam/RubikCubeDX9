@@ -179,6 +179,7 @@ class CUBIE
 		int vRow1[27];
 		int vRowTest[27];
 		int hTopRow[9];
+		bool isY[9];
 		int hMidRow[9];
 		int hBotRow[9];
 		float xTest1, xTest2, xTest3;
@@ -739,11 +740,12 @@ class CUBIE
 			xTest3 = xIndex;
 		}
 
-		void SetH1(int* hRow)
+		void SetH1(int* hRow, bool* yesY)
 		{
 			for (int i = 0; i < 9; i++)
 			{
 				hTopRow[i] = hRow[i];
+				isY[i] = yesY[i];
 			}
 			
 		}
@@ -951,7 +953,10 @@ class CUBIE
 				{
 					D3DXMATRIX matRotateHT;
 					D3DXQUATERNION  qR;
-					D3DXQuaternionRotationAxis(&qR, &D3DXVECTOR3(0.0f, 1.0f, 0.0f), xTest1);
+					if(isY[i])
+						D3DXQuaternionRotationAxis(&qR, &D3DXVECTOR3(0.0f, 1.0f, 0.0f), xTest1);
+					else
+						D3DXQuaternionRotationAxis(&qR, &D3DXVECTOR3(0.0f, 0.0f, 1.0f), -xTest1);
 
 					D3DXVECTOR3 rotCentre(dimension, 0.0f, dimension + 0.65f);
 					D3DXMatrixTransformation(&matRotateHT, NULL, NULL, NULL, &rotCentre, &qR, NULL);
