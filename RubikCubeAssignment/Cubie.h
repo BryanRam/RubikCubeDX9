@@ -178,6 +178,7 @@ class CUBIE
 
 		int vRow1[27];
 		int vRowTest[27];
+		int vRowL1[9];
 		int hTopRow[9];
 		bool isY[9];
 		int hMidRow[9];
@@ -783,6 +784,14 @@ class CUBIE
 				vRowTest[i] = vRow[i];
 			}
 		}
+
+		void setVRowL(int* vRow)
+		{
+			for (int i = 0; i < 9; i++)
+			{
+				vRowL1[i] = vRow[i];
+			}
+		}
 		
 		void changeTextures()
 		{
@@ -953,12 +962,20 @@ class CUBIE
 				{
 					D3DXMATRIX matRotateHT;
 					D3DXQUATERNION  qR;
-					if(isY[i])
+					D3DXVECTOR3 rotCentre;
+					if (isY[i])
+					{
 						D3DXQuaternionRotationAxis(&qR, &D3DXVECTOR3(0.0f, 1.0f, 0.0f), xTest1);
+						rotCentre = D3DXVECTOR3(dimension, 0.0f, dimension + 0.65f);
+					}
 					else
-						D3DXQuaternionRotationAxis(&qR, &D3DXVECTOR3(0.0f, 0.0f, 1.0f), -xTest1);
+					{
+						D3DXQuaternionRotationAxis(&qR, &D3DXVECTOR3(0.0f, 0.0f, 1.0f), xTest1);
+						rotCentre = D3DXVECTOR3(dimension, 0.0f, dimension + 0.65f);
+						//rotCentre = D3DXVECTOR3 (dimension*2, dimension + 0.65f, 0.0f );
+					}
 
-					D3DXVECTOR3 rotCentre(dimension, 0.0f, dimension + 0.65f);
+					
 					D3DXMatrixTransformation(&matRotateHT, NULL, NULL, NULL, &rotCentre, &qR, NULL);
 					WorldMat2 *= matRotateHT;
 				}
@@ -1130,7 +1147,20 @@ class CUBIE
 
 			//WorldMat2 *= WorldMat3;
 			//if (((count) % 3 == 0) /*|| ((count) % 3 == 2)*/)
-			if (vRow1[count] % 3 == 0)
+			for (int i = 0; i < 9; i++)
+			{
+				if (count == vRowL1[i])
+				{
+					D3DXQUATERNION  qR;
+					D3DXQuaternionRotationAxis(&qR, &D3DXVECTOR3(1.0f, 0.0f, 0.0f), yIndexRowV1);
+
+					D3DXVECTOR3 rotCentre(0.0f, -dimension, dimension + 0.65f);
+					D3DXMatrixTransformation(&matRotateV, NULL, NULL, NULL, &rotCentre, &qR, NULL);
+					WorldMat2 *= matRotateV;
+				}
+			}
+
+			/*if (vRow1[count] % 3 == 0)
 			{
 				D3DXQUATERNION  qR;
 				D3DXQuaternionRotationAxis(&qR, &D3DXVECTOR3(1.0f, 0.0f, 0.0f), yIndexRowV1);
@@ -1138,7 +1168,7 @@ class CUBIE
 				D3DXVECTOR3 rotCentre (0.0f, -dimension, dimension + 0.65f);
 				D3DXMatrixTransformation(&matRotateV, NULL, NULL, NULL, &rotCentre, &qR, NULL);
 				WorldMat2 *= matRotateV;
-			}
+			}*/
 			D3DXMatrixMultiply(&WorldMat2, &WorldMat2, &matRotateY);
 			
 			render_target_->SetTransform(D3DTS_WORLD, &WorldMat2);
