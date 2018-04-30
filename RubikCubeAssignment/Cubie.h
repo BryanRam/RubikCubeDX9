@@ -793,20 +793,75 @@ class CUBIE
 			}
 		}
 		
-		void changeTextures()
+		void changeTexturesVCW(int* row)
 		{
-			for (int i = 0; i < 27; i++)
+			for (int i = 0; i < 9; i++)
 			{
-				if (i % 3 == 0)
-				{
-					ts_it = textureStore.find(i);
+				//if (i % 3 == 0)
+				//if (i == vRowL1[i])
+				//{
+					ts_it = textureStore.find(row[i]);
 					faces texFaces = ts_it->second;
-					ts_it->second.frontSide = texFaces.bottomSide;
-					ts_it->second.topSide = texFaces.frontSide;
-					ts_it->second.bottomSide = texFaces.backSide;
-					ts_it->second.backSide = texFaces.topSide;
+					ts_it->second.frontSide = texFaces.topSide;
+					ts_it->second.topSide = texFaces.backSide;
+					ts_it->second.bottomSide = texFaces.frontSide;
+					ts_it->second.backSide = texFaces.bottomSide;
 					//ts_it->second.frontSide = 6;
-				}
+				//}
+			}
+		}
+
+		void changeTexturesVCCW(int* row)
+		{
+			for (int i = 0; i < 9; i++)
+			{
+				//if (i % 3 == 0)
+				//if (i == vRowL1[i])
+				//{
+				ts_it = textureStore.find(row[i]);
+				faces texFaces = ts_it->second;
+				ts_it->second.frontSide = texFaces.bottomSide;
+				ts_it->second.topSide = texFaces.frontSide;
+				ts_it->second.bottomSide = texFaces.backSide;
+				ts_it->second.backSide = texFaces.topSide;
+				//ts_it->second.frontSide = 6;
+				//}
+			}
+		}
+
+		void changeTexturesHCW(int* row)
+		{
+			for (int i = 0; i < 9; i++)
+			{
+				//if (i % 3 == 0)
+				//if (i == vRowL1[i])
+				//{
+				ts_it = textureStore.find(row[i]);
+				faces texFaces = ts_it->second;
+				ts_it->second.frontSide = texFaces.rightSide;
+				ts_it->second.leftSide = texFaces.frontSide;
+				ts_it->second.rightSide = texFaces.backSide;
+				ts_it->second.backSide = texFaces.leftSide;
+				//ts_it->second.frontSide = 6;
+				//}
+			}
+		}
+
+		void changeTexturesHCCW(int* row)
+		{
+			for (int i = 0; i < 9; i++)
+			{
+				//if (i % 3 == 0)
+				//if (i == vRowL1[i])
+				//{
+				ts_it = textureStore.find(row[i]);
+				faces texFaces = ts_it->second;
+				ts_it->second.frontSide = texFaces.leftSide;
+				ts_it->second.leftSide = texFaces.backSide;
+				ts_it->second.rightSide = texFaces.frontSide;
+				ts_it->second.backSide = texFaces.rightSide;
+				//ts_it->second.frontSide = 6;
+				//}
 			}
 		}
 		
@@ -958,61 +1013,61 @@ class CUBIE
 			{
 				// Select the texture.
 				
-				//Add black textures to the cubies	//3 rows, 1 column
-				if ((count % 3 == 0 && i == 1) ||	//Left Row of 9 cubies(, Right side
-					(count % 3 == 2 && i == 3) ||	//Right row of 9 cubies, Left side
-					(count % 3 == 1 && i == 1) ||	//Middle Row of 9 cubies, Left and right sides
-					(count % 3 == 1 &&- i == 3)
-					)
-				{
-					render_target_->SetTexture(0, g_pTextures[6]);
-					render_target_->DrawPrimitive(D3DPT_TRIANGLELIST, i * 6, 2);
-					ts_it = textureStore.find(count);
-					if (ts_it != textureStore.end())
-					{
-						switch (i)
-						{
-							case 1:
-								ts_it->second.rightSide = 6;
-								break;
-							case 3:
-								ts_it->second.leftSide = 6;
-								break;
-						}
-						
-					}
-				}
-				else if ((zVal == 0 && i == 2) || //Front Row of 9, Back Side
-						 //(zVal == 1 && i == 0) || //Middle Row, Front Side
-						 //(zVal == 1 && i == 2) || //Middle Row, Back Side
-					     (zVal == 2 && i == 0)	  //Back Row, Front Side
-						)
-				{
-					render_target_->SetTexture(0, g_pTextures[6]);
-					render_target_->DrawPrimitive(D3DPT_TRIANGLELIST, i * 6, 2);
-				}
-				else if ( (k == 0 && i == 5)) //Top Row of 9, Bottom side
-				{
-					render_target_->SetTexture(0, g_pTextures[6]);
-					render_target_->DrawPrimitive(D3DPT_TRIANGLELIST, i * 6, 2);
-					//render_target_->SetTexture(0, g_pTextures[i]);
+				////Add black textures to the cubies	//3 rows, 1 column
+				//if ((count % 3 == 0 && i == 1) ||	//Left Row of 9 cubies(, Right side
+				//	(count % 3 == 2 && i == 3) ||	//Right row of 9 cubies, Left side
+				//	(count % 3 == 1 && i == 1) ||	//Middle Row of 9 cubies, Left and right sides
+				//	(count % 3 == 1 &&- i == 3)
+				//	)
+				//{
+				//	render_target_->SetTexture(0, g_pTextures[6]);
 				//	render_target_->DrawPrimitive(D3DPT_TRIANGLELIST, i * 6, 2);
-					
-				}
-				else  if ((k == 1 && i == 4) || //Middle row of 9, Top Side 
-						  (k == 1 && i == 5)    //Middle row of 9, Bottom Side
-						 )
-				{
-					render_target_->SetTexture(0, g_pTextures[6]);
-					render_target_->DrawPrimitive(D3DPT_TRIANGLELIST, i * 6, 2);
-				}
-				else if (k == 2 && i == 4) //Bottom row of 9, Top Side
-				{
-					render_target_->SetTexture(0, g_pTextures[6]);
-					render_target_->DrawPrimitive(D3DPT_TRIANGLELIST, i * 6, 2);
-				}
-				else
-				{
+				//	ts_it = textureStore.find(count);
+				//	if (ts_it != textureStore.end())
+				//	{
+				//		switch (i)
+				//		{
+				//			case 1:
+				//				ts_it->second.rightSide = 6;
+				//				break;
+				//			case 3:
+				//				ts_it->second.leftSide = 6;
+				//				break;
+				//		}
+				//		
+				//	}
+				//}
+				//else if ((zVal == 0 && i == 2) || //Front Row of 9, Back Side
+				//		 //(zVal == 1 && i == 0) || //Middle Row, Front Side
+				//		 //(zVal == 1 && i == 2) || //Middle Row, Back Side
+				//	     (zVal == 2 && i == 0)	  //Back Row, Front Side
+				//		)
+				//{
+				//	render_target_->SetTexture(0, g_pTextures[6]);
+				//	render_target_->DrawPrimitive(D3DPT_TRIANGLELIST, i * 6, 2);
+				//}
+				//else if ( (k == 0 && i == 5)) //Top Row of 9, Bottom side
+				//{
+				//	render_target_->SetTexture(0, g_pTextures[6]);
+				//	render_target_->DrawPrimitive(D3DPT_TRIANGLELIST, i * 6, 2);
+				//	//render_target_->SetTexture(0, g_pTextures[i]);
+				////	render_target_->DrawPrimitive(D3DPT_TRIANGLELIST, i * 6, 2);
+				//	
+				//}
+				//else  if ((k == 1 && i == 4) || //Middle row of 9, Top Side 
+				//		  (k == 1 && i == 5)    //Middle row of 9, Bottom Side
+				//		 )
+				//{
+				//	render_target_->SetTexture(0, g_pTextures[6]);
+				//	render_target_->DrawPrimitive(D3DPT_TRIANGLELIST, i * 6, 2);
+				//}
+				//else if (k == 2 && i == 4) //Bottom row of 9, Top Side
+				//{
+				//	render_target_->SetTexture(0, g_pTextures[6]);
+				//	render_target_->DrawPrimitive(D3DPT_TRIANGLELIST, i * 6, 2);
+				//}
+				//else
+				//{
 					//render_target_->SetTexture(0, g_pTextures[i]);
 
 
@@ -1089,7 +1144,7 @@ class CUBIE
 					//g_pd3dDevice->DrawPrimitive(D3DPT_TRIANGLELIST, i * 6, 2);
 					// Render the contents of the vertex buffer.
 					//render_target_->DrawPrimitive(D3DPT_TRIANGLELIST, i * 6, 2);
-				}
+				//}
 			}
 
 			// draw the cube

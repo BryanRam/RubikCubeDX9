@@ -358,8 +358,10 @@ void Render()
 				{
 					isRotating = !isRotating;
 					cw = !cw;
-					++count;
-					g_RotationAngle = D3DX_PI / 2 * count;
+					/*++count;
+					g_RotationAngle = D3DX_PI / 2 * count;*/
+
+					g_RotationAngle = 0;
 					
 					/*for (int i = 0; i < 9; i++)
 					{
@@ -414,6 +416,7 @@ void Render()
 						vRowL[i] = hRowTopTest[(i * 3)];
 					}
 					UpdateTempRow(0);
+					cubie.changeTexturesHCW(hRowTopTest);
 				}
 				else
 				{
@@ -426,8 +429,9 @@ void Render()
 				{
 					isRotating = !isRotating;
 					ccw = !ccw;
-					--count;
-					g_RotationAngle = D3DX_PI / 2 * count;
+					/*--count;
+					g_RotationAngle = D3DX_PI / 2 * count;*/
+					g_RotationAngle = 0;
 					
 					for (int i = 0; i<3; ++i) {
 						for (int j = 0; j<3; ++j) {
@@ -445,6 +449,7 @@ void Render()
 						}
 					}
 					UpdateTempRow(0);
+					cubie.changeTexturesHCCW(hRowTopTest);
 				}
 				else
 				{
@@ -461,8 +466,9 @@ void Render()
 				{
 					cw = !cw;
 					isRotatingH2 = !isRotatingH2;
-					++countH2;
-					g_RotationAngleH2 = D3DX_PI / 2 * countH2;
+					/*++countH2;
+					g_RotationAngleH2 = D3DX_PI / 2 * countH2;*/
+					g_RotationAngleH2 = 0;
 
 					for (int i = 0; i < 3; ++i) {
 						for (int j = 0; j < 3; ++j) {
@@ -477,6 +483,7 @@ void Render()
 						}
 					}
 					UpdateTempRow(1);
+					cubie.changeTexturesHCW(hRowMidTest);
 				}
 				else
 				{
@@ -489,8 +496,9 @@ void Render()
 				{
 					isRotatingH2 = !isRotatingH2;
 					ccw = !ccw;
-					--countH2;
-					g_RotationAngleH2 = D3DX_PI / 2 * countH2;
+					/*--countH2;
+					g_RotationAngleH2 = D3DX_PI / 2 * countH2;*/
+					g_RotationAngleH2 = 0;
 
 					for (int i = 0; i<3; ++i) {
 						for (int j = 0; j<3; ++j) {
@@ -508,7 +516,7 @@ void Render()
 						}
 					}
 					UpdateTempRow(1);
-					
+					cubie.changeTexturesHCCW(hRowMidTest);
 				}
 				else
 				{
@@ -525,8 +533,9 @@ void Render()
 				{
 					isRotatingH3 = !isRotatingH3;
 					cw = !cw;
-					++countH3;
-					g_RotationAngleH3 = D3DX_PI / 2 * countH3;
+					/*++countH3;
+					g_RotationAngleH3 = D3DX_PI / 2 * countH3;*/
+					g_RotationAngleH3 = 0;
 					
 					for (int i = 0; i < 3; ++i) {
 						for (int j = 0; j < 3; ++j) {
@@ -541,6 +550,7 @@ void Render()
 						}
 					}
 					UpdateTempRow(2);
+					cubie.changeTexturesHCW(hRowBotTest);
 				}
 				else
 				{
@@ -553,8 +563,9 @@ void Render()
 				{
 					isRotatingH3 = !isRotatingH3;
 					ccw = !ccw;
-					--countH3;
-					g_RotationAngleH3 = D3DX_PI / 2 * countH3;
+					/*--countH3;
+					g_RotationAngleH3 = D3DX_PI / 2 * countH3;*/
+					g_RotationAngleH3 = 0;
 
 					for (int i = 0; i<3; ++i) {
 						for (int j = 0; j<3; ++j) {
@@ -572,7 +583,7 @@ void Render()
 						}
 					}
 					UpdateTempRow(2);
-
+					cubie.changeTexturesHCCW(hRowBotTest);
 				}
 				else
 				{
@@ -589,8 +600,10 @@ void Render()
 			if (g_RotationAngleV1 >= (D3DX_PI / 2 * (countV1+1)))
 			{
 				isRotatingV1 = !isRotatingV1;
-				++countV1;
-				g_RotationAngleV1 = D3DX_PI / 2 * countV1;
+				//+countV1;
+				//g_RotationAngleV1 = D3DX_PI / 2 * countV1;
+
+				g_RotationAngleV1 = 0;
 
 				for (int i = 0; i<3; ++i) {
 					
@@ -607,7 +620,7 @@ void Render()
 					if (i == 0 && i<3)
 					{
 						hRowTopTest[i] = vRowPosTest[i];
-						isY[i] = !isY[i];
+						//isY[i] = !isY[i];
 						
 						/*hRowMidTest[i] = vRowPosTest[(i+1)*9];
 						hRowBotTest[i] = vRowPosTest[(i+1)*18];*/
@@ -616,14 +629,14 @@ void Render()
 					else if(i<3)
 					{
 						hRowTopTest[i*3] = vRowPosTest[i*3];
-						isY[i*3] = !isY[i*3];
+						//isY[i*3] = !isY[i*3];
 						
 						/*hRowMidTest[i*3] = vRowPosTest[9 + (i*3)];
 						hRowBotTest[i*3] = vRowPosTest[18 + (i*3)];*/
 					}
 				}
-
-				//cubie.changeTextures();
+				//cubie.setVRowL(vRowL);
+				cubie.changeTexturesVCCW(vRowL);
 				//++countV1;
 				//	0	3	6
 				//	9	12	15
