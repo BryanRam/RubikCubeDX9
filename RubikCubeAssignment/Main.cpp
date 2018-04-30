@@ -582,8 +582,9 @@ void Render()
 			if (g_RotationAngleV1 >= (D3DX_PI / 2 * (countV1+1)))
 			{
 				isRotatingV1 = !isRotatingV1;
-				++countV1;
-				g_RotationAngleV1 = D3DX_PI / 2 * countV1;
+				//++countV1;
+				//g_RotationAngleV1 = D3DX_PI / 2 * countV1;
+				g_RotationAngleV1 = 0;
 
 				for (int i = 0; i<3; ++i) {
 					
@@ -611,7 +612,7 @@ void Render()
 						hRowBotTest[i*3] = vRowPosTest[18 + (i*3)];*/
 					}
 				}
-				//cubie.changeTextures();
+				cubie.changeTextures();
 				//++countV1;
 				//	0	3	6
 				//	9	12	15

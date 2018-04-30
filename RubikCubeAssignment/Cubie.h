@@ -791,8 +791,11 @@ class CUBIE
 				if (i % 3 == 0)
 				{
 					ts_it = textureStore.find(i);
-					ts_it->second.frontSide += 5;
-					ts_it->second.topSide -= 4;
+					faces texFaces = ts_it->second;
+					ts_it->second.frontSide = texFaces.bottomSide;
+					ts_it->second.topSide = texFaces.frontSide;
+					ts_it->second.bottomSide = texFaces.backSide;
+					ts_it->second.backSide = texFaces.topSide;
 					//ts_it->second.frontSide = 6;
 				}
 			}
@@ -847,106 +850,7 @@ class CUBIE
 			D3DXMatrixTranslation(&emptyMat, 0.0f, 0.0f, -0.65f);
 			D3DXMatrixMultiply(&WorldMat, &WorldMat, &TranslateMatEx);
 			D3DXMatrixMultiply(&WorldMat2, &WorldMat2, &TranslateMat);
-			//D3DXMatrixMultiply(&WorldMat3, &WorldMat3, &WorldMat2);
-
-			//render_target_->SetTransform(D3DTS_WORLD, &WorldMat);
-			//D3DXMatrixIdentity(&WorldMat);
-
-			//D3DXMatrixMultiply(&WorldMat, &WorldMat, &tMat);
-
-			/*if (count % 3 == 0)
-			{
-				D3DXMatrixTranslation(&tMat, toArr[count], 0.0f, toArr2[count]);
-				D3DXMatrixMultiply(&WorldMat2, &WorldMat2, &tMat);
-
-				D3DXMatrixIdentity(&WorldMat2);
-
-				D3DXMatrixTranslation(&tMat2, fromArr[count], 0.0f, fromArr2[count]);
-				D3DXMatrixMultiply(&WorldMat2, &WorldMat2, &tMat2);
-				D3DXMatrixMultiply(&WorldMat2, &WorldMat2, &matRotateH);
-
-
-				D3DXMatrixMultiply(&WorldMat3, &WorldMat3, &WorldMat2);
-				D3DXMatrixMultiply(&WorldMat3, &WorldMat3, &tMat3);
-				D3DXMatrixIdentity(&WorldMat3);
-
-				D3DXMatrixMultiply(&WorldMat3, &WorldMat3, &tMat4);
-				D3DXMatrixMultiply(&WorldMat3, &WorldMat3, &matRotateV);
-				D3DXMatrixMultiply(&WorldMat3, &WorldMat3, &emptyMat);
-				D3DXMatrixMultiply(&WorldMat2, &WorldMat2, &WorldMat3);
-
-
-
-				D3DXMatrixMultiply(&WorldMat2, &WorldMat2, &WorldMat);
-			}
-
-			else*/ 
-			//if ((count) % 3 == 0)
-			//{
-			//	D3DXQUATERNION  qR;
-			//	D3DXQuaternionRotationAxis(&qR, &D3DXVECTOR3(1.0f, 0.0f, 0.0f), yIndexRowV1);
-
-			//	D3DXVECTOR3 rotCentre(0.0f, 0, dimension-0.425f);
-			//	D3DXMatrixTransformation(&matRotateV, NULL, NULL, NULL, &rotCentre, &qR, /*&D3DXVECTOR3(vCoords[count].toX, vCoords[count].toY, vCoords[count].toZ)*/NULL);
-			//	D3DXMatrixMultiply(&WorldMat3, &WorldMat3, &tMat3);
-
-			//	D3DXMatrixIdentity(&WorldMat3);
-
-			//	D3DXMatrixMultiply(&WorldMat3, &WorldMat3, &tMat4);
-			//	
-			//	WorldMat3 *= matRotateV;
-			//	D3DXMATRIX fixMat;
-			//	D3DXMatrixTranslation(&fixMat, 0.0f, -dimension, dimension-0.65f);
-			//	WorldMat3 *= fixMat;
-			//	WorldMat2 *= WorldMat3;
-			//	//D3DXMatrixIdentity(&WorldMat2);
-			//}
-
-			//for (int i = 0; i < 9; i++)
-			//{
-			//	if(vRowTest[i] == count)
-			//	{
-			//		D3DXMatrixTranslation(&tMat, toArr[count], 0.0f, toArr2[count]);
-			//	D3DXMatrixMultiply(&WorldMat2, &WorldMat2, &tMat);
-
-			//	D3DXMatrixIdentity(&WorldMat2);
-
-			//	D3DXMatrixTranslation(&tMat2, fromArr[count], 0.0f, fromArr2[count]);
-			//	D3DXMatrixMultiply(&WorldMat2, &WorldMat2, &tMat2);
-
-			//	
-
-			//	D3DXMatrixMultiply(&WorldMat2, &WorldMat2, &matRotateH);
-
-			//	if ((count) % 3 == 0)
-			//	{
-			//		////D3DXMatrixIdentity(&WorldMat3);
-			//		//D3DXMatrixMultiply(&WorldMat3, &WorldMat3, &WorldMat2);
-			//		//
-			//		////D3DXMatrixTranslation(&emptyMat, 0.0f, 0.0f, -(0.65f * dimension));
-			//		////D3DXMatrixMultiply(&WorldMat3, &WorldMat3, &emptyMat);
-			//		//D3DXMatrixMultiply(&WorldMat3, &WorldMat3, &tMat3);
-			//		////D3DXMatrixMultiply(&WorldMat3, &WorldMat3, &matRotateV);
-			//		//D3DXMatrixIdentity(&WorldMat3);
-			//		////D3DXMatrixMultiply(&WorldMat3, &WorldMat3, &tMat4);
-			//		//D3DXMatrixMultiply(&WorldMat3, &WorldMat3, &matRotateV);
-			//		////D3DXMatrixIdentity(&WorldMat3);
-			//		////D3DXMatrixMultiply(&WorldMat2, &WorldMat2, &WorldMat3);
-			//		////D3DXMatrixTranslation(&emptyMat, 0.0f, 0.0f, -0.65f);
-			//		////D3DXMatrixMultiply(&WorldMat3, &WorldMat3, &emptyMat);
-			//		//D3DXMatrixMultiply(&WorldMat2, &WorldMat2, &WorldMat3);
-			//		//D3DXMatrixRotationAxis(&matRotateV, &axis, yIndexRowV1);
-
-			//		//WorldMat2 *= matRotateV;
-			//	}
-
-			//	
-
-			//	//D3DXMatrixMultiply(&WorldMat2, &WorldMat2, &WorldMat);
-
-			//	D3DXMatrixMultiply(&WorldMat2, &WorldMat2, &WorldMat);
-			//	}
-			//}
+			
 			for (int i = 0; i < 9; i++)
 			{
 				if (count == hTopRow[i])
@@ -955,8 +859,8 @@ class CUBIE
 					D3DXQUATERNION  qR;
 					if(isY[i])
 						D3DXQuaternionRotationAxis(&qR, &D3DXVECTOR3(0.0f, 1.0f, 0.0f), xTest1);
-					else
-						D3DXQuaternionRotationAxis(&qR, &D3DXVECTOR3(0.0f, 0.0f, 1.0f), -xTest1);
+					else if (!isY[i])
+						D3DXQuaternionRotationAxis(&qR, &D3DXVECTOR3(0.0f, 0.0f, 1.0f), xTest1);
 
 					D3DXVECTOR3 rotCentre(dimension, 0.0f, dimension + 0.65f);
 					D3DXMatrixTransformation(&matRotateHT, NULL, NULL, NULL, &rotCentre, &qR, NULL);
@@ -984,151 +888,7 @@ class CUBIE
 				}
 			}
 
-			/*if (count < 9)
-			{
-				D3DXMATRIX matRotateHT;
-				D3DXQUATERNION  qR;
-				D3DXQuaternionRotationAxis(&qR, &D3DXVECTOR3(0.0f, 1.0f, 0.0f), xTest1);
-
-				D3DXVECTOR3 rotCentre(dimension, 0.0f, dimension + 0.65f);
-				D3DXMatrixTransformation(&matRotateHT, NULL, NULL, NULL, &rotCentre, &qR, NULL);
-				WorldMat2 *= matRotateHT;
-			}*/
-
 			
-			//if ((count < 9))
-			//{
-			//	D3DXMatrixTranslation(&tMat, toArr[count], 0.0f, toArr2[count]);
-			//	D3DXMatrixMultiply(&WorldMat2, &WorldMat2, &tMat);
-
-			//	D3DXMatrixIdentity(&WorldMat2);
-
-			//	D3DXMatrixTranslation(&tMat2, fromArr[count], 0.0f, fromArr2[count]);
-			//	D3DXMatrixMultiply(&WorldMat2, &WorldMat2, &tMat2);
-
-			//	
-
-			//	D3DXMatrixMultiply(&WorldMat2, &WorldMat2, &matRotateH);
-
-			//	if ((count) % 3 == 0)
-			//	{
-			//		////D3DXMatrixIdentity(&WorldMat3);
-			//		//D3DXMatrixMultiply(&WorldMat3, &WorldMat3, &WorldMat2);
-			//		//
-			//		////D3DXMatrixTranslation(&emptyMat, 0.0f, 0.0f, -(0.65f * dimension));
-			//		////D3DXMatrixMultiply(&WorldMat3, &WorldMat3, &emptyMat);
-			//		//D3DXMatrixMultiply(&WorldMat3, &WorldMat3, &tMat3);
-			//		////D3DXMatrixMultiply(&WorldMat3, &WorldMat3, &matRotateV);
-			//		//D3DXMatrixIdentity(&WorldMat3);
-			//		////D3DXMatrixMultiply(&WorldMat3, &WorldMat3, &tMat4);
-			//		//D3DXMatrixMultiply(&WorldMat3, &WorldMat3, &matRotateV);
-			//		////D3DXMatrixIdentity(&WorldMat3);
-			//		////D3DXMatrixMultiply(&WorldMat2, &WorldMat2, &WorldMat3);
-			//		////D3DXMatrixTranslation(&emptyMat, 0.0f, 0.0f, -0.65f);
-			//		////D3DXMatrixMultiply(&WorldMat3, &WorldMat3, &emptyMat);
-			//		//D3DXMatrixMultiply(&WorldMat2, &WorldMat2, &WorldMat3);
-			//		//D3DXMatrixRotationAxis(&matRotateV, &axis, yIndexRowV1);
-
-			//		//WorldMat2 *= matRotateV;
-			//	}
-
-			//	
-
-			//	//D3DXMatrixMultiply(&WorldMat2, &WorldMat2, &WorldMat);
-
-			//	D3DXMatrixMultiply(&WorldMat2, &WorldMat2, &WorldMat);
-
-
-			//}
-			
-			//else if (/*(count % 3 != 0) && */(count < 18) && (count > 8))
-			//{
-			//	D3DXMATRIX matRotateHT;
-			//	D3DXQUATERNION  qR;
-			//	D3DXQuaternionRotationAxis(&qR, &D3DXVECTOR3(0.0f, 1.0f, 0.0f), xTest2);
-
-			//	D3DXVECTOR3 rotCentre(dimension, 0.0f, dimension + 0.65f);
-			//	D3DXMatrixTransformation(&matRotateHT, NULL, NULL, NULL, &rotCentre, &qR, NULL);
-			//	WorldMat2 *= matRotateHT;
-			//}
-
-			///*Middle hRotation
-			//else if(/*(count % 3 != 0) && */(count < 18) && (count > 8))
-			//{
-			//D3DXMatrixTranslation(&tMat, toArr[count - 9], -(dimension), toArr2[count - 9]);
-			//D3DXMatrixMultiply(&WorldMat2, &WorldMat2, &tMat);
-
-			//D3DXMatrixIdentity(&WorldMat2);
-
-			//D3DXMatrixTranslation(&tMat2, fromArr[count - 9], -(dimension), fromArr2[count - 9]);
-			//D3DXMatrixMultiply(&WorldMat2, &WorldMat2, &tMat2);
-			//
-			//D3DXMatrixMultiply(&WorldMat2, &WorldMat2, &matRotateH2);
-
-			//if ((count) % 3 == 0)
-			//{
-			//	//D3DXMatrixMultiply(&WorldMat3, &WorldMat3, &WorldMat2);
-			//	////D3DXMatrixIdentity(&WorldMat3);
-			//	////D3DXMatrixTranslation(&emptyMat, 0.0f, 0.0f, -(0.65f * dimension));
-			//	////D3DXMatrixMultiply(&WorldMat3, &WorldMat3, &emptyMat);
-			//	//D3DXMatrixMultiply(&WorldMat3, &WorldMat3, &tMat3);
-			//	////D3DXMatrixMultiply(&WorldMat3, &WorldMat3, &matRotateV);
-			//	//D3DXMatrixIdentity(&WorldMat3);
-			//	////D3DXMatrixMultiply(&WorldMat3, &WorldMat3, &tMat4);
-			//	//D3DXMatrixMultiply(&WorldMat3, &WorldMat3, &matRotateV);
-			//	////D3DXMatrixIdentity(&WorldMat3);
-			//	////D3DXMatrixMultiply(&WorldMat2, &WorldMat2, &WorldMat3);
-			//	////D3DXMatrixTranslation(&emptyMat, 0.0f, 0.0f, -0.65f);
-			//	////D3DXMatrixMultiply(&WorldMat3, &WorldMat3, &emptyMat);
-			//	//D3DXMatrixMultiply(&WorldMat2, &WorldMat2, &WorldMat3);
-			//}
-			//
-
-			//D3DXMatrixMultiply(&WorldMat2, &WorldMat2, &WorldMat);
-			//
-		 //   }
-
-			
-
-			//D3DXMatrixTranslation(&tMat2, fromArr[count], 0.0f, fromArr2[count]);
-
-
-
-			//else
-			//{
-			//	D3DXMatrixTranslation(&tMat, toArr[count - 18], -(dimension*2), toArr2[count - 18]);
-			//	D3DXMatrixMultiply(&WorldMat2, &WorldMat2, &tMat);
-
-			//	D3DXMatrixIdentity(&WorldMat2);
-
-			//	D3DXMatrixTranslation(&tMat2, fromArr[count - 18], -(dimension*2), fromArr2[count - 18]);
-			//	D3DXMatrixMultiply(&WorldMat2, &WorldMat2, &tMat2);
-
-			//	D3DXMatrixMultiply(&WorldMat2, &WorldMat2, &matRotateH3);
-
-			//	//if ((count) % 3 == 0)
-			//	//{
-			//	//	D3DXMatrixMultiply(&WorldMat3, &WorldMat3, &WorldMat2);
-			//	//	//D3DXMatrixTranslation(&emptyMat, 0.0f, 0.0f, -(0.65f * dimension));
-			//	//	//D3DXMatrixMultiply(&WorldMat3, &WorldMat3, &emptyMat);
-			//	//	//D3DXMatrixMultiply(&WorldMat3, &WorldMat3, &tMat3);
-			//	//	D3DXMatrixIdentity(&WorldMat3);
-			//	//	//D3DXMatrixMultiply(&WorldMat3, &WorldMat3, &tMat4);
-			//	//	D3DXMatrixMultiply(&WorldMat3, &WorldMat3, &matRotateV);
-			//	//	//D3DXMatrixIdentity(&WorldMat3);
-			//	//	//D3DXMatrixMultiply(&WorldMat2, &WorldMat2, &WorldMat3);
-			//	//	//D3DXMatrixTranslation(&emptyMat, 0.0f, 0.0f, -0.65f);
-			//	//	//D3DXMatrixMultiply(&WorldMat3, &WorldMat3, &emptyMat);
-			//	//	D3DXMatrixMultiply(&WorldMat2, &WorldMat2, &WorldMat3);
-			//	//}
-			//	
-
-			//	D3DXMatrixMultiply(&WorldMat2, &WorldMat2, &WorldMat);
-			//}
-
-
-
-			//WorldMat2 *= WorldMat3;
 			//if (((count) % 3 == 0) /*|| ((count) % 3 == 2)*/)
 			if (vRow1[count] % 3 == 0)
 			{
@@ -1172,7 +932,7 @@ class CUBIE
 				if ((count % 3 == 0 && i == 1) ||	//Left Row of 9 cubies(, Right side
 					(count % 3 == 2 && i == 3) ||	//Right row of 9 cubies, Left side
 					(count % 3 == 1 && i == 1) ||	//Middle Row of 9 cubies, Left and right sides
-					(count % 3 == 1 && i == 3)
+					(count % 3 == 1 &&- i == 3)
 					)
 				{
 					render_target_->SetTexture(0, g_pTextures[6]);
