@@ -414,6 +414,11 @@ void Render()
 					for (int i = 0; i < 3; i++)
 					{
 						vRowL[i] = hRowTopTest[(i * 3)];
+						
+					}
+					for (int i = 0; i < 9; i++)
+					{
+						vRowPosTest[i] = hRowTopTest[i];
 					}
 					UpdateTempRow(0);
 					cubie.changeTexturesHCW(hRowTopTest);
