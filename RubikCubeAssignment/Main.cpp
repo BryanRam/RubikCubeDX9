@@ -61,6 +61,7 @@ static int vRowPos1[27];
 static int vRowPosTest[27];
 static int vRowTemp[3][3];
 static int vRowTempTest[3][3];
+static int vRowL[9];
 
 static int hRowTop[3][3];
 static int hRowTemp[3][3];
@@ -324,6 +325,7 @@ void Render()
 		cubie.SetH3(hRowBotTest);
 		cubie.setVRow1(vRowPos1);
 		cubie.setVRowTest(vRowPosTest);
+		cubie.setVRowL(vRowL);
 		
 		int zVal = 0;
 		for (int i = 0; i < 27; i++)
@@ -405,6 +407,11 @@ void Render()
 							else
 								vRowPos1[(i * 3) + j] = hRowTop[i][j];
 						}
+					}
+
+					for (int i = 0; i < 3; i++)
+					{
+						vRowL[i] = hRowTopTest[(i * 3)];
 					}
 					UpdateTempRow(0);
 				}
@@ -582,9 +589,8 @@ void Render()
 			if (g_RotationAngleV1 >= (D3DX_PI / 2 * (countV1+1)))
 			{
 				isRotatingV1 = !isRotatingV1;
-				//++countV1;
-				//g_RotationAngleV1 = D3DX_PI / 2 * countV1;
-				g_RotationAngleV1 = 0;
+				++countV1;
+				g_RotationAngleV1 = D3DX_PI / 2 * countV1;
 
 				for (int i = 0; i<3; ++i) {
 					
@@ -594,25 +600,30 @@ void Render()
 					}
 				}
 
-				for (int i = 0; i < 3; i++)
+				for (int i = 0; i < 9; i++)
 				{
-					if (i == 0)
+					vRowL[i] = vRowPosTest[i * 3];
+
+					if (i == 0 && i<3)
 					{
 						hRowTopTest[i] = vRowPosTest[i];
 						isY[i] = !isY[i];
+						
 						/*hRowMidTest[i] = vRowPosTest[(i+1)*9];
 						hRowBotTest[i] = vRowPosTest[(i+1)*18];*/
 						
 					}
-					else
+					else if(i<3)
 					{
 						hRowTopTest[i*3] = vRowPosTest[i*3];
 						isY[i*3] = !isY[i*3];
+						
 						/*hRowMidTest[i*3] = vRowPosTest[9 + (i*3)];
 						hRowBotTest[i*3] = vRowPosTest[18 + (i*3)];*/
 					}
 				}
-				cubie.changeTextures();
+
+				//cubie.changeTextures();
 				//++countV1;
 				//	0	3	6
 				//	9	12	15
@@ -837,6 +848,7 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE, LPSTR, int)
 			for (int i = 0; i < 27; i++)
 			{
 				vRowPosTest[i] = i;
+				
 				if (i < 9)
 				{
 					hRowTopTest[i] = i;
@@ -847,7 +859,10 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE, LPSTR, int)
 				else if (i > 17 && i < 27)
 					hRowBotTest[i - 18] = i;
 				if (i % 3 == 0)
+				{
 					vRowPos1[i] = 3;
+					vRowL[i/3] = i;
+				}
 				else
 					vRowPos1[i] = 1;
 			}
