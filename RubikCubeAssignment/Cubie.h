@@ -813,6 +813,25 @@ class CUBIE
 
 		void changeTexturesVCCW(int* row)
 		{
+			std::map<int, faces>::iterator ts_it2;
+			int tempRow[3][3];
+			int row2[9];
+			for (int i = 0; i < 3; i++)
+			{
+				for (int j = 0; j < 3; j++)
+				{
+					tempRow[i][j] = row[(i * 3) + j];
+					row2[(i * 3) + j] = row[(i * 3) + j];
+				}
+			}
+
+			for (int i = 0; i < 3; i++)
+			{
+				for (int j = 0; j < 3; j++)
+				{
+					row2[(i*3)+j] = tempRow[3 - j - 1][i];
+				}
+			}
 			for (int i = 0; i < 9; i++)
 			{
 				//if (i % 3 == 0)
@@ -821,12 +840,28 @@ class CUBIE
 				ts_it = textureStore.find(row[i]);
 				faces texFaces = ts_it->second;
 				ts_it->second.frontSide = texFaces.bottomSide;
-				ts_it->second.topSide = texFaces.frontSide;
+				ts_it->second.topSide = texFaces. frontSide;
 				ts_it->second.bottomSide = texFaces.backSide;
 				ts_it->second.backSide = texFaces.topSide;
+
+				ts_it2 = textureStore.find(row2[i]);
+				ts_it->second.leftSide = ts_it2->second.leftSide;
+				ts_it->second.rightSide = ts_it2->second.rightSide;
+
+				/*  -
+					2	1	0
+					5	4	3
+					8	7	6
+
+					0	3	6
+					1	4	7
+					2	5	8
+				*/
 				//ts_it->second.frontSide = 6;
 				//}
 			}
+
+			
 		}
 
 		void changeTexturesHCW(int* row)
