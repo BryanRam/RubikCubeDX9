@@ -829,7 +829,7 @@ class CUBIE
 			{
 				for (int j = 0; j < 3; j++)
 				{
-					row2[(i*3)+j] = tempRow[3 - j - 1][i];
+					row2[(i*3)+j] = tempRow[j][3 - i - 1];
 				}
 			}
 			for (int i = 0; i < 9; i++)
@@ -837,6 +837,9 @@ class CUBIE
 				//if (i % 3 == 0)
 				//if (i == vRowL1[i])
 				//{
+				
+				
+
 				ts_it = textureStore.find(row[i]);
 				faces texFaces = ts_it->second;
 				ts_it->second.frontSide = texFaces.bottomSide;
@@ -847,6 +850,7 @@ class CUBIE
 				ts_it2 = textureStore.find(row2[i]);
 				ts_it->second.leftSide = ts_it2->second.leftSide;
 				ts_it->second.rightSide = ts_it2->second.rightSide;
+				
 
 				/*  -
 					2	1	0
