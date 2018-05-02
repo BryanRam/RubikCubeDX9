@@ -622,6 +622,7 @@ void Render()
 
 				for (int i = 0; i < 9; i++)
 				{
+					if(i>2)
 					vRowL[i] = vRowPosTest[i * 3];
 
 					if (i == 0 && i<3)
