@@ -839,15 +839,23 @@ class CUBIE
 				//if (i == vRowL1[i])
 				//{
 				ts_it = textureStore.find(row[i]);
+				ts_it2 = textureStore.find(i);
+				/*if (i < 3)
+				{*/
+					ts_it->second.leftSide = ts_it2->second.leftSide;
+					//ts_it->second.frontSide = ts_it2->second.leftSide;
+				//}
+				//else
+				//	ts_it->second.leftSide = ts_it2->second.bottomSide;
 				faces texFaces = ts_it->second;
+				//ts_it->second.leftSide = texFaces.bottomSide;
 				ts_it->second.frontSide = texFaces.bottomSide;
 				ts_it->second.topSide = texFaces.frontSide;
 				ts_it->second.bottomSide = texFaces.backSide;
 				ts_it->second.backSide = texFaces.topSide;
-				ts_it->second.leftSide = texFaces.bottomSide;
+				
 
-				ts_it2 = textureStore.find(row2[i]);
-				ts_it->second.leftSide = ts_it2->second.bottomSide;
+				
 				//ts_it->second.rightSide = ts_it2->second.bottomSide;
 
 				/*  -
@@ -875,10 +883,18 @@ class CUBIE
 				//{
 				ts_it = textureStore.find(row[i]);
 				faces texFaces = ts_it->second;
-				ts_it->second.frontSide = texFaces.rightSide;
-				ts_it->second.leftSide = texFaces.frontSide;
+				if (row[i] < 3)
+				{
+					ts_it->second.leftSide = texFaces.frontSide;
+					ts_it->second.frontSide = texFaces.rightSide;
+					if(row[i] == 0)
+						ts_it->second.backSide = texFaces.leftSide;
+					if(row[i] == 2)
+						ts_it->second.frontSide = texFaces.rightSide;
+				}
+				/*ts_it->second.leftSide = texFaces.frontSide;
 				ts_it->second.rightSide = texFaces.backSide;
-				ts_it->second.backSide = texFaces.leftSide;
+				ts_it->second.backSide = texFaces.leftSide;*/
 				//ts_it->second.frontSide = 6;
 				//}
 			}
