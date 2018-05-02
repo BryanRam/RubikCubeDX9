@@ -815,13 +815,14 @@ class CUBIE
 		{
 			std::map<int, faces>::iterator ts_it2;
 			int tempRow[3][3];
-			int row2[9];
+			int row2[9], row3[9];
 			for (int i = 0; i < 3; i++)
 			{
 				for (int j = 0; j < 3; j++)
 				{
 					tempRow[i][j] = row[(i * 3) + j];
 					row2[(i * 3) + j] = row[(i * 3) + j];
+					row3[(i * 3) + j] = row[(i * 3) + j];
 				}
 			}
 
@@ -829,7 +830,7 @@ class CUBIE
 			{
 				for (int j = 0; j < 3; j++)
 				{
-					row2[(i*3)+j] = tempRow[3 - j - 1][i];
+					row2[(i*3)+j] = tempRow[j][3 - i - 1];
 				}
 			}
 			for (int i = 0; i < 9; i++)
@@ -840,13 +841,14 @@ class CUBIE
 				ts_it = textureStore.find(row[i]);
 				faces texFaces = ts_it->second;
 				ts_it->second.frontSide = texFaces.bottomSide;
-				ts_it->second.topSide = texFaces. frontSide;
+				ts_it->second.topSide = texFaces.frontSide;
 				ts_it->second.bottomSide = texFaces.backSide;
 				ts_it->second.backSide = texFaces.topSide;
+				ts_it->second.leftSide = texFaces.bottomSide;
 
 				ts_it2 = textureStore.find(row2[i]);
-				ts_it->second.leftSide = ts_it2->second.leftSide;
-				ts_it->second.rightSide = ts_it2->second.rightSide;
+				ts_it->second.leftSide = ts_it2->second.bottomSide;
+				//ts_it->second.rightSide = ts_it2->second.bottomSide;
 
 				/*  -
 					2	1	0
@@ -950,54 +952,88 @@ class CUBIE
 			D3DXMatrixMultiply(&WorldMat, &WorldMat, &TranslateMatEx);
 			D3DXMatrixMultiply(&WorldMat2, &WorldMat2, &TranslateMat);
 			
-			for (int i = 0; i < 9; i++)
+			//for (int i = 0; i < 9; i++)
+			//{
+			//	if (count == hTopRow[i])
+			//	{
+			//		D3DXMATRIX matRotateHT;
+			//		D3DXQUATERNION  qR;
+			//		D3DXVECTOR3 rotCentre;
+			//		if (isY[i])
+			//		{
+			//			D3DXQuaternionRotationAxis(&qR, &D3DXVECTOR3(0.0f, 1.0f, 0.0f), xTest1);
+			//			rotCentre = D3DXVECTOR3(dimension, 0.0f, dimension + 0.65f);
+			//		}
+			//		else
+			//		{
+			//			D3DXQuaternionRotationAxis(&qR, &D3DXVECTOR3(0.0f, 0.0f, 1.0f), xTest1);
+			//			rotCentre = D3DXVECTOR3(dimension, 0.0f, dimension + 0.65f);
+			//			//rotCentre = D3DXVECTOR3 (dimension*2, dimension + 0.65f, 0.0f );
+			//		}
+
+			//		
+			//		D3DXMatrixTransformation(&matRotateHT, NULL, NULL, NULL, &rotCentre, &qR, NULL);
+			//		WorldMat2 *= matRotateHT;
+			//	}
+			//	else if (count == hMidRow[i])
+			//	{
+			//		D3DXMATRIX matRotateHT;
+			//		D3DXQUATERNION  qR;
+			//		D3DXQuaternionRotationAxis(&qR, &D3DXVECTOR3(0.0f, 1.0f, 0.0f), xTest2);
+
+			//		D3DXVECTOR3 rotCentre(dimension, 0.0f, dimension + 0.65f);
+			//		D3DXMatrixTransformation(&matRotateHT, NULL, NULL, NULL, &rotCentre, &qR, NULL);
+			//		WorldMat2 *= matRotateHT;
+			//	}
+			//	else if (count == hBotRow[i])
+			//	{
+			//		D3DXMATRIX matRotateHT;
+			//		D3DXQUATERNION  qR;
+			//		D3DXQuaternionRotationAxis(&qR, &D3DXVECTOR3(0.0f, 1.0f, 0.0f), xTest3);
+
+			//		D3DXVECTOR3 rotCentre(dimension, 0.0f, dimension + 0.65f);
+			//		D3DXMatrixTransformation(&matRotateHT, NULL, NULL, NULL, &rotCentre, &qR, NULL);
+			//		WorldMat2 *= matRotateHT;
+			//	}
+			//}
+
+			if (count < 9)
 			{
-				if (count == hTopRow[i])
-				{
-					D3DXMATRIX matRotateHT;
-					D3DXQUATERNION  qR;
-					D3DXVECTOR3 rotCentre;
-					if (isY[i])
-					{
-						D3DXQuaternionRotationAxis(&qR, &D3DXVECTOR3(0.0f, 1.0f, 0.0f), xTest1);
-						rotCentre = D3DXVECTOR3(dimension, 0.0f, dimension + 0.65f);
-					}
-					else
-					{
-						D3DXQuaternionRotationAxis(&qR, &D3DXVECTOR3(0.0f, 0.0f, 1.0f), xTest1);
-						rotCentre = D3DXVECTOR3(dimension, 0.0f, dimension + 0.65f);
-						//rotCentre = D3DXVECTOR3 (dimension*2, dimension + 0.65f, 0.0f );
-					}
+				D3DXMATRIX matRotateHT;
+				D3DXQUATERNION  qR;
+				D3DXVECTOR3 rotCentre;
+				D3DXQuaternionRotationAxis(&qR, &D3DXVECTOR3(0.0f, 1.0f, 0.0f), xTest1);
+				rotCentre = D3DXVECTOR3(dimension, 0.0f, dimension + 0.65f);
 
-					
-					D3DXMatrixTransformation(&matRotateHT, NULL, NULL, NULL, &rotCentre, &qR, NULL);
-					WorldMat2 *= matRotateHT;
-				}
-				else if (count == hMidRow[i])
-				{
-					D3DXMATRIX matRotateHT;
-					D3DXQUATERNION  qR;
-					D3DXQuaternionRotationAxis(&qR, &D3DXVECTOR3(0.0f, 1.0f, 0.0f), xTest2);
+				D3DXMatrixTransformation(&matRotateHT, NULL, NULL, NULL, &rotCentre, &qR, NULL);
+				WorldMat2 *= matRotateHT;
+			}
+			
+			else if (count < 18 && count>8)
+			{
+				D3DXMATRIX matRotateHT;
+				D3DXQUATERNION  qR;
+				D3DXVECTOR3 rotCentre;
+				D3DXQuaternionRotationAxis(&qR, &D3DXVECTOR3(0.0f, 1.0f, 0.0f), xTest2);
+				rotCentre = D3DXVECTOR3(dimension, 0.0f, dimension + 0.65f);
 
-					D3DXVECTOR3 rotCentre(dimension, 0.0f, dimension + 0.65f);
-					D3DXMatrixTransformation(&matRotateHT, NULL, NULL, NULL, &rotCentre, &qR, NULL);
-					WorldMat2 *= matRotateHT;
-				}
-				else if (count == hBotRow[i])
-				{
-					D3DXMATRIX matRotateHT;
-					D3DXQUATERNION  qR;
-					D3DXQuaternionRotationAxis(&qR, &D3DXVECTOR3(0.0f, 1.0f, 0.0f), xTest3);
-
-					D3DXVECTOR3 rotCentre(dimension, 0.0f, dimension + 0.65f);
-					D3DXMatrixTransformation(&matRotateHT, NULL, NULL, NULL, &rotCentre, &qR, NULL);
-					WorldMat2 *= matRotateHT;
-				}
+				D3DXMatrixTransformation(&matRotateHT, NULL, NULL, NULL, &rotCentre, &qR, NULL);
+				WorldMat2 *= matRotateHT;
 			}
 
-			
+			else
+			{
+				D3DXMATRIX matRotateHT;
+				D3DXQUATERNION  qR;
+				D3DXVECTOR3 rotCentre;
+				D3DXQuaternionRotationAxis(&qR, &D3DXVECTOR3(0.0f, 1.0f, 0.0f), xTest3);
+				rotCentre = D3DXVECTOR3(dimension, 0.0f, dimension + 0.65f);
+
+				D3DXMatrixTransformation(&matRotateHT, NULL, NULL, NULL, &rotCentre, &qR, NULL);
+				WorldMat2 *= matRotateHT;
+			}
 			//if (((count) % 3 == 0) /*|| ((count) % 3 == 2)*/)
-			for (int i = 0; i < 9; i++)
+			/*for (int i = 0; i < 9; i++)
 			{
 				if (count == vRowL1[i])
 				{
@@ -1008,9 +1044,9 @@ class CUBIE
 					D3DXMatrixTransformation(&matRotateV, NULL, NULL, NULL, &rotCentre, &qR, NULL);
 					WorldMat2 *= matRotateV;
 				}
-			}
+			}*/
 
-			/*if (vRow1[count] % 3 == 0)
+			if (count % 3 == 0)
 			{
 				D3DXQUATERNION  qR;
 				D3DXQuaternionRotationAxis(&qR, &D3DXVECTOR3(1.0f, 0.0f, 0.0f), yIndexRowV1);
@@ -1018,7 +1054,7 @@ class CUBIE
 				D3DXVECTOR3 rotCentre (0.0f, -dimension, dimension + 0.65f);
 				D3DXMatrixTransformation(&matRotateV, NULL, NULL, NULL, &rotCentre, &qR, NULL);
 				WorldMat2 *= matRotateV;
-			}*/
+			}
 			D3DXMatrixMultiply(&WorldMat2, &WorldMat2, &matRotateY);
 			
 			render_target_->SetTransform(D3DTS_WORLD, &WorldMat2);

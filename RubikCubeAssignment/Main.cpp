@@ -398,12 +398,13 @@ void Render()
 					for (int i = 0; i < 3; ++i) {
 						for (int j = 0; j < 3; ++j) {
 							hRowTop[i][j] = hRowTemp[3 - j - 1][i]; //rotate clockwise 90 degrees
-							hRowTopTest[(i * 3) + (j)] = hRowTTTemp[3 - j - 1][i]; //rotate clockwise 90 degrees
+							hRowTopTest[(i * 3) + (j)] = hRowTTTemp[j][3 - i - 1]; //rotate clockwise 90 degrees
 						}
 					}
 
 					for (int i = 0; i < 3; ++i) {
 						for (int j = 0; j < 3; ++j) {
+							
 							if (i == 0)
 								vRowPos1[j] = hRowTop[i][j];
 							else
@@ -414,11 +415,12 @@ void Render()
 					for (int i = 0; i < 3; i++)
 					{
 						vRowL[i] = hRowTopTest[(i * 3)];
-						
+						vRowTempTest[0][i] = hRowTopTest[(i * 3)];
 					}
 					for (int i = 0; i < 9; i++)
 					{
 						vRowPosTest[i] = hRowTopTest[i];
+						
 					}
 					UpdateTempRow(0);
 					cubie.changeTexturesHCW(hRowTopTest);
