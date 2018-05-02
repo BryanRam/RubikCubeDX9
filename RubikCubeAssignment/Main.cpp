@@ -423,7 +423,7 @@ void Render()
 						
 					}
 					UpdateTempRow(0);
-					cubie.changeTexturesHCW(hRowTopTest);
+					cubie.changeTexturesHCW(hRowTopTest, 0);
 				}
 				else
 				{
@@ -490,7 +490,7 @@ void Render()
 						}
 					}
 					UpdateTempRow(1);
-					cubie.changeTexturesHCW(hRowMidTest);
+					cubie.changeTexturesHCW(hRowMidTest, 1);
 				}
 				else
 				{
@@ -557,7 +557,7 @@ void Render()
 						}
 					}
 					UpdateTempRow(2);
-					cubie.changeTexturesHCW(hRowBotTest);
+					cubie.changeTexturesHCW(hRowBotTest, 2);
 				}
 				else
 				{

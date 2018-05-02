@@ -876,53 +876,76 @@ class CUBIE
 			textureStore2 = textureStore;
 		}
 
-		void changeTexturesHCW(int* row)
+		void changeTexturesHCW(int* row, int i)
 		{
 			std::map<int, faces>::iterator ts_it2;
-			ts_it = textureStore.find(0);
-			ts_it2 = textureStore2.find(2);
+			ts_it = textureStore.find((i*9) + 0);
+			ts_it2 = textureStore2.find((i * 9) + 2);
 
-			ts_it->second.leftSide = ts_it->second.frontSide;
+			ts_it->second.topSide = ts_it2->second.topSide;
+			ts_it->second.bottomSide = ts_it2->second.bottomSide;
+			ts_it->second.leftSide = ts_it2->second.frontSide;
 			ts_it->second.frontSide = ts_it2->second.rightSide;
 
-			ts_it = textureStore.find(1);
-			ts_it2 = textureStore2.find(5);
 
+			ts_it = textureStore.find((i * 9) + 1);
+			ts_it2 = textureStore2.find((i * 9) + 5);
+
+			ts_it->second.topSide = ts_it2->second.topSide;
+			ts_it->second.bottomSide = ts_it2->second.bottomSide;
 			ts_it->second.frontSide = ts_it2->second.rightSide;
 
-			ts_it = textureStore.find(2);
-			ts_it2 = textureStore2.find(8);
 
+			ts_it = textureStore.find((i * 9) + 2);
+			ts_it2 = textureStore2.find((i * 9) + 8);
+
+			ts_it->second.topSide = ts_it2->second.topSide;
+			ts_it->second.bottomSide = ts_it2->second.bottomSide;
 			ts_it->second.rightSide = ts_it2->second.backSide;
 			ts_it->second.frontSide = ts_it2->second.rightSide;
 
 
-			ts_it = textureStore.find(3);
-			ts_it2 = textureStore2.find(1);
+			ts_it = textureStore.find((i * 9) + 3);
+			ts_it2 = textureStore2.find((i * 9) + 1);
 
+			ts_it->second.topSide = ts_it2->second.topSide;
+			ts_it->second.bottomSide = ts_it2->second.bottomSide;
 			ts_it->second.leftSide = ts_it2->second.frontSide;
 
-			ts_it = textureStore.find(5);
-			ts_it2 = textureStore2.find(7);
 
+			ts_it = textureStore.find((i * 9) + 5);
+			ts_it2 = textureStore2.find((i * 9) + 7);
+
+			ts_it->second.topSide = ts_it2->second.topSide;
+			ts_it->second.bottomSide = ts_it2->second.bottomSide;
 			ts_it->second.rightSide = ts_it2->second.backSide;
 
-			ts_it = textureStore.find(6);
-			ts_it2 = textureStore2.find(0);
 
+			ts_it = textureStore.find((i * 9) + 6);
+			ts_it2 = textureStore2.find((i * 9));
+
+			ts_it->second.topSide = ts_it2->second.topSide;
+			ts_it->second.bottomSide = ts_it2->second.bottomSide;
 			ts_it->second.backSide = ts_it2->second.leftSide;
 			ts_it->second.leftSide = ts_it2->second.frontSide;
 
-			ts_it = textureStore.find(7);
-			ts_it2 = textureStore2.find(3);
 
+			ts_it = textureStore.find((i * 9) + 7);
+			ts_it2 = textureStore2.find((i * 9) + 3);
+
+			ts_it->second.topSide = ts_it2->second.topSide;
+			ts_it->second.bottomSide = ts_it2->second.bottomSide;
 			ts_it->second.backSide = ts_it2->second.leftSide;
 
-			ts_it = textureStore.find(8);
-			ts_it2 = textureStore2.find(6);
 
+			ts_it = textureStore.find((i * 9) + 8);
+			ts_it2 = textureStore2.find((i * 9) + 6);
+
+			ts_it->second.topSide = ts_it2->second.topSide;
+			ts_it->second.bottomSide = ts_it2->second.bottomSide;
 			ts_it->second.backSide = ts_it2->second.leftSide;
 			ts_it->second.rightSide = ts_it2->second.backSide;
+
 
 			textureStore2 = textureStore;
 
