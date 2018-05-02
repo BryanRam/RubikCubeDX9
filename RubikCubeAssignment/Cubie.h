@@ -91,7 +91,7 @@ class CUBIE
 		float stud_height, stud_radius;
 		DWORD brick_colour;
 		std::vector<float> transXCoordsToCenter;
-		std::map<int, faces> textureStore;
+		std::map<int, faces> textureStore, textureStore2;
 		std::map<int, faces>::iterator ts_it;
 		float toArr[9] = { dimension, 0.0f, -(dimension), 
 						    dimension, 0.0f, -(dimension), 
@@ -287,7 +287,7 @@ class CUBIE
 						break;
 					}
 				}
-				
+				textureStore2 = textureStore;
 				
 			}
 		}
@@ -814,90 +814,154 @@ class CUBIE
 		void changeTexturesVCCW(int* row)
 		{
 			std::map<int, faces>::iterator ts_it2;
-			int tempRow[3][3];
-			int row2[9], row3[9];
-			for (int i = 0; i < 3; i++)
-			{
-				for (int j = 0; j < 3; j++)
-				{
-					tempRow[i][j] = row[(i * 3) + j];
-					row2[(i * 3) + j] = row[(i * 3) + j];
-					row3[(i * 3) + j] = row[(i * 3) + j];
-				}
-			}
-
-			for (int i = 0; i < 3; i++)
-			{
-				for (int j = 0; j < 3; j++)
-				{
-					row2[(i*3)+j] = tempRow[j][3 - i - 1];
-				}
-			}
-			for (int i = 0; i < 9; i++)
-			{
-				//if (i % 3 == 0)
-				//if (i == vRowL1[i])
-				//{
-				ts_it = textureStore.find(row[i]);
-				ts_it2 = textureStore.find(i);
-				/*if (i < 3)
-				{*/
-					ts_it->second.leftSide = ts_it2->second.leftSide;
-					//ts_it->second.frontSide = ts_it2->second.leftSide;
-				//}
-				//else
-				//	ts_it->second.leftSide = ts_it2->second.bottomSide;
-				faces texFaces = ts_it->second;
-				//ts_it->second.leftSide = texFaces.bottomSide;
-				ts_it->second.frontSide = texFaces.bottomSide;
-				ts_it->second.topSide = texFaces.frontSide;
-				ts_it->second.bottomSide = texFaces.backSide;
-				ts_it->second.backSide = texFaces.topSide;
-				
-
-				
-				//ts_it->second.rightSide = ts_it2->second.bottomSide;
-
-				/*  -
-					2	1	0
-					5	4	3
-					8	7	6
-
-					0	3	6
-					1	4	7
-					2	5	8
-				*/
-				//ts_it->second.frontSide = 6;
-				//}
-			}
-
 			
+			ts_it = textureStore.find(0);
+			ts_it2 = textureStore2.find(18);
+
+			ts_it->second.frontSide = ts_it2->second.bottomSide;
+			ts_it->second.topSide = ts_it2->second.frontSide;
+			ts_it->second.leftSide = ts_it2->second.leftSide;
+
+
+			ts_it = textureStore.find(3);
+			ts_it2 = textureStore2.find(9);
+
+			ts_it->second.topSide = ts_it2->second.frontSide;
+			ts_it->second.leftSide = ts_it2->second.leftSide;
+
+
+			ts_it = textureStore.find(6);
+			ts_it2 = textureStore2.find(0);
+
+			ts_it->second.topSide = ts_it2->second.frontSide;
+			ts_it->second.backSide = ts_it2->second.topSide;
+			ts_it->second.leftSide = ts_it2->second.leftSide;
+
+
+			ts_it = textureStore.find(9);
+			ts_it2 = textureStore2.find(21);
+
+			ts_it->second.frontSide = ts_it2->second.bottomSide;
+			ts_it->second.leftSide = ts_it2->second.leftSide;
+
+
+			ts_it = textureStore.find(15);
+			ts_it2 = textureStore2.find(3);
+
+			ts_it->second.backSide = ts_it2->second.topSide;
+			ts_it->second.leftSide = ts_it2->second.leftSide;
+
+
+			ts_it = textureStore.find(18);
+			ts_it2 = textureStore2.find(24);
+
+			ts_it->second.frontSide = ts_it2->second.bottomSide;
+			ts_it->second.bottomSide = ts_it2->second.backSide;
+			ts_it->second.leftSide = ts_it2->second.leftSide;
+
+
+			ts_it = textureStore.find(21);
+			ts_it2 = textureStore2.find(15);
+
+			ts_it->second.bottomSide = ts_it2->second.backSide;
+			ts_it->second.leftSide = ts_it2->second.leftSide;
+
+			ts_it = textureStore.find(24);
+			ts_it2 = textureStore2.find(6);
+
+			ts_it->second.backSide = ts_it2->second.topSide;
+			ts_it->second.bottomSide = ts_it2->second.backSide;
+			ts_it->second.leftSide = ts_it2->second.leftSide;
+
+			textureStore2 = textureStore;
 		}
 
 		void changeTexturesHCW(int* row)
 		{
-			for (int i = 0; i < 9; i++)
+			std::map<int, faces>::iterator ts_it2;
+			ts_it = textureStore.find(0);
+			ts_it2 = textureStore2.find(2);
+
+			ts_it->second.leftSide = ts_it->second.frontSide;
+			ts_it->second.frontSide = ts_it2->second.rightSide;
+
+			ts_it = textureStore.find(1);
+			ts_it2 = textureStore2.find(5);
+
+			ts_it->second.frontSide = ts_it2->second.rightSide;
+
+			ts_it = textureStore.find(2);
+			ts_it2 = textureStore2.find(8);
+
+			ts_it->second.rightSide = ts_it2->second.backSide;
+			ts_it->second.frontSide = ts_it2->second.rightSide;
+
+
+			ts_it = textureStore.find(3);
+			ts_it2 = textureStore2.find(1);
+
+			ts_it->second.leftSide = ts_it2->second.frontSide;
+
+			ts_it = textureStore.find(5);
+			ts_it2 = textureStore2.find(7);
+
+			ts_it->second.rightSide = ts_it2->second.backSide;
+
+			ts_it = textureStore.find(6);
+			ts_it2 = textureStore2.find(0);
+
+			ts_it->second.backSide = ts_it2->second.leftSide;
+			ts_it->second.leftSide = ts_it2->second.frontSide;
+
+			ts_it = textureStore.find(7);
+			ts_it2 = textureStore2.find(3);
+
+			ts_it->second.backSide = ts_it2->second.leftSide;
+
+			ts_it = textureStore.find(8);
+			ts_it2 = textureStore2.find(6);
+
+			ts_it->second.backSide = ts_it2->second.leftSide;
+			ts_it->second.rightSide = ts_it2->second.backSide;
+
+			textureStore2 = textureStore;
+
+			/*for (int i = 0; i < 3; i++)
 			{
-				//if (i % 3 == 0)
-				//if (i == vRowL1[i])
-				//{
-				ts_it = textureStore.find(row[i]);
-				faces texFaces = ts_it->second;
-				if (row[i] < 3)
+				for (int j = 0; j < 3; j++)
 				{
-					ts_it->second.leftSide = texFaces.frontSide;
-					ts_it->second.frontSide = texFaces.rightSide;
-					if(row[i] == 0)
-						ts_it->second.backSide = texFaces.leftSide;
-					if(row[i] == 2)
-						ts_it->second.frontSide = texFaces.rightSide;
+					ts_it = textureStore.find[(i * 3) + j];
+					ts_it2 = textureStore2.find[]
 				}
-				/*ts_it->second.leftSide = texFaces.frontSide;
-				ts_it->second.rightSide = texFaces.backSide;
-				ts_it->second.backSide = texFaces.leftSide;*/
-				//ts_it->second.frontSide = 6;
-				//}
-			}
+			}*/
+
+			//for (int i = 0; i < 9; i++)
+			//{
+			//	//if (i % 3 == 0)
+			//	//if (i == vRowL1[i])
+			//	//{
+			//	ts_it = textureStore.find(i);
+			//	faces texFaces = ts_it->second;
+			//	if (i % 3 == 0)
+			//	{
+			//		ts_it->second.leftSide = texFaces.frontSide;
+			//		//ts_it->second.frontSide = texFaces.rightSide;
+			//		
+			//		
+			//	}
+
+			//	if (i < 3)
+			//		ts_it->second.frontSide = texFaces.rightSide;
+			//	if (i % 3 == 2)
+			//		ts_it->second.rightSide = texFaces.backSide;
+			//	if (i > 5)
+			//		ts_it->second.backSide = texFaces.leftSide;
+			//	//ts_it->second.leftSide = texFaces.frontSide;
+			//	//ts_it->second.rightSide = texFaces.backSide;
+			//	//ts_it->second.backSide = texFaces.leftSide;
+			//	//ts_it->second.frontSide = 6;
+			//	//}
+			//}
 		}
 
 		void changeTexturesHCCW(int* row)
