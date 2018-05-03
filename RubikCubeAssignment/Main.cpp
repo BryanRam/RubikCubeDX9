@@ -62,8 +62,10 @@ static float g_RotationAngleZ3 = 0.0f;
 static int count = 0;
 static int countH2 = 0;
 static int countH3 = 0;
+
 static int countV1 = 0;
 static int countV2 = 0;
+static int countV3 = 0;
 
 static int canRotateX = 0;
 static int canRotateY = 0;
@@ -94,9 +96,14 @@ static int hRowTemp3[3][3];
 bool isRotating = false;
 bool isRotatingH2 = false;
 bool isRotatingH3 = false;
+
 bool isRotatingV1 = false;
 bool isRotatingV2 = false;
 bool isRotatingV3 = false;
+
+bool isRotatingZ1 = false;
+bool isRotatingZ2 = false;
+bool isRotatingZ3 = false;
 
 bool cw, ccw = false;
 
@@ -333,9 +340,16 @@ void Render()
 		cubie.setY(yIndexVRow1);
 		cubie.setY(g_RotationAngleV1);
 		cubie.setY2(g_RotationAngleV2);
+		cubie.setY3(g_RotationAngleV3);
+
+		cubie.setZ(g_RotationAngle);
+		cubie.setZ2(g_RotationAngleZ2);
+		cubie.setZ3(g_RotationAngleZ3);
+
 		cubie.SetX1(xIndexHRow1);
 		cubie.SetX2(g_RotationAngleH2);
 		cubie.SetX3(g_RotationAngleH3);
+		
 		cubie.SetH1(hRowTopTest, isY);
 		cubie.SetH2(hRowMidTest);
 		cubie.SetH3(hRowBotTest);
@@ -754,6 +768,60 @@ void Render()
 			}
 		}
 
+		if (isRotatingV3) 
+		{
+			if (cw)
+			{
+				if (g_RotationAngleV3 <= (D3DX_PI / 2 * (countV3 - 1)))
+				{
+					isRotatingV3 = !isRotatingV3;
+					//+countV1;
+					//g_RotationAngleV1 = D3DX_PI / 2 * countV1;
+
+					g_RotationAngleV3 = 0;
+					cubie.changeTexturesVCW(2);
+				}
+				else
+				{
+					g_RotationAngleV3 -= 0.035f;
+				}
+			}
+
+			if (ccw)
+			{
+				if (g_RotationAngleV3 >= (D3DX_PI / 2 * (countV3 + 1)))
+				{
+					isRotatingV3 = !isRotatingV3;
+					//+countV1;
+					//g_RotationAngleV1 = D3DX_PI / 2 * countV1;
+
+					g_RotationAngleV3 = 0;
+
+
+					cubie.changeTexturesVCCW(vRowL, 2);
+
+				}
+				else
+				{
+					g_RotationAngleV3 += 0.035f;
+				}
+			}
+		}
+
+		if (isRotatingZ1)
+		{
+
+		}
+
+		if (isRotatingZ2)
+		{
+
+		}
+
+		if (isRotatingZ3)
+		{
+
+		}
     }
 
 

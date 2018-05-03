@@ -82,7 +82,8 @@ class CUBIE
 
 
 		LPDIRECT3DDEVICE9 render_target_;
-		float yIndexRowV1, yIndexRowV2;
+		float yIndexRowV1, yIndexRowV2, yIndexRowV3;
+		float zIndexRow1, zIndexRow2, zIndexRow3;
 		int studs;
 		int columns, rows;
 		int Sides = 24;  // The number of sides used to contruct the circle. More sides = smoother circle.
@@ -733,6 +734,26 @@ class CUBIE
 			yIndexRowV2 = yIndex;
 		}
 
+		void setY3(float yIndex)
+		{
+			yIndexRowV3 = yIndex;
+		}
+
+		void setZ(float zIndex)
+		{
+			zIndexRow1 = zIndex;
+		}
+
+		void setZ2(float zIndex)
+		{
+			zIndexRow2 = zIndex;
+		}
+
+		void setZ3(float zIndex)
+		{
+			zIndexRow3 = zIndex;
+		}
+
 		void SetX1(float xIndex)
 		{
 			xTest1 = xIndex;
@@ -1307,6 +1328,17 @@ class CUBIE
 				D3DXVECTOR3 rotCentre(dimension, -dimension, dimension + 0.65f);
 				D3DXMatrixTransformation(&matRotateV2, NULL, NULL, NULL, &rotCentre, &qR, NULL);
 				WorldMat2 *= matRotateV2;
+			}
+
+			else if (count % 3 == 2)
+			{
+				D3DXMATRIX matRotateV3;
+				D3DXQUATERNION  qR;
+				D3DXQuaternionRotationAxis(&qR, &D3DXVECTOR3(1.0f, 0.0f, 0.0f), yIndexRowV3);
+
+				D3DXVECTOR3 rotCentre(dimension * 2, -dimension, dimension + 0.65f);
+				D3DXMatrixTransformation(&matRotateV3, NULL, NULL, NULL, &rotCentre, &qR, NULL);
+				WorldMat2 *= matRotateV3;
 			}
 
 			D3DXMatrixMultiply(&WorldMat2, &WorldMat2, &matRotateY);
