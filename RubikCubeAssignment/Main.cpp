@@ -51,6 +51,7 @@ static float g_RotationAngle = 0.0f;
 static float g_RotationAngleH2 = 0.0f;
 static float g_RotationAngleH3 = 0.0f;
 static float g_RotationAngleV1 = 0.0f;
+static float g_RotationAngleV2 = 0.0f;
 
 static int count = 0;
 static int countH2 = 0;
@@ -83,6 +84,8 @@ bool isRotating = false;
 bool isRotatingH2 = false;
 bool isRotatingH3 = false;
 bool isRotatingV1 = false;
+bool isRotatingV2 = false;
+
 bool cw, ccw = false;
 
 void UpdateTempRow(int);
@@ -317,6 +320,7 @@ void Render()
 
 		cubie.setY(yIndexVRow1);
 		cubie.setY(g_RotationAngleV1);
+		cubie.setY2(g_RotationAngleV2);
 		cubie.SetX1(xIndexHRow1);
 		cubie.SetX2(g_RotationAngleH2);
 		cubie.SetX3(g_RotationAngleH3);
@@ -644,7 +648,7 @@ void Render()
 					}
 				}
 				//cubie.setVRowL(vRowL);
-				cubie.changeTexturesVCCW(vRowL);
+				cubie.changeTexturesVCCW(vRowL, 0);
 				//++countV1;
 				//	0	3	6
 				//	9	12	15
@@ -677,7 +681,32 @@ void Render()
 				g_RotationAngleV1 += 0.035f;
 			}
 		}
+
+
+		if (isRotatingV2)
+		{
+
+			if (g_RotationAngleV2 >= (D3DX_PI / 2 * (countV1 + 1)))
+			{
+				isRotatingV2 = !isRotatingV2;
+				//+countV1;
+				//g_RotationAngleV1 = D3DX_PI / 2 * countV1;
+
+				g_RotationAngleV2 = 0;
+				
+				
+				cubie.changeTexturesVCCW(vRowL, 1);
+				
+			}
+			else
+			{
+				g_RotationAngleV2 += 0.035f;
+			}
+		}
+
     }
+
+
 
     // Present the backbuffer to the display.
     g_pd3dDevice -> Present(NULL, NULL, NULL, NULL);
@@ -790,7 +819,7 @@ LRESULT WINAPI MsgProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 				break;
 
 			case 'h':
-				yIndexVRow1 += 0.1f;
+				isRotatingV2 = !isRotatingV2;
 				return 0;
 				break;
 			case 'j':

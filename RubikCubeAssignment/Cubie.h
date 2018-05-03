@@ -82,7 +82,7 @@ class CUBIE
 
 
 		LPDIRECT3DDEVICE9 render_target_;
-		float yIndexRowV1;
+		float yIndexRowV1, yIndexRowV2;
 		int studs;
 		int columns, rows;
 		int Sides = 24;  // The number of sides used to contruct the circle. More sides = smoother circle.
@@ -728,6 +728,11 @@ class CUBIE
 			yIndexRowV1= yIndex;
 		}
 
+		void setY2(float yIndex)
+		{
+			yIndexRowV2 = yIndex;
+		}
+
 		void SetX1(float xIndex)
 		{
 			xTest1 = xIndex;
@@ -811,63 +816,63 @@ class CUBIE
 			}
 		}
 
-		void changeTexturesVCCW(int* row)
+		void changeTexturesVCCW(int* row, int i)
 		{
 			std::map<int, faces>::iterator ts_it2;
 			
-			ts_it = textureStore.find(0);
-			ts_it2 = textureStore2.find(18);
+			ts_it = textureStore.find(0 + i);
+			ts_it2 = textureStore2.find(18 + i);
 
 			ts_it->second.frontSide = ts_it2->second.bottomSide;
 			ts_it->second.topSide = ts_it2->second.frontSide;
 			ts_it->second.leftSide = ts_it2->second.leftSide;
 
 
-			ts_it = textureStore.find(3);
-			ts_it2 = textureStore2.find(9);
+			ts_it = textureStore.find(3 + i);
+			ts_it2 = textureStore2.find(9 + i);
 
 			ts_it->second.topSide = ts_it2->second.frontSide;
 			ts_it->second.leftSide = ts_it2->second.leftSide;
 
 
-			ts_it = textureStore.find(6);
-			ts_it2 = textureStore2.find(0);
+			ts_it = textureStore.find(6 + i);
+			ts_it2 = textureStore2.find(0 + i);
 
 			ts_it->second.topSide = ts_it2->second.frontSide;
 			ts_it->second.backSide = ts_it2->second.topSide;
 			ts_it->second.leftSide = ts_it2->second.leftSide;
 
 
-			ts_it = textureStore.find(9);
-			ts_it2 = textureStore2.find(21);
+			ts_it = textureStore.find(9 + i);
+			ts_it2 = textureStore2.find(21 + i);
 
 			ts_it->second.frontSide = ts_it2->second.bottomSide;
 			ts_it->second.leftSide = ts_it2->second.leftSide;
 
 
-			ts_it = textureStore.find(15);
-			ts_it2 = textureStore2.find(3);
+			ts_it = textureStore.find(15 + i);
+			ts_it2 = textureStore2.find(3 + i);
 
 			ts_it->second.backSide = ts_it2->second.topSide;
 			ts_it->second.leftSide = ts_it2->second.leftSide;
 
 
-			ts_it = textureStore.find(18);
-			ts_it2 = textureStore2.find(24);
+			ts_it = textureStore.find(18 + i);
+			ts_it2 = textureStore2.find(24 + i);
 
 			ts_it->second.frontSide = ts_it2->second.bottomSide;
 			ts_it->second.bottomSide = ts_it2->second.backSide;
 			ts_it->second.leftSide = ts_it2->second.leftSide;
 
 
-			ts_it = textureStore.find(21);
-			ts_it2 = textureStore2.find(15);
+			ts_it = textureStore.find(21 + i);
+			ts_it2 = textureStore2.find(15 + i);
 
 			ts_it->second.bottomSide = ts_it2->second.backSide;
 			ts_it->second.leftSide = ts_it2->second.leftSide;
 
-			ts_it = textureStore.find(24);
-			ts_it2 = textureStore2.find(6);
+			ts_it = textureStore.find(24 + i);
+			ts_it2 = textureStore2.find(6 + i);
 
 			ts_it->second.backSide = ts_it2->second.topSide;
 			ts_it->second.bottomSide = ts_it2->second.backSide;
@@ -1221,6 +1226,7 @@ class CUBIE
 
 			if (count % 3 == 0)
 			{
+				
 				D3DXQUATERNION  qR;
 				D3DXQuaternionRotationAxis(&qR, &D3DXVECTOR3(1.0f, 0.0f, 0.0f), yIndexRowV1);
 
@@ -1228,6 +1234,18 @@ class CUBIE
 				D3DXMatrixTransformation(&matRotateV, NULL, NULL, NULL, &rotCentre, &qR, NULL);
 				WorldMat2 *= matRotateV;
 			}
+
+			else if (count % 3 == 1)
+			{
+				D3DXMATRIX matRotateV2;
+				D3DXQUATERNION  qR;
+				D3DXQuaternionRotationAxis(&qR, &D3DXVECTOR3(1.0f, 0.0f, 0.0f), yIndexRowV2);
+
+				D3DXVECTOR3 rotCentre(dimension, -dimension, dimension + 0.65f);
+				D3DXMatrixTransformation(&matRotateV2, NULL, NULL, NULL, &rotCentre, &qR, NULL);
+				WorldMat2 *= matRotateV2;
+			}
+
 			D3DXMatrixMultiply(&WorldMat2, &WorldMat2, &matRotateY);
 			
 			render_target_->SetTransform(D3DTS_WORLD, &WorldMat2);
