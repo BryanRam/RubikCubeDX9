@@ -67,6 +67,10 @@ static int countV1 = 0;
 static int countV2 = 0;
 static int countV3 = 0;
 
+static int countZ1 = 0;
+static int countZ2 = 0;
+static int countZ3 = 0;
+
 static int canRotateX = 0;
 static int canRotateY = 0;
 static int canRotateZ = 0;
@@ -342,7 +346,7 @@ void Render()
 		cubie.setY2(g_RotationAngleV2);
 		cubie.setY3(g_RotationAngleV3);
 
-		cubie.setZ(g_RotationAngle);
+		cubie.setZ(g_RotationAngleZ1);
 		cubie.setZ2(g_RotationAngleZ2);
 		cubie.setZ3(g_RotationAngleZ3);
 
@@ -495,7 +499,7 @@ void Render()
 			}
 		}
 
-		if (isRotatingH2)
+		else if (isRotatingH2)
 		{
 			if (cw)
 			{
@@ -562,7 +566,7 @@ void Render()
 			}
 		}
 
-		if (isRotatingH3)
+		else if (isRotatingH3)
 		{
 			if (cw)
 			{
@@ -631,7 +635,7 @@ void Render()
 			
 		}
 
-		if (isRotatingV1)
+		else if (isRotatingV1)
 		{
 			if (cw)
 			{
@@ -728,7 +732,7 @@ void Render()
 		}
 
 
-		if (isRotatingV2)
+		else if (isRotatingV2)
 		{
 			if (cw)
 			{
@@ -768,7 +772,7 @@ void Render()
 			}
 		}
 
-		if (isRotatingV3) 
+		else if (isRotatingV3) 
 		{
 			if (cw)
 			{
@@ -808,19 +812,118 @@ void Render()
 			}
 		}
 
-		if (isRotatingZ1)
+		else if (isRotatingZ1)
 		{
+			if (cw)
+			{
+				if (g_RotationAngleZ1 <= (D3DX_PI / 2 * (countZ1 - 1)))
+				{
+					isRotatingZ1 = !isRotatingZ1;
+					
 
+					g_RotationAngleZ1 = 0;
+					cubie.changeTexturesZCW(0);
+				}
+				else
+				{
+					g_RotationAngleZ1 -= 0.035f;
+				}
+			}
+
+			if (ccw)
+			{
+				if (g_RotationAngleZ1 >= (D3DX_PI / 2 * (countZ1 + 1)))
+				{
+					isRotatingZ1 = !isRotatingZ1;
+					
+
+					g_RotationAngleZ1 = 0;
+
+				
+					cubie.changeTexturesZCCW(0);
+					
+				}
+				else
+				{
+					g_RotationAngleZ1 += 0.035f;
+				}
+			}
 		}
 
-		if (isRotatingZ2)
+		else if (isRotatingZ2)
 		{
+			if (cw)
+			{
+				if (g_RotationAngleZ2 <= (D3DX_PI / 2 * (countZ2 - 1)))
+				{
+					isRotatingZ2 = !isRotatingZ2;
 
+
+					g_RotationAngleZ2 = 0;
+					cubie.changeTexturesZCW(1);
+				}
+				else
+				{
+					g_RotationAngleZ2 -= 0.035f;
+				}
+			}
+
+			if (ccw)
+			{
+				if (g_RotationAngleZ2 >= (D3DX_PI / 2 * (countZ2 + 1)))
+				{
+					isRotatingZ2 = !isRotatingZ2;
+
+
+					g_RotationAngleZ2 = 0;
+
+
+					cubie.changeTexturesZCCW(1);
+
+				}
+				else
+				{
+					g_RotationAngleZ2 += 0.035f;
+				}
+			}
 		}
 
-		if (isRotatingZ3)
+		else if (isRotatingZ3)
 		{
+			if (cw)
+			{
+				if (g_RotationAngleZ3 <= (D3DX_PI / 2 * (countZ3 - 1)))
+				{
+					isRotatingZ3 = !isRotatingZ3;
 
+
+					g_RotationAngleZ3 = 0;
+					cubie.changeTexturesZCW(2);
+				}
+				else
+				{
+					g_RotationAngleZ3 -= 0.035f;
+				}
+			}
+
+			if (ccw)
+			{
+				if (g_RotationAngleZ3 >= (D3DX_PI / 2 * (countZ3 + 1)))
+				{
+					isRotatingZ3 = !isRotatingZ3;
+
+
+					g_RotationAngleZ3 = 0;
+
+
+					cubie.changeTexturesZCCW(2);
+
+				}
+				else
+				{
+					g_RotationAngleZ3 += 0.035f;
+				}
+			}
 		}
     }
 
@@ -1012,21 +1115,21 @@ LRESULT WINAPI MsgProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 			case 'b':
 				if (canRotateZ == 0)
 				{
-					isRotatingV1 = !isRotatingV1;
-					ccw = true;
-					cw = false;
+					isRotatingZ1 = !isRotatingZ1;
+					cw = true;
+					ccw = false;
 				}
 				else if (canRotateZ == 1)
 				{
-					isRotatingV2 = !isRotatingV2;
-					ccw = true;
-					cw = false;
+					isRotatingZ2 = !isRotatingZ2;
+					cw = true;
+					ccw = false;
 				}
 				else if (canRotateZ == 2)
 				{
-					isRotatingV3 = !isRotatingV3;
-					ccw = true;
-					cw = false;
+					isRotatingZ3 = !isRotatingZ3;
+					cw = true;
+					ccw = false;
 				}
 				return 0;
 				break;
@@ -1034,18 +1137,21 @@ LRESULT WINAPI MsgProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 			case 'n':
 				if (canRotateZ == 0)
 				{
-					isRotatingV1 = !isRotatingV1;
+					isRotatingZ1 = !isRotatingZ1;
 					ccw = true;
+					cw = false;
 				}
 				else if (canRotateZ == 1)
 				{
-					isRotatingV2 = !isRotatingV2;
+					isRotatingZ2 = !isRotatingZ2;
 					ccw = true;
+					cw = false;
 				}
 				else if (canRotateZ == 2)
 				{
-					isRotatingV3 = !isRotatingV3;
+					isRotatingZ3 = !isRotatingZ3;
 					ccw = true;
+					cw = false;
 				}
 				return 0;
 				break;

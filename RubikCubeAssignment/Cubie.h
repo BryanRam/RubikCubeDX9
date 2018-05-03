@@ -1164,6 +1164,162 @@ class CUBIE
 			//}
 		}
 		
+		void changeTexturesZCW(int i)
+		{
+			std::map<int, faces>::iterator ts_it2;
+			ts_it = textureStore.find((i * 3) + 0);
+			ts_it2 = textureStore2.find((i * 3) + 18);
+
+			ts_it->second.topSide = ts_it2->second.leftSide;
+			ts_it->second.leftSide = ts_it2->second.bottomSide;
+			ts_it->second.frontSide = ts_it2->second.frontSide;
+			ts_it->second.backSide = ts_it2->second.backSide;
+
+
+			ts_it = textureStore.find((i * 3) + 1);
+			ts_it2 = textureStore2.find((i * 3) + 9);
+
+
+			ts_it->second.topSide = ts_it2->second.leftSide;
+			ts_it->second.frontSide = ts_it2->second.frontSide;
+			ts_it->second.backSide = ts_it2->second.backSide;
+
+
+			ts_it = textureStore.find((i * 3) + 2);
+			ts_it2 = textureStore2.find((i * 3) + 0);
+
+			ts_it->second.topSide = ts_it2->second.leftSide;
+			ts_it->second.rightSide = ts_it2->second.topSide;
+			ts_it->second.frontSide = ts_it2->second.frontSide;
+			ts_it->second.backSide = ts_it2->second.backSide;
+
+
+			ts_it = textureStore.find((i * 3) + 9);
+			ts_it2 = textureStore2.find((i * 3) + 19);
+
+			ts_it->second.leftSide = ts_it2->second.bottomSide;
+			ts_it->second.frontSide = ts_it2->second.frontSide;
+			ts_it->second.backSide = ts_it2->second.backSide;
+
+
+			ts_it = textureStore.find((i * 3) + 11);
+			ts_it2 = textureStore2.find((i * 3) + 1);
+
+			ts_it->second.rightSide = ts_it2->second.topSide;
+			ts_it->second.frontSide = ts_it2->second.frontSide;
+			ts_it->second.backSide = ts_it2->second.backSide;
+
+
+			ts_it = textureStore.find((i * 3) + 18);
+			ts_it2 = textureStore2.find((i * 3) + 20);
+
+			ts_it->second.bottomSide = ts_it2->second.rightSide;
+			ts_it->second.leftSide = ts_it2->second.bottomSide;
+			ts_it->second.frontSide = ts_it2->second.frontSide;
+			ts_it->second.backSide = ts_it2->second.backSide;
+
+
+			ts_it = textureStore.find((i * 3) + 19);
+			ts_it2 = textureStore2.find((i * 3) + 11);
+
+			ts_it->second.bottomSide = ts_it2->second.rightSide;
+			ts_it->second.frontSide = ts_it2->second.frontSide;
+			ts_it->second.backSide = ts_it2->second.backSide;
+
+
+			ts_it = textureStore.find((i * 3) + 20);
+			ts_it2 = textureStore2.find((i * 3) + 2);
+
+			ts_it->second.rightSide = ts_it2->second.topSide;
+			ts_it->second.bottomSide = ts_it2->second.rightSide;
+			ts_it->second.frontSide = ts_it2->second.frontSide;
+			ts_it->second.backSide = ts_it2->second.backSide;
+
+
+			textureStore2 = textureStore;
+		}
+
+		void changeTexturesZCCW(int i)
+		{
+			std::map<int, faces>::iterator ts_it2;
+			ts_it = textureStore.find((i * 3) + 0);
+			ts_it2 = textureStore2.find((i * 3) + 2);
+
+			ts_it->second.topSide = ts_it2->second.rightSide;
+			ts_it->second.leftSide = ts_it2->second.topSide;
+			ts_it->second.frontSide = ts_it2->second.frontSide;
+			ts_it->second.backSide = ts_it2->second.backSide;
+
+
+			ts_it = textureStore.find((i * 3) + 1);
+			ts_it2 = textureStore2.find((i * 3) + 11);
+
+
+			ts_it->second.topSide = ts_it2->second.rightSide;
+			ts_it->second.frontSide = ts_it2->second.frontSide;
+			ts_it->second.backSide = ts_it2->second.backSide;
+
+
+			ts_it = textureStore.find((i * 3) + 2);
+			ts_it2 = textureStore2.find((i * 3) + 20);
+
+			ts_it->second.topSide = ts_it2->second.rightSide;
+			ts_it->second.rightSide = ts_it2->second.bottomSide;
+			ts_it->second.frontSide = ts_it2->second.frontSide;
+			ts_it->second.backSide = ts_it2->second.backSide;
+
+
+			ts_it = textureStore.find((i * 3) + 9);
+			ts_it2 = textureStore2.find((i * 3) + 1);
+
+			ts_it->second.leftSide = ts_it2->second.topSide;
+			ts_it->second.frontSide = ts_it2->second.frontSide;
+			ts_it->second.backSide = ts_it2->second.backSide;
+
+
+			ts_it = textureStore.find((i * 3) + 11);
+			ts_it2 = textureStore2.find((i * 3) + 19);
+
+			ts_it->second.rightSide = ts_it2->second.bottomSide;
+			ts_it->second.frontSide = ts_it2->second.frontSide;
+			ts_it->second.backSide = ts_it2->second.backSide;
+
+
+			ts_it = textureStore.find((i * 3) + 18);
+			ts_it2 = textureStore2.find((i * 3)+ 0);
+
+			ts_it->second.bottomSide = ts_it2->second.leftSide;
+			ts_it->second.leftSide = ts_it2->second.topSide;
+			ts_it->second.frontSide = ts_it2->second.frontSide;
+			ts_it->second.backSide = ts_it2->second.backSide;
+
+
+			ts_it = textureStore.find((i * 3) + 19);
+			ts_it2 = textureStore2.find((i * 3) + 9);
+
+			ts_it->second.bottomSide = ts_it2->second.leftSide;
+			ts_it->second.frontSide = ts_it2->second.frontSide;
+			ts_it->second.backSide = ts_it2->second.backSide;
+
+
+			ts_it = textureStore.find((i * 3) + 20);
+			ts_it2 = textureStore2.find((i * 3) + 18);
+
+			ts_it->second.rightSide = ts_it2->second.bottomSide;
+			ts_it->second.bottomSide = ts_it2->second.leftSide;
+			ts_it->second.frontSide = ts_it2->second.frontSide;
+			ts_it->second.backSide = ts_it2->second.backSide;
+
+
+			textureStore2 = textureStore;
+
+
+
+
+			
+		}
+
+
 	private:
 		
 		
@@ -1340,6 +1496,45 @@ class CUBIE
 				D3DXMatrixTransformation(&matRotateV3, NULL, NULL, NULL, &rotCentre, &qR, NULL);
 				WorldMat2 *= matRotateV3;
 			}
+
+			int zRow1[9] = {0, 1, 2, 9, 10, 11, 18, 19, 20};
+			int zRow2[9] = {3, 4, 5, 12, 13, 14, 21, 22, 23 };
+			int zRow3[9] = {6, 7, 8, 15, 16, 17, 24, 25, 26 };
+
+			for (int i = 0; i < 9; i++)
+			{
+				if (count == zRow1[i])
+				{
+					D3DXMATRIX matRotateZ1;
+					D3DXQUATERNION  qR;
+					D3DXQuaternionRotationAxis(&qR, &D3DXVECTOR3(0.0f, 0.0f, 1.0f), zIndexRow1);
+
+					D3DXVECTOR3 rotCentre(dimension, -dimension, 0.65f);
+					D3DXMatrixTransformation(&matRotateZ1, NULL, NULL, NULL, &rotCentre, &qR, NULL);
+					WorldMat2 *= matRotateZ1;
+				}
+				else if (count == zRow2[i])
+				{
+					D3DXMATRIX matRotateZ2;
+					D3DXQUATERNION  qR;
+					D3DXQuaternionRotationAxis(&qR, &D3DXVECTOR3(0.0f, 0.0f, 1.0f), zIndexRow2);
+
+					D3DXVECTOR3 rotCentre(dimension, -dimension, dimension + 0.65f);
+					D3DXMatrixTransformation(&matRotateZ2, NULL, NULL, NULL, &rotCentre, &qR, NULL);
+					WorldMat2 *= matRotateZ2;
+				}
+				else if (count == zRow3[i])
+				{
+					D3DXMATRIX matRotateZ3;
+					D3DXQUATERNION  qR;
+					D3DXQuaternionRotationAxis(&qR, &D3DXVECTOR3(0.0f, 0.0f, 1.0f), zIndexRow3);
+
+					D3DXVECTOR3 rotCentre(dimension, -dimension, (dimension * 2) + 0.65f);
+					D3DXMatrixTransformation(&matRotateZ3, NULL, NULL, NULL, &rotCentre, &qR, NULL);
+					WorldMat2 *= matRotateZ3;
+				}
+			}
+
 
 			D3DXMatrixMultiply(&WorldMat2, &WorldMat2, &matRotateY);
 			
