@@ -50,13 +50,24 @@ CUBIE cubie(Black);
 static float g_RotationAngle = 0.0f;
 static float g_RotationAngleH2 = 0.0f;
 static float g_RotationAngleH3 = 0.0f;
+
 static float g_RotationAngleV1 = 0.0f;
 static float g_RotationAngleV2 = 0.0f;
+static float g_RotationAngleV3 = 0.0f;
+
+static float g_RotationAngleZ1 = 0.0f;
+static float g_RotationAngleZ2 = 0.0f;
+static float g_RotationAngleZ3 = 0.0f;
 
 static int count = 0;
 static int countH2 = 0;
 static int countH3 = 0;
 static int countV1 = 0;
+static int countV2 = 0;
+
+static int canRotateX = 0;
+static int canRotateY = 0;
+static int canRotateZ = 0;
 
 static int vRowPos1[27];
 static int vRowPosTest[27];
@@ -85,6 +96,7 @@ bool isRotatingH2 = false;
 bool isRotatingH3 = false;
 bool isRotatingV1 = false;
 bool isRotatingV2 = false;
+bool isRotatingV3 = false;
 
 bool cw, ccw = false;
 
@@ -607,100 +619,138 @@ void Render()
 
 		if (isRotatingV1)
 		{
-
-			if (g_RotationAngleV1 >= (D3DX_PI / 2 * (countV1+1)))
+			if (cw)
 			{
-				isRotatingV1 = !isRotatingV1;
-				//+countV1;
-				//g_RotationAngleV1 = D3DX_PI / 2 * countV1;
-
-				g_RotationAngleV1 = 0;
-
-				for (int i = 0; i<3; ++i) {
-					
-					for (int j = 0; j<3; ++j) {
-						vRowPosTest[(i * 9) + (j * 3)] = vRowTempTest[3 - j - 1][i];
-						vRowPos1[(i * 9)+(j*3)] = vRowTemp[3 - j - 1][i]; //rotate counter-clockwise 90 degrees
-					}
-				}
-
-				for (int i = 0; i < 9; i++)
+				if (g_RotationAngleV1 <= (D3DX_PI / 2 * (countV1 - 1)))
 				{
-					//if(i>2)
-					vRowL[i] = vRowPosTest[i * 3];
+					isRotatingV1 = !isRotatingV1;
+					//+countV1;
+					//g_RotationAngleV1 = D3DX_PI / 2 * countV1;
 
-					if (i == 0 && i<3)
-					{
-						hRowTopTest[i] = vRowPosTest[i];
-						//isY[i] = !isY[i];
-						
-						/*hRowMidTest[i] = vRowPosTest[(i+1)*9];
-						hRowBotTest[i] = vRowPosTest[(i+1)*18];*/
-						
-					}
-					else if(i<3)
-					{
-						hRowTopTest[i*3] = vRowPosTest[i*3];
-						//isY[i*3] = !isY[i*3];
-						
-						/*hRowMidTest[i*3] = vRowPosTest[9 + (i*3)];
-						hRowBotTest[i*3] = vRowPosTest[18 + (i*3)];*/
-					}
+					g_RotationAngleV1 = 0;
+					cubie.changeTexturesVCW(0);
 				}
-				//cubie.setVRowL(vRowL);
-				cubie.changeTexturesVCCW(vRowL, 0);
-				//++countV1;
-				//	0	3	6
-				//	9	12	15
-				//	18	21	24
-				
-				// 02, 12, 22, 01, 11, 21, 00, 10, 20
-				//	cw
-				//	6	15	24
-				//	3	12	21
-				//	0	9	18
-				//for (int i = 0; i<3; ++i) {
-				//	for (int j = 0; j<3; ++j) {
-				//		vRowPos1[(i * 9)+(j*3)] = hRowTemp3[j][3 - i - 1]; //rotate clockwise 90 degrees
-				//	}
-				//}
-				
-				// 20, 10, 00, 21, 11, 01, 22, 12, 02
-				//	ccw
-				//	18	9	0
-				//	21	12	3
-				//	24	15	6
-				//for (int i = 0; i<3; ++i) {
-				//	for (int j = 0; j<3; ++j) {
-				//		vRowPos1[(i * 9)+(j*3)] = hRowTemp3[3 - j - 1][i]; //rotate counter-clockwise 90 degrees
-				//	}
-				//}
+				else
+				{
+					g_RotationAngleV1 -= 0.035f;
+				}
 			}
-			else
+
+			if (ccw)
 			{
-				g_RotationAngleV1 += 0.035f;
+				if (g_RotationAngleV1 >= (D3DX_PI / 2 * (countV1 + 1)))
+				{
+					isRotatingV1 = !isRotatingV1;
+					//+countV1;
+					//g_RotationAngleV1 = D3DX_PI / 2 * countV1;
+
+					g_RotationAngleV1 = 0;
+
+					for (int i = 0; i < 3; ++i) {
+
+						for (int j = 0; j < 3; ++j) {
+							vRowPosTest[(i * 9) + (j * 3)] = vRowTempTest[3 - j - 1][i];
+							vRowPos1[(i * 9) + (j * 3)] = vRowTemp[3 - j - 1][i]; //rotate counter-clockwise 90 degrees
+						}
+					}
+
+					for (int i = 0; i < 9; i++)
+					{
+						//if(i>2)
+						vRowL[i] = vRowPosTest[i * 3];
+
+						if (i == 0 && i < 3)
+						{
+							hRowTopTest[i] = vRowPosTest[i];
+							//isY[i] = !isY[i];
+
+							/*hRowMidTest[i] = vRowPosTest[(i+1)*9];
+							hRowBotTest[i] = vRowPosTest[(i+1)*18];*/
+
+						}
+						else if (i < 3)
+						{
+							hRowTopTest[i * 3] = vRowPosTest[i * 3];
+							//isY[i*3] = !isY[i*3];
+
+							/*hRowMidTest[i*3] = vRowPosTest[9 + (i*3)];
+							hRowBotTest[i*3] = vRowPosTest[18 + (i*3)];*/
+						}
+					}
+					//cubie.setVRowL(vRowL);
+					cubie.changeTexturesVCCW(vRowL, 0);
+					//++countV1;
+					//	0	3	6
+					//	9	12	15
+					//	18	21	24
+
+					// 02, 12, 22, 01, 11, 21, 00, 10, 20
+					//	cw
+					//	6	15	24
+					//	3	12	21
+					//	0	9	18
+					//for (int i = 0; i<3; ++i) {
+					//	for (int j = 0; j<3; ++j) {
+					//		vRowPos1[(i * 9)+(j*3)] = hRowTemp3[j][3 - i - 1]; //rotate clockwise 90 degrees
+					//	}
+					//}
+
+					// 20, 10, 00, 21, 11, 01, 22, 12, 02
+					//	ccw
+					//	18	9	0
+					//	21	12	3
+					//	24	15	6
+					//for (int i = 0; i<3; ++i) {
+					//	for (int j = 0; j<3; ++j) {
+					//		vRowPos1[(i * 9)+(j*3)] = hRowTemp3[3 - j - 1][i]; //rotate counter-clockwise 90 degrees
+					//	}
+					//}
+				}
+				else
+				{
+					g_RotationAngleV1 += 0.035f;
+				}
 			}
 		}
 
 
 		if (isRotatingV2)
 		{
-
-			if (g_RotationAngleV2 >= (D3DX_PI / 2 * (countV1 + 1)))
+			if (cw)
 			{
-				isRotatingV2 = !isRotatingV2;
-				//+countV1;
-				//g_RotationAngleV1 = D3DX_PI / 2 * countV1;
+				if (g_RotationAngleV2 <= (D3DX_PI / 2 * (countV2 - 1)))
+				{
+					isRotatingV2 = !isRotatingV2;
+					//+countV1;
+					//g_RotationAngleV1 = D3DX_PI / 2 * countV1;
 
-				g_RotationAngleV2 = 0;
-				
-				
-				cubie.changeTexturesVCCW(vRowL, 1);
-				
+					g_RotationAngleV2 = 0;
+					cubie.changeTexturesVCW(1);
+				}
+				else
+				{
+					g_RotationAngleV2 -= 0.035f;
+				}
 			}
-			else
+
+			if (ccw)
 			{
-				g_RotationAngleV2 += 0.035f;
+				if (g_RotationAngleV2 >= (D3DX_PI / 2 * (countV2 + 1)))
+				{
+					isRotatingV2 = !isRotatingV2;
+					//+countV1;
+					//g_RotationAngleV1 = D3DX_PI / 2 * countV1;
+
+					g_RotationAngleV2 = 0;
+
+
+					cubie.changeTexturesVCCW(vRowL, 1);
+
+				}
+				else
+				{
+					g_RotationAngleV2 += 0.035f;
+				}
 			}
 		}
 
@@ -802,7 +852,136 @@ LRESULT WINAPI MsgProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 				g_CameraZ -= 10.0f;
 				return 0;
 				break;
+
+			case 'z':
+				if (canRotateX == 0)
+				{
+					isRotating = !isRotating;
+					cw = true;
+					ccw = false;
+				}
+				else if (canRotateX == 1)
+				{
+					isRotatingH2 = !isRotatingH2;
+					cw = true;
+					ccw = false;
+				}
+				else if (canRotateX == 2)
+				{
+					isRotatingH3 = !isRotatingH3;
+					cw = true;
+					ccw = false;
+				}
+				return 0;
+				break;
+
+			case 'x':
+				if (canRotateX == 0)
+				{
+					isRotating = !isRotating;
+					ccw = true;
+					cw = false;
+				}
+				else if (canRotateX == 1)
+				{
+					isRotatingH2 = !isRotatingH2;
+					ccw = true;
+					cw = false;
+				}
+				else if (canRotateX == 2)
+				{
+					isRotatingH3 = !isRotatingH3;
+					ccw = true;
+					cw = false;
+				}
+				return 0;
+				break;
+
+			case 'c':
+				if (canRotateY == 0)
+				{
+					isRotatingV1 = !isRotatingV1;
+					cw = true;
+					ccw = false;
+				}
+				else if (canRotateY == 1)
+				{
+					isRotatingV2 = !isRotatingV2;
+					cw = true;
+					ccw = false;
+				}
+				else if (canRotateY == 2)
+				{
+					isRotatingV3 = !isRotatingV3;
+					cw = true;
+					ccw = false;
+				}
+				return 0;
+				break;
+
+			case 'v':
+				if (canRotateY == 0)
+				{
+					isRotatingV1 = !isRotatingV1;
+					ccw = true;
+					cw = false;
+				}
+				else if (canRotateY == 1)
+				{
+					isRotatingV2 = !isRotatingV2;
+					ccw = true;
+					cw = false;
+				}
+				else if (canRotateY == 2)
+				{
+					isRotatingV3 = !isRotatingV3;
+					ccw = true;
+					cw = false;
+				}
+				return 0;
+				break;
+
+			case 'b':
+				if (canRotateZ == 0)
+				{
+					isRotatingV1 = !isRotatingV1;
+					ccw = true;
+					cw = false;
+				}
+				else if (canRotateZ == 1)
+				{
+					isRotatingV2 = !isRotatingV2;
+					ccw = true;
+					cw = false;
+				}
+				else if (canRotateZ == 2)
+				{
+					isRotatingV3 = !isRotatingV3;
+					ccw = true;
+					cw = false;
+				}
+				return 0;
+				break;
 			
+			case 'n':
+				if (canRotateZ == 0)
+				{
+					isRotatingV1 = !isRotatingV1;
+					ccw = true;
+				}
+				else if (canRotateZ == 1)
+				{
+					isRotatingV2 = !isRotatingV2;
+					ccw = true;
+				}
+				else if (canRotateZ == 2)
+				{
+					isRotatingV3 = !isRotatingV3;
+					ccw = true;
+				}
+				return 0;
+				break;
+
 			case 't':
 				xIndexHRow1 -= 0.1f;
 				return 0;
@@ -863,6 +1042,67 @@ LRESULT WINAPI MsgProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 				break;
 
 			//=============================================
+			}
+
+		case WM_KEYDOWN:
+			switch (wParam)
+			{
+				case VK_LEFT:
+					// Process the LEFT ARROW key. 
+					// Process the UP ARROW key.
+					if (canRotateY == 0)
+						canRotateY = 2;
+					else
+						--canRotateY;
+
+					break;
+
+				case VK_RIGHT:
+					// Process the RIGHT ARROW key. 
+					if (canRotateY == 2)
+						canRotateY = 0;
+					else
+						++canRotateY;
+					break;
+
+				case VK_UP:
+					// Process the UP ARROW key.
+					if (canRotateX == 0)
+						canRotateX = 2;
+					else
+						--canRotateX;
+					 
+
+					break;
+
+				case VK_DOWN:
+					// Process the DOWN ARROW key. 
+					if (canRotateX == 2)
+						canRotateX = 0;
+					else
+						++canRotateX;
+
+					break;
+
+				case VK_HOME:
+					// Process the HOME key. 
+					if (canRotateZ == 2)
+						canRotateZ = 0;
+					else
+						++canRotateZ;
+
+					break;
+
+				case VK_END:
+					// Process the END key.
+					if (canRotateZ == 0)
+						canRotateZ = 2;
+					else
+						--canRotateZ;
+
+					break;
+
+
 			}
     }
 
