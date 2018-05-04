@@ -5,6 +5,7 @@
 #include <map>
 #include <algorithm>
 #include <functional>
+#include <string>
 //#include "Panel.h"
 
 
@@ -186,6 +187,15 @@ class CUBIE
 		int hBotRow[9];
 		float xTest1, xTest2, xTest3;
 
+		ID3DXFont *fontbb1 = NULL, *fontbb2 = NULL;
+		RECT billboard_rectangle1, billboard_rectangle2;
+		std::string billboard1, billboard2;
+
+		//Variable for the UI
+		ID3DXFont *font1, *font2;
+		RECT title_rectangle, instruction_rectangle, interactive_rectangle;
+		std::string title, instruction;
+
 		//faces textureStore[27];
 		
 		//transXCoordsToCenter.insert(transXCoordsToCenter.begin(), {1, -(dimension)+1, -(dimension*2)+1, 0,0,0,0,0,0, 1, 0, -1, 1, 0, -1});
@@ -301,6 +311,8 @@ class CUBIE
 		{	
 			D3DXMATRIX TranslateMat3;
 			D3DXMatrixTranslation(&TranslateMat3, 0.0f, -24.0f, 0.0f);
+
+			drawTheUI();
 
 			RenderCubie(matRotateY, 
 				matRotateH, matRotateH2, matRotateH3, 
@@ -719,6 +731,7 @@ class CUBIE
 			g_cubeVertexBuffer->Unlock();
 
 			//panelRed->Setup();
+			initializeUI();
 
 			return S_OK;
 		}
@@ -1319,6 +1332,55 @@ class CUBIE
 			
 		}
 
+		HRESULT initializeUI()
+		{
+			//Set the title
+			font1 = NULL;
+			D3DXCreateFont(render_target_, 40, 0, FW_BOLD, 1, false, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, ANTIALIASED_QUALITY, FF_DONTCARE, "Arial", &font1);
+
+			SetRect(&title_rectangle, 40, 70, 700, 700);
+			title = "THE RUBIK'S CUBE ";
+
+
+			//Set the instructions
+			font2 = NULL;
+			D3DXCreateFont(render_target_, 17, 0, FW_NORMAL, 1, false, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, ANTIALIASED_QUALITY, FF_DONTCARE, "Arial", &font2);
+
+			SetRect(&instruction_rectangle, 40, 120, 800, 800);
+			instruction = "Press the left and right arrows to change the column, press the up and down arrows to change the row \nPress 'R' to rotate the row, press 'C' to rotate the column ";
+
+
+			return S_OK;
+		}
+
+		void setTheBillboard(int col, int row)
+		{
+			//Set the row
+			//fontbb1 = NULL;
+			D3DXCreateFont(render_target_, 17, 0, FW_NORMAL, 1, false, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, ANTIALIASED_QUALITY, FF_DONTCARE, "Arial", &fontbb1);
+
+			SetRect(&billboard_rectangle1, 40, 160, 800, 800);
+
+			billboard1 = "You are selecting the row number: " + std::to_string(row+1);
+
+			//Set the col
+			//fontbb2 = NULL;
+			D3DXCreateFont(render_target_, 17, 0, FW_NORMAL, 1, false, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, ANTIALIASED_QUALITY, FF_DONTCARE, "Arial", &fontbb2);
+
+			SetRect(&billboard_rectangle2, 40, 175, 800, 800);
+
+			billboard2 = "You are selecting the col number: " + std::to_string(col+1);
+			
+		}
+
+		void drawTheUI()
+		{
+			font1->DrawTextA(NULL, title.c_str(), -1, &title_rectangle, DT_LEFT, D3DCOLOR_XRGB(255, 255, 0));
+			font2->DrawTextA(NULL, instruction.c_str(), -1, &instruction_rectangle, DT_LEFT, D3DCOLOR_XRGB(255, 255, 255));
+
+			fontbb1->DrawTextA(NULL, billboard1.c_str(), -1, &billboard_rectangle1, DT_LEFT, D3DCOLOR_XRGB(255, 255, 255));
+			fontbb2->DrawTextA(NULL, billboard2.c_str(), -1, &billboard_rectangle2, DT_LEFT, D3DCOLOR_XRGB(255, 255, 255));
+		}
 
 	private:
 		

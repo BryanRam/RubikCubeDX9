@@ -360,6 +360,7 @@ void Render()
 		cubie.setVRow1(vRowPos1);
 		cubie.setVRowTest(vRowPosTest);
 		cubie.setVRowL(vRowL);
+		cubie.setTheBillboard(canRotateY, canRotateX);
 		
 		int zVal = 0;
 		for (int i = 0; i < 27; i++)
