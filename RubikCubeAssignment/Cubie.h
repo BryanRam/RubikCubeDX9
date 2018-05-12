@@ -187,14 +187,20 @@ class CUBIE
 		int hBotRow[9];
 		float xTest1, xTest2, xTest3;
 
-		ID3DXFont *fontbb1 = NULL, *fontbb2 = NULL;
+		ID3DXFont *fontbb1, *fontbb2;
 		RECT billboard_rectangle1, billboard_rectangle2;
 		std::string billboard1, billboard2;
 
 		//Variable for the UI
-		ID3DXFont *font1, *font2;
-		RECT title_rectangle, instruction_rectangle, interactive_rectangle;
-		std::string title, instruction;
+		ID3DXFont *font1, *font2,
+			*font_vcol, *font_row, *font_zcol;
+		RECT title_rectangle, 
+			instruction_rectangle, 
+			instruction_vcol_rect,
+			instruction_row_rect, 
+			instruction_zcol_rect;
+		std::string title, instruction, 
+			instruction_row, instruction_vcol, instruction_zcol;
 
 		//faces textureStore[27];
 		
@@ -220,6 +226,13 @@ class CUBIE
 			SAFE_RELEASE(g_studLineVertexBuffer);
 			SAFE_RELEASE(g_lineVertexBuffer);
 			SAFE_RELEASE(i_buffer);
+			font1->Release();
+			font2->Release();
+			fontbb1->Release();
+			fontbb2->Release();
+			font_row->Release();
+			font_vcol->Release();
+			font_zcol->Release();
 		}
 
 		LPDIRECT3DVERTEXBUFFER9 g_topVertexBuffer = NULL; // Buffer to hold vertices for the rectangle
@@ -731,7 +744,7 @@ class CUBIE
 			g_cubeVertexBuffer->Unlock();
 
 			//panelRed->Setup();
-			initializeUI();
+			initialiseUI();
 
 			return S_OK;
 		}
@@ -1332,11 +1345,11 @@ class CUBIE
 			
 		}
 
-		HRESULT initializeUI()
+		HRESULT initialiseUI()
 		{
 			//Set the title
 			font1 = NULL;
-			D3DXCreateFont(render_target_, 40, 0, FW_BOLD, 1, false, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, ANTIALIASED_QUALITY, FF_DONTCARE, "Arial", &font1);
+			D3DXCreateFont(render_target_, 40, 0, FW_BOLD, 1, true, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, ANTIALIASED_QUALITY, FF_DONTCARE, "Helvetica", &font1);
 
 			SetRect(&title_rectangle, 40, 70, 700, 700);
 			title = "THE RUBIK'S CUBE ";
@@ -1344,42 +1357,81 @@ class CUBIE
 
 			//Set the instructions
 			font2 = NULL;
-			D3DXCreateFont(render_target_, 17, 0, FW_NORMAL, 1, false, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, ANTIALIASED_QUALITY, FF_DONTCARE, "Arial", &font2);
+			D3DXCreateFont(render_target_, 17, 0, FW_NORMAL, 1, false, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, ANTIALIASED_QUALITY, FF_DONTCARE, "Helvetica", &font2);
 
 			SetRect(&instruction_rectangle, 40, 120, 800, 800);
 			instruction = "Press the left and right arrows to change the column, press the up and down arrows to change the row \nPress 'R' to rotate the row, press 'C' to rotate the column ";
 
+			setTheBillboard();
 
 			return S_OK;
 		}
 
-		void setTheBillboard(int col, int row)
+		void setTheBillboard(int vcol = 0, int row = 0, int zcol = 0)
 		{
 			//Set the row
-			//fontbb1 = NULL;
+			/*fontbb1 = NULL;
 			D3DXCreateFont(render_target_, 17, 0, FW_NORMAL, 1, false, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, ANTIALIASED_QUALITY, FF_DONTCARE, "Arial", &fontbb1);
 
 			SetRect(&billboard_rectangle1, 40, 160, 800, 800);
+			
+			billboard1 = "You are selecting the row number: " + std::to_string(row + 1);*/
 
-			billboard1 = "You are selecting the row number: " + std::to_string(row+1);
+			font_row = NULL;
 
-			//Set the col
-			//fontbb2 = NULL;
+			D3DXCreateFont(render_target_, 17, 0, FW_NORMAL, 1, false, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, ANTIALIASED_QUALITY, FF_DONTCARE, "Helvetica", &font_row);
+
+			SetRect(&instruction_row_rect, 40, 160, 800, 800);
+			instruction_row = "You are selecting the row number: " + std::to_string(row + 1);
+
+
+			
+
+			//Set the vcol
+			/*fontbb2 = NULL;
 			D3DXCreateFont(render_target_, 17, 0, FW_NORMAL, 1, false, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, ANTIALIASED_QUALITY, FF_DONTCARE, "Arial", &fontbb2);
 
 			SetRect(&billboard_rectangle2, 40, 175, 800, 800);
 
-			billboard2 = "You are selecting the col number: " + std::to_string(col+1);
-			
+			billboard2 = "You are selecting the col number: " + std::to_string(col+1);*/
+
+			font_vcol = NULL;
+
+			D3DXCreateFont(render_target_, 17, 0, FW_NORMAL, 1, false, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, ANTIALIASED_QUALITY, FF_DONTCARE, "Helvetica", &font_vcol);
+
+			SetRect(&instruction_vcol_rect, 40, 175, 800, 800);
+
+			instruction_vcol = "You are selecting the vcol number: " + std::to_string(vcol + 1);
+
+			//Set the zcol
+			font_zcol = NULL;
+
+			D3DXCreateFont(render_target_, 17, 0, FW_NORMAL, 1, false, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, ANTIALIASED_QUALITY, FF_DONTCARE, "Helvetica", &font_zcol);
+
+			SetRect(&instruction_zcol_rect, 40, 190, 800, 800);
+
+			instruction_zcol = "You are selecting the zcol number: " + std::to_string(zcol + 1);
+
+		}
+
+		void updateTheBillboard(int vcol, int row, int zcol)
+		{
+			instruction_row = "You are selecting the row number: " + std::to_string(row + 1);
+			instruction_vcol = "You are selecting the vcol number: " + std::to_string(vcol + 1);
+			instruction_zcol = "You are selecting the zcol number: " + std::to_string(zcol + 1);
 		}
 
 		void drawTheUI()
 		{
-			font1->DrawTextA(NULL, title.c_str(), -1, &title_rectangle, DT_LEFT, D3DCOLOR_XRGB(255, 255, 0));
-			font2->DrawTextA(NULL, instruction.c_str(), -1, &instruction_rectangle, DT_LEFT, D3DCOLOR_XRGB(255, 255, 255));
+			font1->DrawTextA(NULL, title.c_str(), -1, &title_rectangle, DT_LEFT, D3DCOLOR_XRGB(0, 255, 0));
+			font2->DrawTextA(NULL, instruction.c_str(), -1, &instruction_rectangle, DT_LEFT, D3DCOLOR_XRGB(0, 0, 0));
 
-			fontbb1->DrawTextA(NULL, billboard1.c_str(), -1, &billboard_rectangle1, DT_LEFT, D3DCOLOR_XRGB(255, 255, 255));
-			fontbb2->DrawTextA(NULL, billboard2.c_str(), -1, &billboard_rectangle2, DT_LEFT, D3DCOLOR_XRGB(255, 255, 255));
+			/*fontbb1->DrawTextA(NULL, billboard1.c_str(), -1, &billboard_rectangle1, DT_LEFT, D3DCOLOR_XRGB(255, 255, 255));
+			fontbb2->DrawTextA(NULL, billboard2.c_str(), -1, &billboard_rectangle2, DT_LEFT, D3DCOLOR_XRGB(255, 255, 255));*/
+
+			font_row->DrawTextA(NULL, instruction_row.c_str(), -1, &instruction_row_rect, DT_LEFT, D3DCOLOR_XRGB(0, 0, 0));
+			font_vcol->DrawTextA(NULL, instruction_vcol.c_str(), -1, &instruction_vcol_rect, DT_LEFT, D3DCOLOR_XRGB(0, 0, 0));
+			font_zcol->DrawTextA(NULL, instruction_zcol.c_str(), -1, &instruction_zcol_rect, DT_LEFT, D3DCOLOR_XRGB(0, 0, 0));
 		}
 
 	private:
