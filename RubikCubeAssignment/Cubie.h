@@ -228,8 +228,8 @@ class CUBIE
 			SAFE_RELEASE(i_buffer);
 			font1->Release();
 			font2->Release();
-			fontbb1->Release();
-			fontbb2->Release();
+			//fontbb1->Release();
+			//fontbb2->Release();
 			font_row->Release();
 			font_vcol->Release();
 			font_zcol->Release();
