@@ -261,12 +261,12 @@ class CUBIE
 			D3DXCreateTextureFromFile(render_target_, "Green_def.png", &g_pTextures[4]);
 			D3DXCreateTextureFromFile(render_target_, "Green_def.png", &g_pTextures[5]);*/
 
-			D3DXCreateTextureFromFile(render_target_, "Rubik’s_blue.png", &g_pTextures[0]);
-			D3DXCreateTextureFromFile(render_target_, "Rubik’s_green.png", &g_pTextures[1]);
-			D3DXCreateTextureFromFile(render_target_, "Rubik’s_orange.png", &g_pTextures[2]);
-			D3DXCreateTextureFromFile(render_target_, "Rubik’s_red.png", &g_pTextures[3]);
-			D3DXCreateTextureFromFile(render_target_, "Rubik’s_white.png", &g_pTextures[4]);
-			D3DXCreateTextureFromFile(render_target_, "Rubik’s_yellow.png", &g_pTextures[5]);
+			D3DXCreateTextureFromFile(render_target_, "Rubik’s_blue_final.png", &g_pTextures[0]);
+			D3DXCreateTextureFromFile(render_target_, "Rubik’s_green_final.png", &g_pTextures[1]);
+			D3DXCreateTextureFromFile(render_target_, "Rubik’s_orange_final.png", &g_pTextures[2]);
+			D3DXCreateTextureFromFile(render_target_, "Rubik’s_red_final.png", &g_pTextures[3]);
+			D3DXCreateTextureFromFile(render_target_, "Rubik’s_white_final.png", &g_pTextures[4]);
+			D3DXCreateTextureFromFile(render_target_, "Rubik’s_yellow_final.png", &g_pTextures[5]);
 
 			/*D3DXCreateTextureFromFile(render_target_, "Rubik_green2.png", &g_pTextures[0]);
 			D3DXCreateTextureFromFile(render_target_, "CloudTexture.png", &g_pTextures[1]);
