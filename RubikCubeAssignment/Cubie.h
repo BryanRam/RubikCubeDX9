@@ -1359,8 +1359,10 @@ class CUBIE
 			font2 = NULL;
 			D3DXCreateFont(render_target_, 17, 0, FW_NORMAL, 1, false, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, ANTIALIASED_QUALITY, FF_DONTCARE, "Helvetica", &font2);
 
-			SetRect(&instruction_rectangle, 40, 120, 800, 800);
-			instruction = "Press the left and right arrows to change the column, press the up and down arrows to change the row \nPress 'R' to rotate the row, press 'C' to rotate the column ";
+			SetRect(&instruction_rectangle, 40, 120, 1200, 800);
+			instruction = "WSAD keys to rotate the whole cube.\n";
+			instruction += "Press the left and right arrows to change the vcolumns, up and down arrows to change the row, and Home and End keys to change the zcolumns\n";
+			instruction += "Buttons Z,X: Rotate Row Clockwise/CounterClockwise\nButtons C,V: Rotate VCol CW/CCW\nButtons B,N: Rotate ZCol CW/CCW";
 
 			setTheBillboard();
 
@@ -1381,7 +1383,7 @@ class CUBIE
 
 			D3DXCreateFont(render_target_, 17, 0, FW_NORMAL, 1, false, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, ANTIALIASED_QUALITY, FF_DONTCARE, "Helvetica", &font_row);
 
-			SetRect(&instruction_row_rect, 40, 160, 800, 800);
+			SetRect(&instruction_row_rect, 40, 205, 800, 800);
 			instruction_row = "You are selecting the row number: " + std::to_string(row + 1);
 
 
@@ -1399,7 +1401,7 @@ class CUBIE
 
 			D3DXCreateFont(render_target_, 17, 0, FW_NORMAL, 1, false, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, ANTIALIASED_QUALITY, FF_DONTCARE, "Helvetica", &font_vcol);
 
-			SetRect(&instruction_vcol_rect, 40, 175, 800, 800);
+			SetRect(&instruction_vcol_rect, 40, 220, 800, 800);
 
 			instruction_vcol = "You are selecting the vcol number: " + std::to_string(vcol + 1);
 
@@ -1408,7 +1410,7 @@ class CUBIE
 
 			D3DXCreateFont(render_target_, 17, 0, FW_NORMAL, 1, false, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, ANTIALIASED_QUALITY, FF_DONTCARE, "Helvetica", &font_zcol);
 
-			SetRect(&instruction_zcol_rect, 40, 190, 800, 800);
+			SetRect(&instruction_zcol_rect, 40, 235, 800, 800);
 
 			instruction_zcol = "You are selecting the zcol number: " + std::to_string(zcol + 1);
 
