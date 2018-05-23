@@ -6,16 +6,10 @@
 #include <algorithm>
 #include <functional>
 #include <string>
-//#include "Panel.h"
 
 
-// A structure for our custom vertex type
-//struct CUSTOMVERTEX
-//{
-//	float x, y, z;      // X, Y, Z position of the vertex.
-//	DWORD colour;       // The vertex color
-//};
-//
+
+
 DWORD Black = 0x00000000;
 DWORD Blue = 0x000000ff;
 DWORD White = 0x00ffffff;
@@ -87,7 +81,7 @@ class CUBIE
 		float zIndexRow1, zIndexRow2, zIndexRow3;
 		int studs;
 		int columns, rows;
-		int Sides = 24;  // The number of sides used to contruct the circle. More sides = smoother circle.
+		int Sides = 24;  // The number of sides used to construct the circle. More sides = smoother circle.
 		int cubeSides = 6;
 		float brick_height, brick_length, brick_width;
 		float stud_height, stud_radius;
@@ -187,10 +181,6 @@ class CUBIE
 		int hBotRow[9];
 		float xTest1, xTest2, xTest3;
 
-		ID3DXFont *fontbb1, *fontbb2;
-		RECT billboard_rectangle1, billboard_rectangle2;
-		std::string billboard1, billboard2;
-
 		//Variable for the UI
 		ID3DXFont *font1, *font2,
 			*font_vcol, *font_row, *font_zcol;
@@ -202,11 +192,7 @@ class CUBIE
 		std::string title, instruction, 
 			instruction_row, instruction_vcol, instruction_zcol;
 
-		//faces textureStore[27];
-		
-		//transXCoordsToCenter.insert(transXCoordsToCenter.begin(), {1, -(dimension)+1, -(dimension*2)+1, 0,0,0,0,0,0, 1, 0, -1, 1, 0, -1});
-
-		 
+	
 
 		CUBIE(DWORD cube_colour) :
 			colour(cube_colour)
@@ -228,8 +214,7 @@ class CUBIE
 			SAFE_RELEASE(i_buffer);
 			font1->Release();
 			font2->Release();
-			//fontbb1->Release();
-			//fontbb2->Release();
+			
 			font_row->Release();
 			font_vcol->Release();
 			font_zcol->Release();
@@ -254,12 +239,7 @@ class CUBIE
 
 		void LoadTextures()
 		{
-			/*D3DXCreateTextureFromFile(render_target_, "Green_def.png", &g_pTextures[0]);
-			D3DXCreateTextureFromFile(render_target_, "Green_def.png", &g_pTextures[1]);
-			D3DXCreateTextureFromFile(render_target_, "Green_def.png", &g_pTextures[2]);
-			D3DXCreateTextureFromFile(render_target_, "Green_def.png", &g_pTextures[3]);
-			D3DXCreateTextureFromFile(render_target_, "Green_def.png", &g_pTextures[4]);
-			D3DXCreateTextureFromFile(render_target_, "Green_def.png", &g_pTextures[5]);*/
+			
 
 			D3DXCreateTextureFromFile(render_target_, "Rubik’s_blue_final.png", &g_pTextures[0]);
 			D3DXCreateTextureFromFile(render_target_, "Rubik’s_green_final.png", &g_pTextures[1]);
@@ -268,12 +248,7 @@ class CUBIE
 			D3DXCreateTextureFromFile(render_target_, "Rubik’s_white_final.png", &g_pTextures[4]);
 			D3DXCreateTextureFromFile(render_target_, "Rubik’s_yellow_final.png", &g_pTextures[5]);
 
-			/*D3DXCreateTextureFromFile(render_target_, "Rubik_green2.png", &g_pTextures[0]);
-			D3DXCreateTextureFromFile(render_target_, "CloudTexture.png", &g_pTextures[1]);
-			D3DXCreateTextureFromFile(render_target_, "DXTexture.png", &g_pTextures[2]);
-			D3DXCreateTextureFromFile(render_target_, "TimesSquareTexture.png", &g_pTextures[3]);
-			D3DXCreateTextureFromFile(render_target_, "Pattern1Texture.png", &g_pTextures[4]);
-			D3DXCreateTextureFromFile(render_target_, "TilesTexture.png", &g_pTextures[5]);*/
+			
 
 			D3DXCreateTextureFromFile(render_target_, "Black_def.png", &g_pTextures[6]);
 
@@ -317,30 +292,19 @@ class CUBIE
 		}
 
 		void render(D3DXMATRIX matRotateY, 
-			D3DXMATRIX matRotateH, D3DXMATRIX matRotateH2, D3DXMATRIX matRotateH3, 
-			D3DXMATRIX matRotateV, 
 			D3DXMATRIX WorldMat, D3DXMATRIX TranslateMat,
-			D3DXMATRIX TranslateMat2, int zVal, int count = 1)
+			int zVal, int count = 1)
 		{	
-			D3DXMATRIX TranslateMat3;
-			D3DXMatrixTranslation(&TranslateMat3, 0.0f, -24.0f, 0.0f);
 
-			drawTheUI();
-
+			
 			RenderCubie(matRotateY, 
-				matRotateH, matRotateH2, matRotateH3, 
-				matRotateV, WorldMat, TranslateMat, 
+				WorldMat, TranslateMat, 
 				zVal, count);
 
-			//RenderStuds(matRotateY, WorldMat, TranslateMat2, count);
-			//D3DXMatrixIdentity(&WorldMat);								// Set WorldMat to identity matrice
-			//render_target_->SetTransform(D3DTS_WORLD, &WorldMat);
-
-			//RenderCube2X4(matRotateY, WorldMat, TranslateMat, count);
 			
 		}
 
-		HRESULT SetupCubie2()
+		HRESULT SetupCubie()
 		{
 			// Calculate the number of vertices required, and the size of the buffer to hold them.
 			int Vertices = 2 * 3 * 6;	// Six vertices for each side, six sides.
@@ -845,22 +809,16 @@ class CUBIE
 			}
 		}
 		
+		/*Change the textures on the appropriate faces,
+		 depending on what rotation was specified
+		 V = 9 blocks in a single column, vertical rotation 
+		 H = 9 blocks in a horizontal row
+		 Z = 9 blocks that would make up a "face", also a vertical rotation
+		*/
+
+		//Clockwise, Leftmost 9 blocks in a single column
 		void changeTexturesVCW(int i)
 		{
-			//for (int i = 0; i < 9; i++)
-			//{
-			//	//if (i % 3 == 0)
-			//	//if (i == vRowL1[i])
-			//	//{
-			//		ts_it = textureStore.find(row[i]);
-			//		faces texFaces = ts_it->second;
-			//		ts_it->second.frontSide = texFaces.topSide;
-			//		ts_it->second.topSide = texFaces.backSide;
-			//		ts_it->second.bottomSide = texFaces.frontSide;
-			//		ts_it->second.backSide = texFaces.bottomSide;
-			//		//ts_it->second.frontSide = 6;
-			//	//}
-			//}
 
 			std::map<int, faces>::iterator ts_it2;
 
@@ -926,6 +884,7 @@ class CUBIE
 
 		}
 
+		//Counter-clockwise, Leftmost 9 blocks in a single column
 		void changeTexturesVCCW(int* row, int i)
 		{
 			std::map<int, faces>::iterator ts_it2;
@@ -991,6 +950,7 @@ class CUBIE
 			textureStore2 = textureStore;
 		}
 
+		//Top row of 9 blocks, horizontal rotation, clockwise
 		void changeTexturesHCW(int* row, int i)
 		{
 			std::map<int, faces>::iterator ts_it2;
@@ -1064,44 +1024,10 @@ class CUBIE
 
 			textureStore2 = textureStore;
 
-			/*for (int i = 0; i < 3; i++)
-			{
-				for (int j = 0; j < 3; j++)
-				{
-					ts_it = textureStore.find[(i * 3) + j];
-					ts_it2 = textureStore2.find[]
-				}
-			}*/
-
-			//for (int i = 0; i < 9; i++)
-			//{
-			//	//if (i % 3 == 0)
-			//	//if (i == vRowL1[i])
-			//	//{
-			//	ts_it = textureStore.find(i);
-			//	faces texFaces = ts_it->second;
-			//	if (i % 3 == 0)
-			//	{
-			//		ts_it->second.leftSide = texFaces.frontSide;
-			//		//ts_it->second.frontSide = texFaces.rightSide;
-			//		
-			//		
-			//	}
-
-			//	if (i < 3)
-			//		ts_it->second.frontSide = texFaces.rightSide;
-			//	if (i % 3 == 2)
-			//		ts_it->second.rightSide = texFaces.backSide;
-			//	if (i > 5)
-			//		ts_it->second.backSide = texFaces.leftSide;
-			//	//ts_it->second.leftSide = texFaces.frontSide;
-			//	//ts_it->second.rightSide = texFaces.backSide;
-			//	//ts_it->second.backSide = texFaces.leftSide;
-			//	//ts_it->second.frontSide = 6;
-			//	//}
-			//}
+			
 		}
 
+		//counter clockwise, top row
 		void changeTexturesHCCW(int* row, int i)
 		{
 			std::map<int, faces>::iterator ts_it2;
@@ -1174,22 +1100,10 @@ class CUBIE
 
 
 			textureStore2 = textureStore;
-			//for (int i = 0; i < 9; i++)
-			//{
-			//	//if (i % 3 == 0)
-			//	//if (i == vRowL1[i])
-			//	//{
-			//	ts_it = textureStore.find(row[i]);
-			//	faces texFaces = ts_it->second;
-			//	ts_it->second.frontSide = texFaces.leftSide;
-			//	ts_it->second.leftSide = texFaces.backSide;
-			//	ts_it->second.rightSide = texFaces.frontSide;
-			//	ts_it->second.backSide = texFaces.rightSide;
-			//	//ts_it->second.frontSide = 6;
-			//	//}
-			//}
+			
 		}
 		
+		//9 blocks of the cube that make up the front "face", rotated clockwise
 		void changeTexturesZCW(int i)
 		{
 			std::map<int, faces>::iterator ts_it2;
@@ -1265,6 +1179,7 @@ class CUBIE
 			textureStore2 = textureStore;
 		}
 
+		//Counter-clockwise
 		void changeTexturesZCCW(int i)
 		{
 			std::map<int, faces>::iterator ts_it2;
@@ -1345,6 +1260,7 @@ class CUBIE
 			
 		}
 
+		//Set text for UI strings, create appropriate fonts
 		HRESULT initialiseUI()
 		{
 			//Set the title
@@ -1372,30 +1288,19 @@ class CUBIE
 		void setTheBillboard(int vcol = 0, int row = 0, int zcol = 0)
 		{
 			//Set the row
-			/*fontbb1 = NULL;
-			D3DXCreateFont(render_target_, 17, 0, FW_NORMAL, 1, false, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, ANTIALIASED_QUALITY, FF_DONTCARE, "Arial", &fontbb1);
-
-			SetRect(&billboard_rectangle1, 40, 160, 800, 800);
-			
-			billboard1 = "You are selecting the row number: " + std::to_string(row + 1);*/
 
 			font_row = NULL;
 
 			D3DXCreateFont(render_target_, 17, 0, FW_NORMAL, 1, false, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, ANTIALIASED_QUALITY, FF_DONTCARE, "Helvetica", &font_row);
 
 			SetRect(&instruction_row_rect, 40, 205, 800, 800);
-			instruction_row = "You are selecting the row number: " + std::to_string(row + 1);
+			instruction_row = "Current row number: " + std::to_string(row + 1);
 
 
 			
 
 			//Set the vcol
-			/*fontbb2 = NULL;
-			D3DXCreateFont(render_target_, 17, 0, FW_NORMAL, 1, false, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, ANTIALIASED_QUALITY, FF_DONTCARE, "Arial", &fontbb2);
-
-			SetRect(&billboard_rectangle2, 40, 175, 800, 800);
-
-			billboard2 = "You are selecting the col number: " + std::to_string(col+1);*/
+			
 
 			font_vcol = NULL;
 
@@ -1403,7 +1308,7 @@ class CUBIE
 
 			SetRect(&instruction_vcol_rect, 40, 220, 800, 800);
 
-			instruction_vcol = "You are selecting the vcol number: " + std::to_string(vcol + 1);
+			instruction_vcol = "Current vcol number: " + std::to_string(vcol + 1);
 
 			//Set the zcol
 			font_zcol = NULL;
@@ -1412,24 +1317,27 @@ class CUBIE
 
 			SetRect(&instruction_zcol_rect, 40, 235, 800, 800);
 
-			instruction_zcol = "You are selecting the zcol number: " + std::to_string(zcol + 1);
+			instruction_zcol = "Current zcol number: " + std::to_string(zcol + 1);
 
 		}
 
+		/*
+		Provide current row and column numbers to instruction strings
+		*/
 		void updateTheBillboard(int vcol, int row, int zcol)
 		{
-			instruction_row = "You are selecting the row number: " + std::to_string(row + 1);
-			instruction_vcol = "You are selecting the vcol number: " + std::to_string(vcol + 1);
-			instruction_zcol = "You are selecting the zcol number: " + std::to_string(zcol + 1);
+			instruction_row = "Current row number: " + std::to_string(row + 1);
+			instruction_vcol = "Current vcol number: " + std::to_string(vcol + 1);
+			instruction_zcol = "Current zcol number: " + std::to_string(zcol + 1);
 		}
 
+		/*
+		Displays UI Text to the Screen
+		*/
 		void drawTheUI()
 		{
 			font1->DrawTextA(NULL, title.c_str(), -1, &title_rectangle, DT_LEFT, D3DCOLOR_XRGB(0, 255, 0));
 			font2->DrawTextA(NULL, instruction.c_str(), -1, &instruction_rectangle, DT_LEFT, D3DCOLOR_XRGB(0, 0, 0));
-
-			/*fontbb1->DrawTextA(NULL, billboard1.c_str(), -1, &billboard_rectangle1, DT_LEFT, D3DCOLOR_XRGB(255, 255, 255));
-			fontbb2->DrawTextA(NULL, billboard2.c_str(), -1, &billboard_rectangle2, DT_LEFT, D3DCOLOR_XRGB(255, 255, 255));*/
 
 			font_row->DrawTextA(NULL, instruction_row.c_str(), -1, &instruction_row_rect, DT_LEFT, D3DCOLOR_XRGB(0, 0, 0));
 			font_vcol->DrawTextA(NULL, instruction_vcol.c_str(), -1, &instruction_vcol_rect, DT_LEFT, D3DCOLOR_XRGB(0, 0, 0));
@@ -1439,9 +1347,7 @@ class CUBIE
 	private:
 		
 		
-		void RenderCubie(D3DXMATRIX matRotateY, 
-			D3DXMATRIX matRotateH, D3DXMATRIX matRotateH2, D3DXMATRIX matRotateH3, 
-			D3DXMATRIX matRotateV, 
+		void RenderCubie(D3DXMATRIX matRotateY,
 			D3DXMATRIX WorldMat, D3DXMATRIX TranslateMat, 
 			int zVal, int count = 1)
 		{
@@ -1453,7 +1359,8 @@ class CUBIE
 			int l = count % 9;
 
 
-			D3DXMATRIX tMat, tMat2, tMat3, tMat4, WorldMat2, WorldMat3, emptyMat;
+			
+			D3DXMATRIX WorldMat2;
 			D3DXMATRIX TransformMatrix, TranslateMatEx;
 
 			float RotateAngle = 0.0f;
@@ -1461,8 +1368,7 @@ class CUBIE
 			D3DXQUATERNION Rotation, ScalingRotation;
 			D3DXMatrixIdentity(&WorldMat2);
 			
-			D3DXMatrixIdentity(&WorldMat3);
-			D3DXQuaternionRotationMatrix(&Rotation, &matRotateH);
+			
 			D3DXQuaternionRotationYawPitchRoll(&Rotation, 0.0f, 0.0f, RotateAngle);
 			D3DXQuaternionRotationYawPitchRoll(&ScalingRotation, 0.0f, 0.0f, 0.0f);
 
@@ -1476,61 +1382,15 @@ class CUBIE
 
 			D3DXMatrixTranslation(&TranslateMatEx, dimension, 0.0f, 0.65f + dimension);
 
-			//D3DXMatrixTranslation(&tMat3, 0.0f, 0.0f, 0.65f + toArrV2[count]);
-			//D3DXMatrixTranslation(&tMat4, 0.0f, 0.0f, 0.65f + fromArrV2[count]);
-			D3DXMatrixTranslation(&tMat3, vCoords[count].toX, vCoords[count].toY, 0.65 + vCoords[count].toZ);
-			D3DXMatrixTranslation(&tMat4, vCoords[count].fromX, vCoords[count].fromY, 0.65f + vCoords[count].fromZ);
+			
 			//Move forward 10 units and apply world rotation
 			D3DXMatrixTranslation(&TranslateMat, dimension * (i), -(dimension * (k)), 0.65f + (dimension * zVal));
-			D3DXMatrixTranslation(&emptyMat, 0.0f, 0.0f, -0.65f);
+			
 			D3DXMatrixMultiply(&WorldMat, &WorldMat, &TranslateMatEx);
 			D3DXMatrixMultiply(&WorldMat2, &WorldMat2, &TranslateMat);
 			
-			//for (int i = 0; i < 9; i++)
-			//{
-			//	if (count == hTopRow[i])
-			//	{
-			//		D3DXMATRIX matRotateHT;
-			//		D3DXQUATERNION  qR;
-			//		D3DXVECTOR3 rotCentre;
-			//		if (isY[i])
-			//		{
-			//			D3DXQuaternionRotationAxis(&qR, &D3DXVECTOR3(0.0f, 1.0f, 0.0f), xTest1);
-			//			rotCentre = D3DXVECTOR3(dimension, 0.0f, dimension + 0.65f);
-			//		}
-			//		else
-			//		{
-			//			D3DXQuaternionRotationAxis(&qR, &D3DXVECTOR3(0.0f, 0.0f, 1.0f), xTest1);
-			//			rotCentre = D3DXVECTOR3(dimension, 0.0f, dimension + 0.65f);
-			//			//rotCentre = D3DXVECTOR3 (dimension*2, dimension + 0.65f, 0.0f );
-			//		}
-
-			//		
-			//		D3DXMatrixTransformation(&matRotateHT, NULL, NULL, NULL, &rotCentre, &qR, NULL);
-			//		WorldMat2 *= matRotateHT;
-			//	}
-			//	else if (count == hMidRow[i])
-			//	{
-			//		D3DXMATRIX matRotateHT;
-			//		D3DXQUATERNION  qR;
-			//		D3DXQuaternionRotationAxis(&qR, &D3DXVECTOR3(0.0f, 1.0f, 0.0f), xTest2);
-
-			//		D3DXVECTOR3 rotCentre(dimension, 0.0f, dimension + 0.65f);
-			//		D3DXMatrixTransformation(&matRotateHT, NULL, NULL, NULL, &rotCentre, &qR, NULL);
-			//		WorldMat2 *= matRotateHT;
-			//	}
-			//	else if (count == hBotRow[i])
-			//	{
-			//		D3DXMATRIX matRotateHT;
-			//		D3DXQUATERNION  qR;
-			//		D3DXQuaternionRotationAxis(&qR, &D3DXVECTOR3(0.0f, 1.0f, 0.0f), xTest3);
-
-			//		D3DXVECTOR3 rotCentre(dimension, 0.0f, dimension + 0.65f);
-			//		D3DXMatrixTransformation(&matRotateHT, NULL, NULL, NULL, &rotCentre, &qR, NULL);
-			//		WorldMat2 *= matRotateHT;
-			//	}
-			//}
-
+			
+			//Focus on the top horizontal row of 9 cubes
 			if (count < 9)
 			{
 				D3DXMATRIX matRotateHT;
@@ -1543,6 +1403,7 @@ class CUBIE
 				WorldMat2 *= matRotateHT;
 			}
 			
+			//Focus on the middle horizontal row of 9 cubes
 			else if (count < 18 && count>8)
 			{
 				D3DXMATRIX matRotateHT;
@@ -1555,6 +1416,7 @@ class CUBIE
 				WorldMat2 *= matRotateHT;
 			}
 
+			//Focus on the bottom horizontal row of 9 cubes
 			else
 			{
 				D3DXMATRIX matRotateHT;
@@ -1566,23 +1428,11 @@ class CUBIE
 				D3DXMatrixTransformation(&matRotateHT, NULL, NULL, NULL, &rotCentre, &qR, NULL);
 				WorldMat2 *= matRotateHT;
 			}
-			//if (((count) % 3 == 0) /*|| ((count) % 3 == 2)*/)
-			/*for (int i = 0; i < 9; i++)
-			{
-				if (count == vRowL1[i])
-				{
-					D3DXQUATERNION  qR;
-					D3DXQuaternionRotationAxis(&qR, &D3DXVECTOR3(1.0f, 0.0f, 0.0f), yIndexRowV1);
-
-					D3DXVECTOR3 rotCentre(0.0f, -dimension, dimension + 0.65f);
-					D3DXMatrixTransformation(&matRotateV, NULL, NULL, NULL, &rotCentre, &qR, NULL);
-					WorldMat2 *= matRotateV;
-				}
-			}*/
-
+			
+			// V Columns
 			if (count % 3 == 0)
 			{
-				
+				D3DXMATRIX matRotateV;
 				D3DXQUATERNION  qR;
 				D3DXQuaternionRotationAxis(&qR, &D3DXVECTOR3(1.0f, 0.0f, 0.0f), yIndexRowV1);
 
@@ -1613,6 +1463,7 @@ class CUBIE
 				WorldMat2 *= matRotateV3;
 			}
 
+			//Z Columns/Faces
 			int zRow1[9] = {0, 1, 2, 9, 10, 11, 18, 19, 20};
 			int zRow2[9] = {3, 4, 5, 12, 13, 14, 21, 22, 23 };
 			int zRow3[9] = {6, 7, 8, 15, 16, 17, 24, 25, 26 };
@@ -1659,8 +1510,7 @@ class CUBIE
 			D3DXMatrixIdentity(&WorldMat2);
 
 			
-			//D3DXMatrixMultiply(&WorldMat, &WorldMat, &WorldMat2);
-			//render_target_->SetTransform(D3DTS_WORLD, &WorldMat);
+			
 
 			
 			
@@ -1674,75 +1524,15 @@ class CUBIE
 			render_target_->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_MODULATE);
 			
 			
-			//render_target_->SetIndices(i_buffer);
+			
 
 			// Render each face in turn, but select a different texture for each one.
 			for (int i = 0; i < 6; i++)
 			{
 				// Select the texture.
 				
-				////Add black textures to the cubies	//3 rows, 1 column
-				//if ((count % 3 == 0 && i == 1) ||	//Left Row of 9 cubies(, Right side
-				//	(count % 3 == 2 && i == 3) ||	//Right row of 9 cubies, Left side
-				//	(count % 3 == 1 && i == 1) ||	//Middle Row of 9 cubies, Left and right sides
-				//	(count % 3 == 1 &&- i == 3)
-				//	)
-				//{
-				//	render_target_->SetTexture(0, g_pTextures[6]);
-				//	render_target_->DrawPrimitive(D3DPT_TRIANGLELIST, i * 6, 2);
-				//	ts_it = textureStore.find(count);
-				//	if (ts_it != textureStore.end())
-				//	{
-				//		switch (i)
-				//		{
-				//			case 1:
-				//				ts_it->second.rightSide = 6;
-				//				break;
-				//			case 3:
-				//				ts_it->second.leftSide = 6;
-				//				break;
-				//		}
-				//		
-				//	}
-				//}
-				//else if ((zVal == 0 && i == 2) || //Front Row of 9, Back Side
-				//		 //(zVal == 1 && i == 0) || //Middle Row, Front Side
-				//		 //(zVal == 1 && i == 2) || //Middle Row, Back Side
-				//	     (zVal == 2 && i == 0)	  //Back Row, Front Side
-				//		)
-				//{
-				//	render_target_->SetTexture(0, g_pTextures[6]);
-				//	render_target_->DrawPrimitive(D3DPT_TRIANGLELIST, i * 6, 2);
-				//}
-				//else if ( (k == 0 && i == 5)) //Top Row of 9, Bottom side
-				//{
-				//	render_target_->SetTexture(0, g_pTextures[6]);
-				//	render_target_->DrawPrimitive(D3DPT_TRIANGLELIST, i * 6, 2);
-				//	//render_target_->SetTexture(0, g_pTextures[i]);
-				////	render_target_->DrawPrimitive(D3DPT_TRIANGLELIST, i * 6, 2);
-				//	
-				//}
-				//else  if ((k == 1 && i == 4) || //Middle row of 9, Top Side 
-				//		  (k == 1 && i == 5)    //Middle row of 9, Bottom Side
-				//		 )
-				//{
-				//	render_target_->SetTexture(0, g_pTextures[6]);
-				//	render_target_->DrawPrimitive(D3DPT_TRIANGLELIST, i * 6, 2);
-				//}
-				//else if (k == 2 && i == 4) //Bottom row of 9, Top Side
-				//{
-				//	render_target_->SetTexture(0, g_pTextures[6]);
-				//	render_target_->DrawPrimitive(D3DPT_TRIANGLELIST, i * 6, 2);
-				//}
-				//else
-				//{
-					//render_target_->SetTexture(0, g_pTextures[i]);
-
-
-
 					ts_it = textureStore.find(count);
-					//if (ts_it != textureStore.end())
-					//{
+					
 						switch (i)
 						{
 						case 0:
@@ -1777,53 +1567,11 @@ class CUBIE
 							break;
 						}
 
-					//}
-					//else
-					//{
-					//	faces newFaces;
-					//	textureStore.insert(std::make_pair(count, newFaces));
-					//	ts_it = textureStore.find(count);
-					//	switch (i)
-					//	{
-					//		case 0:
-					//			ts_it->second.frontSide = i;
-					//			break;
-					//		case 1:
-					//			ts_it->second.rightSide = i;
-					//			break;
-					//		case 2:
-					//			ts_it->second.backSide = i;
-					//			break;
-					//		case 3:
-					//			ts_it->second.leftSide = i;
-					//			break;
-					//		case 4:
-					//			ts_it->second.topSide = i;
-					//			break;
-					//		case 5:
-					//			ts_it->second.bottomSide = i;
-					//			break;
-					//	}
-
-					//	render_target_->DrawPrimitive(D3DPT_TRIANGLELIST, i * 6, 2);
-					//	//textureStore.insert(std::make_pair(count,))
-					//}
-
-					//g_pd3dDevice->DrawPrimitive(D3DPT_TRIANGLELIST, i * 6, 2);
-					// Render the contents of the vertex buffer.
-					//render_target_->DrawPrimitive(D3DPT_TRIANGLELIST, i * 6, 2);
-				//}
+					
 			}
 
-			// draw the cube
-			//render_target_->DrawIndexedPrimitive(D3DPT_TRIANGLELIST, 0, 0, 8, 0, 12);
-			/*
-			if(i == 0)
-			panelRed->render(matRotateH, WorldMat2, i, -(dimension * (k)));
-			else
-				panelRed->render(matRotateH, WorldMat2, i * ((panelRed->hCubeWidth*2) + (dimension- panelRed->hCubeWidth * 2)), -(dimension * (k)));
-			*/
-			//render_target_->DrawIndexedPrimitive(D3DPT_LINESTRIP, 0, 0, 8, 0, 12);
+			
+			
 		}
 
 		

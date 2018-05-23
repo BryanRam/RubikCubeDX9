@@ -10,7 +10,7 @@
 #include <d3dx9.h>		// Direct 3D library (for all Direct 3D funtions).
 #include <math.h>
 #include "Cubie.h"
-//#include "Panel.h"
+
 
 //-----------------------------------------------------------------------------
 // Global variables
@@ -32,21 +32,10 @@ float xIndexHRow1 = 0.0f;
 float yIndexVRow1 = 0.0f;
 
 /*
-Define different types of bricks
+Define Rubik's Cube block
 */
 CUBIE cubie(Black);
-//CUBIE_PANEL panel(Red);
-//LEGO_BRICK brick6X16(6, 16, LEGO_HEIGHT2, Blue);
-//LEGO_BRICK brick2X6Gy(2, 6, LEGO_HEIGHT, White);
-//LEGO_BRICK brick2X6B(2, 6, LEGO_HEIGHT, Yellow);
-//LEGO_BRICK brick4X2(4, 2, LEGO_HEIGHT, Black);
-//LEGO_BRICK brick4X2B(4, 2, LEGO_HEIGHT, Orange);
-//LEGO_BRICK brick2X4B(2, 4, LEGO_HEIGHT, Red);
-//LEGO_BRICK brick2X8(2, 8, LEGO_HEIGHT, Orange);
-//LEGO_BRICK brick2X2(2, 2, LEGO_HEIGHT, Green);
-//LEGO_BRICK brick12X8(12, 8, LEGO_HEIGHT2, Yellow);
-//LEGO_BRICK brick4X2R(4, 2, LEGO_HEIGHT, White);
-//LEGO_BRICK brick2X6R(2, 6, LEGO_HEIGHT, Blue);
+
 static float g_RotationAngle = 0.0f;
 static float g_RotationAngleH2 = 0.0f;
 static float g_RotationAngleH3 = 0.0f;
@@ -111,7 +100,7 @@ bool isRotatingZ3 = false;
 
 bool cw, ccw = false;
 
-void UpdateTempRow(int);
+
 
 // The structure of a vertex in our vertex buffer...
 //#define D3DFVF_CUSTOMVERTEX (D3DFVF_XYZ | D3DFVF_DIFFUSE)
@@ -151,20 +140,8 @@ HRESULT SetupD3D(HWND hWnd)
 
 	g_pd3dDevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_CCW);
 
-	/*Initialise brick object*/
-	/*brick6X16.initialise(g_pd3dDevice);
-	brick2X6Gy.initialise(g_pd3dDevice);
-	brick2X6B.initialise(g_pd3dDevice);*/
-//	brick4X2.initialise(g_pd3dDevice);
 	cubie.initialise(g_pd3dDevice);
-	//panel.initialise(g_pd3dDevice);
-	/*brick4X2B.initialise(g_pd3dDevice);
-	brick2X4B.initialise(g_pd3dDevice);
-	brick2X2.initialise(g_pd3dDevice);
-	brick2X8.initialise(g_pd3dDevice);
-	brick12X8.initialise(g_pd3dDevice);
-	brick4X2R.initialise(g_pd3dDevice);
-	brick2X6R.initialise(g_pd3dDevice);*/
+	
 
     return S_OK;
 }
@@ -189,8 +166,7 @@ void CleanUp()
 HRESULT SetupGeometry()
 {
 	if (
-		cubie.SetupCubie2() == S_OK /*&&
-//		panel.SetupPanel() == S_OK */
+		cubie.SetupCubie() == S_OK 
 		)
 	{
 			return S_OK;
@@ -232,18 +208,11 @@ void SetupViewMatrices()
 
 	D3DXVec3Cross(&vUpVector, &vLookat, &rightVector);
 	
-	//D3DXMatrixInverse(&matView, NULL, &matView);
 	D3DXMatrixRotationYawPitchRoll(&matRotate, xIndex2, yIndex2, 0);
-	//D3DXVec3TransformCoord(&vLookat, &vLookat, &matRotate);
-	//D3DXVec3Normalize(&vLookat, &vLookat);
-	//D3DXMatrixTranslation(&toCenter, cubie.dimension, -(cubie.dimension), 0.65f + (cubie.dimension));
-	//D3DXMatrixTranslation(&fromCenter, -cubie.dimension, (cubie.dimension), -(0.65f + (cubie.dimension)));
+	
 
 	D3DXMatrixIdentity(&matView);
-	//D3DXMatrixMultiply(&matView, &matView, &toCenter);
-	//D3DXMatrixIdentity(&matView);
-	//D3DXMatrixMultiply(&matView, &matView, &fromCenter);
-	//D3DXMatrixMultiply(&matView, &toCenter, &matRotate);
+
 
     D3DXMatrixLookAtLH( &matView, &vCamera, &vLookat, &vUpVector);
     g_pd3dDevice -> SetTransform(D3DTS_VIEW, &matView);
@@ -309,7 +278,7 @@ void Render()
 	D3DXMATRIX WorldMat, WorldMat2, TranslateMat, TranslateMat2, TranslateMat3;
 
 
-	//static float index = 0.0f; index += 0.01f;    // an ever-increasing float value
+	
 	static float index = 0.0f;
 												 
 
@@ -327,21 +296,14 @@ void Render()
 		SetupViewMatrices();
 
 		xIndexHRow1 = g_RotationAngle;
-		//yIndexVRow1 = g_RotationAngleV1;
+		
 
-		D3DXMatrixRotationYawPitchRoll(&matRotateY, /*index*//*0*/xIndex, yIndex/*0*//*index*/, 0/*index*/);
-		D3DXMatrixRotationYawPitchRoll(&matRotateH, xIndexHRow1, 0, 0);
-		D3DXMatrixRotationYawPitchRoll(&matRotateH2, g_RotationAngleH2, 0, 0);
-		D3DXMatrixRotationYawPitchRoll(&matRotateH3, g_RotationAngleH3, 0, 0);
-		D3DXMatrixRotationYawPitchRoll(&matRotateV, 0.0f, yIndexVRow1, 0/*index*/);
-		D3DXMatrixRotationYawPitchRoll(&sideMat, 0, D3DX_PI / 2, 0); //rotate 90 degrees
-//		D3DXMatrixTranslation(&TranslateMat2, LEGO_HALF_PITCH, LEGO_PITCH, 0.0f);
-		D3DXMatrixTranslation(&TranslateMat3, 0.0f, -24.0f, 0.0f);
+		D3DXMatrixRotationYawPitchRoll(&matRotateY, xIndex, yIndex, 0);
+		
 		D3DXMatrixTranslation(&TranslateMat, 0.0f, 0.0f, 5.0f);
-		D3DXMatrixIdentity(&WorldMat);								// Set WorldMat to identity matrice
-		D3DXMatrixIdentity(&WorldMat2);
+		D3DXMatrixIdentity(&WorldMat);								// Set WorldMat to identity matrix
 
-		cubie.setY(yIndexVRow1);
+		
 		cubie.setY(g_RotationAngleV1);
 		cubie.setY2(g_RotationAngleV2);
 		cubie.setY3(g_RotationAngleV3);
@@ -354,14 +316,10 @@ void Render()
 		cubie.SetX2(g_RotationAngleH2);
 		cubie.SetX3(g_RotationAngleH3);
 		
-		cubie.SetH1(hRowTopTest, isY);
-		cubie.SetH2(hRowMidTest);
-		cubie.SetH3(hRowBotTest);
-		cubie.setVRow1(vRowPos1);
-		cubie.setVRowTest(vRowPosTest);
-		cubie.setVRowL(vRowL);
+		
 		cubie.updateTheBillboard(canRotateY, canRotateX, canRotateZ);
 		
+		cubie.drawTheUI();
 		int zVal = 0;
 		for (int i = 0; i < 27; i++)
 		{
@@ -372,64 +330,34 @@ void Render()
 			if (zVal > 2)
 				zVal = 0;
 			cubie.render(matRotateY, 
-				matRotateH, matRotateH2, matRotateH3, 
-				matRotateV, 
-				WorldMat, TranslateMat, TranslateMat2, 
+				WorldMat, TranslateMat, 
 				zVal, i);
 		}
 		
-		//panel.render(matRotateY, WorldMat/*, (D3DX_PI / 2)*/);
+		
 
 		
 
         // End the scene.
         g_pd3dDevice -> EndScene();
 
+		/*Check each section for a rotation event.
+		If a rotation occurs, increase/decrease the rotation angle value, which will guide the animation for that rotation
+		*/
+
 		if (isRotating)	
 		{
-			if (cw)
+			if (cw) //If rotation event is clockwise
 			{
-				if (g_RotationAngle >= (D3DX_PI / 2 * (count + 1)))
+				if (g_RotationAngle >= (D3DX_PI / 2 * (count + 1))) //Stop animation when rotation angle is greater than or equal to 90 degrees
 				{
 					isRotating = !isRotating;
 					cw = !cw;
-					/*++count;
-					g_RotationAngle = D3DX_PI / 2 * count;*/
-
-					g_RotationAngle = 0;
 					
-					/*for (int i = 0; i < 9; i++)
-					{
-						if (i % 3 == 0)
-						{
-							vRowPos1[i] = 1;
-						}
-						if (i < 3)
-						{
-							vRowPos1[i] = 3;
-						}
-					}*/
-					/*	3	1	1
-						3	1	1
-						3	1	1
 
-						3	3	3
-						1	1	1
-						1	1	1
-
-						02, 12, 22, 01, 11, 21, 00, 10, 20
-						1	1	1
-						1	1	1
-						3	3	3
-
-						for (int i = 0; i<3; ++i) {
-						for (int j = 0; j<3; ++j) {
-						hRowTop[i][j] = hRowTemp[j][3-i-1]; //rotate counter-clockwise 90 degrees
-						}
-						}
-						j=0
-
-					*/
+					g_RotationAngle = 0; //reset angle, guaranteeing that the rotating segment always stops in place
+					
+					
 					for (int i = 0; i < 3; ++i) {
 						for (int j = 0; j < 3; ++j) {
 							hRowTop[i][j] = hRowTemp[3 - j - 1][i]; //rotate clockwise 90 degrees
@@ -457,7 +385,7 @@ void Render()
 						vRowPosTest[i] = hRowTopTest[i];
 						
 					}
-					UpdateTempRow(0);
+					
 					cubie.changeTexturesHCW(hRowTopTest, 0);
 				}
 				else
@@ -465,14 +393,13 @@ void Render()
 					g_RotationAngle += 0.035f;
 				}
 			}
-			if (ccw)
+			if (ccw) //If rotation event is counter-clockwise
 			{
-				if (g_RotationAngle <= (D3DX_PI / 2 * (count-1)))
+				if (g_RotationAngle <= (D3DX_PI / 2 * (count-1))) 
 				{
 					isRotating = !isRotating;
 					ccw = !ccw;
-					/*--count;
-					g_RotationAngle = D3DX_PI / 2 * count;*/
+					
 					g_RotationAngle = 0;
 					
 					for (int i = 0; i<3; ++i) {
@@ -490,7 +417,7 @@ void Render()
 								vRowPos1[(i * 3) + j] = hRowTop[i][j];
 						}
 					}
-					UpdateTempRow(0);
+					
 					cubie.changeTexturesHCCW(hRowTopTest, 0);
 				}
 				else
@@ -508,8 +435,7 @@ void Render()
 				{
 					cw = !cw;
 					isRotatingH2 = !isRotatingH2;
-					/*++countH2;
-					g_RotationAngleH2 = D3DX_PI / 2 * countH2;*/
+					
 					g_RotationAngleH2 = 0;
 
 					for (int i = 0; i < 3; ++i) {
@@ -524,7 +450,7 @@ void Render()
 							vRowPos1[(i * 3) + j] = hRowMid[i % 3][j];
 						}
 					}
-					UpdateTempRow(1);
+					
 					cubie.changeTexturesHCW(hRowMidTest, 1);
 				}
 				else
@@ -538,8 +464,7 @@ void Render()
 				{
 					isRotatingH2 = !isRotatingH2;
 					ccw = !ccw;
-					/*--countH2;
-					g_RotationAngleH2 = D3DX_PI / 2 * countH2;*/
+					
 					g_RotationAngleH2 = 0;
 
 					for (int i = 0; i<3; ++i) {
@@ -557,7 +482,7 @@ void Render()
 								vRowPos1[(i * 3) + j] = hRowMid[(i % 3)][j];
 						}
 					}
-					UpdateTempRow(1);
+					
 					cubie.changeTexturesHCCW(hRowMidTest, 1);
 				}
 				else
@@ -575,8 +500,7 @@ void Render()
 				{
 					isRotatingH3 = !isRotatingH3;
 					cw = !cw;
-					/*++countH3;
-					g_RotationAngleH3 = D3DX_PI / 2 * countH3;*/
+					
 					g_RotationAngleH3 = 0;
 					
 					for (int i = 0; i < 3; ++i) {
@@ -591,7 +515,7 @@ void Render()
 							vRowPos1[(i * 3) + j] = hRowBottom[i % 3][j];
 						}
 					}
-					UpdateTempRow(2);
+					
 					cubie.changeTexturesHCW(hRowBotTest, 2);
 				}
 				else
@@ -605,8 +529,7 @@ void Render()
 				{
 					isRotatingH3 = !isRotatingH3;
 					ccw = !ccw;
-					/*--countH3;
-					g_RotationAngleH3 = D3DX_PI / 2 * countH3;*/
+					
 					g_RotationAngleH3 = 0;
 
 					for (int i = 0; i<3; ++i) {
@@ -618,13 +541,11 @@ void Render()
 
 					for (int i = 6; i < 9; ++i) {
 						for (int j = 0; j < 3; ++j) {
-							/*if (i == 3)
-							vRowPos1[i*3] = hRowMid[(i / 3) - 1][j];
-							else*/
+							
 							vRowPos1[(i * 3) + j] = hRowBottom[(i % 3)][j];
 						}
 					}
-					UpdateTempRow(2);
+					
 					cubie.changeTexturesHCCW(hRowBotTest, 2);
 				}
 				else
@@ -643,8 +564,7 @@ void Render()
 				if (g_RotationAngleV1 <= (D3DX_PI / 2 * (countV1 - 1)))
 				{
 					isRotatingV1 = !isRotatingV1;
-					//+countV1;
-					//g_RotationAngleV1 = D3DX_PI / 2 * countV1;
+					
 
 					g_RotationAngleV1 = 0;
 					cubie.changeTexturesVCW(0);
@@ -660,8 +580,7 @@ void Render()
 				if (g_RotationAngleV1 >= (D3DX_PI / 2 * (countV1 + 1)))
 				{
 					isRotatingV1 = !isRotatingV1;
-					//+countV1;
-					//g_RotationAngleV1 = D3DX_PI / 2 * countV1;
+					
 
 					g_RotationAngleV1 = 0;
 
@@ -681,49 +600,18 @@ void Render()
 						if (i == 0 && i < 3)
 						{
 							hRowTopTest[i] = vRowPosTest[i];
-							//isY[i] = !isY[i];
-
-							/*hRowMidTest[i] = vRowPosTest[(i+1)*9];
-							hRowBotTest[i] = vRowPosTest[(i+1)*18];*/
+							
 
 						}
 						else if (i < 3)
 						{
 							hRowTopTest[i * 3] = vRowPosTest[i * 3];
-							//isY[i*3] = !isY[i*3];
-
-							/*hRowMidTest[i*3] = vRowPosTest[9 + (i*3)];
-							hRowBotTest[i*3] = vRowPosTest[18 + (i*3)];*/
+							
 						}
 					}
-					//cubie.setVRowL(vRowL);
+					
 					cubie.changeTexturesVCCW(vRowL, 0);
-					//++countV1;
-					//	0	3	6
-					//	9	12	15
-					//	18	21	24
-
-					// 02, 12, 22, 01, 11, 21, 00, 10, 20
-					//	cw
-					//	6	15	24
-					//	3	12	21
-					//	0	9	18
-					//for (int i = 0; i<3; ++i) {
-					//	for (int j = 0; j<3; ++j) {
-					//		vRowPos1[(i * 9)+(j*3)] = hRowTemp3[j][3 - i - 1]; //rotate clockwise 90 degrees
-					//	}
-					//}
-
-					// 20, 10, 00, 21, 11, 01, 22, 12, 02
-					//	ccw
-					//	18	9	0
-					//	21	12	3
-					//	24	15	6
-					//for (int i = 0; i<3; ++i) {
-					//	for (int j = 0; j<3; ++j) {
-					//		vRowPos1[(i * 9)+(j*3)] = hRowTemp3[3 - j - 1][i]; //rotate counter-clockwise 90 degrees
-					//	}
-					//}
+					
 				}
 				else
 				{
@@ -740,8 +628,7 @@ void Render()
 				if (g_RotationAngleV2 <= (D3DX_PI / 2 * (countV2 - 1)))
 				{
 					isRotatingV2 = !isRotatingV2;
-					//+countV1;
-					//g_RotationAngleV1 = D3DX_PI / 2 * countV1;
+					
 
 					g_RotationAngleV2 = 0;
 					cubie.changeTexturesVCW(1);
@@ -757,8 +644,7 @@ void Render()
 				if (g_RotationAngleV2 >= (D3DX_PI / 2 * (countV2 + 1)))
 				{
 					isRotatingV2 = !isRotatingV2;
-					//+countV1;
-					//g_RotationAngleV1 = D3DX_PI / 2 * countV1;
+					
 
 					g_RotationAngleV2 = 0;
 
@@ -780,8 +666,7 @@ void Render()
 				if (g_RotationAngleV3 <= (D3DX_PI / 2 * (countV3 - 1)))
 				{
 					isRotatingV3 = !isRotatingV3;
-					//+countV1;
-					//g_RotationAngleV1 = D3DX_PI / 2 * countV1;
+					
 
 					g_RotationAngleV3 = 0;
 					cubie.changeTexturesVCW(2);
@@ -797,8 +682,7 @@ void Render()
 				if (g_RotationAngleV3 >= (D3DX_PI / 2 * (countV3 + 1)))
 				{
 					isRotatingV3 = !isRotatingV3;
-					//+countV1;
-					//g_RotationAngleV1 = D3DX_PI / 2 * countV1;
+					
 
 					g_RotationAngleV3 = 0;
 
@@ -935,45 +819,7 @@ void Render()
 }
 
 
-void UpdateTempRow(int num)
-{
-	if (num == 0)
-	{
-		for (int i = 0; i < 3; i++)
-		{
-			for (int j = 0; j < 3; j++)
-			{
-				hRowTemp[i][j] = hRowTop[i][j];
-				hRowTTTemp[i][j] = hRowTopTest[(i * 3) + j];
-			}
-		}
-	}
 
-	else if (num == 1)
-	{
-		for (int i = 0; i < 3; i++)
-		{
-			for (int j = 0; j < 3; j++)
-			{
-				hRowTemp2[i][j] = hRowMid[i][j];
-				hRowMTTemp[i][j] = hRowMidTest[(i * 3) + j];
-			}
-		}
-	}
-
-	else if (num == 2)
-	{
-		for (int i = 0; i < 3; i++)
-		{
-			for (int j = 0; j < 3; j++)
-			{
-				hRowTemp3[i][j] = hRowBottom[i][j];
-				hRowBTTemp[i][j] = hRowBotTest[(i * 3) + j];
-			}
-		}
-	}
-	
-}
 
 //-----------------------------------------------------------------------------
 // The window's message handling function.
@@ -995,6 +841,7 @@ LRESULT WINAPI MsgProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 		case WM_CHAR:
 			switch (wParam)
 			{
+				//Whole Cube Movements
 			case 'w':
 				yIndex += 0.1f;
 				return 0;
@@ -1015,6 +862,7 @@ LRESULT WINAPI MsgProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 				return 0;
 				break;
 
+				//Zooming
 			case 'r':
 				g_CameraZ += 10.0f;
 				return 0;
@@ -1025,6 +873,7 @@ LRESULT WINAPI MsgProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 				return 0;
 				break;
 
+				//Horizontal Rotations
 			case 'z':
 				if (canRotateX == 0)
 				{
@@ -1069,6 +918,7 @@ LRESULT WINAPI MsgProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 				return 0;
 				break;
 
+				//Vertical Rotations based on 9 Blocks in a single column, the vCol
 			case 'c':
 				if (canRotateY == 0)
 				{
@@ -1113,6 +963,7 @@ LRESULT WINAPI MsgProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 				return 0;
 				break;
 
+				//Vertical Rotations based on 9 Blocks in a single face, the ZCol
 			case 'b':
 				if (canRotateZ == 0)
 				{
@@ -1157,64 +1008,7 @@ LRESULT WINAPI MsgProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 				return 0;
 				break;
 
-			case 't':
-				xIndexHRow1 -= 0.1f;
-				return 0;
-				break;
-
-			case 'y':
-				xIndexHRow1 += 0.1f;
-				return 0;
-				break;
-
-			case 'g':
-				yIndexVRow1 -= 0.1f;
-				return 0;
-				break;
-
-			case 'h':
-				isRotatingV2 = !isRotatingV2;
-				return 0;
-				break;
-			case 'j':
-				isRotatingV1 = !isRotatingV1;
-				return 0;
-				break;
-
-			//Horizontal Animations
-			//===============================================
-			case 'o':
-				isRotating = !isRotating;
-				cw = true;
-				return 0;
-				break;
-			case 'l':
-				isRotatingH2 = !isRotatingH2;
-				cw = true;
-				return 0;
-				break;
-			case '.':
-				isRotatingH3 = !isRotatingH3;
-				cw = true;
-				return 0;
-				break;
-
-				//CCW
-			case 'p':
-				isRotating = !isRotating;
-				ccw = true;
-				return 0;
-				break;
-			case ';':
-				isRotatingH2 = !isRotatingH2;
-				ccw = true;
-				return 0;
-				break;
-			case '/':
-				isRotatingH3 = !isRotatingH3;
-				ccw = true;
-				return 0;
-				break;
+			
 
 			//=============================================
 			}
